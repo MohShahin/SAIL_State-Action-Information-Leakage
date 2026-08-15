@@ -45,12 +45,19 @@ vasopressor/inotrope drugs — clinically implausible (vasopressors are a small 
 charted infusions: fluids, nutrition, sedation, antibiotics, blood products, etc. dominate). The
 fresh extraction's proportion (7.0% of all inputevents) is far more plausible.
 
-**Working theory:** the original numbers were generated against an earlier, uncorrected version of
-the `sepsis_cohort` scratch table that likely had duplicate rows per `stay_id`, producing a join
-fanout that uniformly inflated every downstream `JOIN ... USING(stay_id)` extraction. The current
-`sepsis_cohort` table is verified clean (row count exactly equals distinct `stay_id` count,
-11,354). `icustays` (unfiltered) matches PhysioNet's documented total (94,458) exactly, ruling out
-a partial-dataset/access problem.
+**Confirmed mechanism:** `notebook/...ipynb` Section 1's cohort-write cell
+(`client.load_table_from_dataframe(cohort_df, f"{SCRATCH_DATASET}.sepsis_cohort")`) had no
+`write_disposition` set. BigQuery's load-job default when the destination table already exists is
+`WRITE_APPEND`, not overwrite. Any re-run of that cell against an already-populated
+`sepsis_cohort` table — e.g. a Colab session restart followed by re-running Section 1, entirely
+plausible during iterative development — would silently append another full copy of the cohort
+rows rather than replacing them, duplicating every `stay_id` and producing exactly the kind of
+uniform multiplicative fanout seen in the vasopressor-dose and vitals/labs/FiO2 counts through
+every downstream `JOIN ... USING(stay_id)`. The cell has been patched to set
+`write_disposition="WRITE_TRUNCATE"` (commit `0a32303`), making it idempotent regardless of how
+many times it's re-run. The current `sepsis_cohort` table is verified clean (row count exactly
+equals distinct `stay_id` count, 11,354). `icustays` (unfiltered) matches PhysioNet's documented
+total (94,458) exactly, ruling out a partial-dataset/access problem.
 
 **Action needed before manuscript finalization (Phase 6):** re-run the full pipeline end-to-end
 against the current, verified-clean cohort table, and update every cohort/data-characteristics
