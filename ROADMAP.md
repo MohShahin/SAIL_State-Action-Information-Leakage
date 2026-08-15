@@ -66,6 +66,16 @@ Experiment 1–3's *ratio-based* statistics (30.5%/26.3% dose-determined, the 0.
 gap, 56.1% mean window overlap) are robust to this correction — they may be far less sensitive to
 it than the raw counts were, since they're proportions rather than absolute row counts.
 
+## Note — separate schema-autodetect bug found during notebook re-run (2026-08-15)
+
+Cell 5's BigQuery load used schema autodetection, which mapped intime/outtime/deathtime to
+TIMESTAMP instead of their native DATETIME type -- causing TIMESTAMP_DIFF errors in every
+downstream cell that joins against chartevents/labevents (DATETIME-typed charttime columns).
+Fixed by passing an explicit schema on load. Likely a library-version artifact specific to this
+local re-run environment (original data collection ran in Google Colab with different
+google-cloud-bigquery/db_dtypes versions) -- unlikely to be connected to the WRITE_APPEND/join-
+fanout issue documented above, which is a separate, already-confirmed root cause.
+
 - [ ] **3.2 Data source** — exact MIMIC-IV version + PhysioNet DOI, extraction date range, CITI/credentialing reference, pipeline commit hash
 - [ ] **3.3 Cohort definition** — confirm adult-age threshold and any exclusions not yet documented
 - [ ] **3.4 Temporal discretization** — confirm bin anchoring (ICU admission vs. clock time), overlapping vs. non-overlapping bins, missing-bin handling, whether decision points span the full stay or only the vasopressor-eligible window
