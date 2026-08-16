@@ -66,6 +66,51 @@ Experiment 1–3's *ratio-based* statistics (30.5%/26.3% dose-determined, the 0.
 gap, 56.1% mean window overlap) are robust to this correction — they may be far less sensitive to
 it than the raw counts were, since they're proportions rather than absolute row counts.
 
+## Resolved — Experiment 3 window-overlap discrepancy explained (2026-08-16)
+
+Fresh re-run reproduces Experiment 3's n exactly (204,372) but originally showed substantially
+lower overlap statistics than the manuscript:
+
+| Statistic | Manuscript | Fresh (N=1, sum-based) | Fresh (N=1, union-corrected) |
+|---|---|---|---|
+| Mean window overlap (24h) | 56.1% | 33.1% | 31.1% |
+| Median window overlap (24h) | 100% | 12.8% | 12.4% |
+| % of points >50% overlap (24h) | 55.7% | 30.8% | 28.7% |
+
+Two contributing causes identified:
+
+1. **Sum-vs-union bug (present-day, code-level):** `run_experiment3`'s overlap computation summed
+   overlap across every matching action interval per stay rather than taking their union, causing
+   double-counting whenever a patient had genuinely overlapping multi-drug pressor therapy (34.8%
+   of stays in the current cohort). A union-corrected version (`run_experiment3_unioned`) reduces
+   this modestly but does not close the gap alone.
+2. **WRITE_APPEND join-fanout (historical, confirmed dominant cause):** a synthetic diagnostic —
+   duplicating the real, clean `vaso_bins_df` N times and running the unmodified original
+   `run_experiment3` — produced a clear monotonic, threshold-shaped curve as N increased:
+
+   | N (duplication factor) | Mean | Median | >50% |
+   |---|---|---|---|
+   | 1 (real, no dup) | 33.1% | 12.8% | 30.8% |
+   | 2 | 43.5% | 25.7% | 42.3% |
+   | 5 | 52.5% | 64.2% | 52.2% |
+   | 15 | 58.1% | 100.0% | 57.9% |
+   | **Manuscript** | **56.1%** | **100%** | **55.7%** |
+
+   At N=15 — independently derived from the earlier vaso-dose row-count investigation
+   (5,428,937 / 351,720 ≈ 15.44x), not fitted to match this result — the synthetic output lands
+   almost exactly on the manuscript's reported figures, including the distinctive saturated 100%
+   median (a direct consequence of duplicated-interval overlap hours exceeding the window length
+   before the `min(1.0, ...)` cap). This confirms the same WRITE_APPEND root cause identified for
+   the vasopressor-dose row counts also explains Experiment 3's overlap statistics.
+
+**Action for manuscript finalization (Phase 6):** replace `run_experiment3` with the
+union-corrected version in the notebook (keep the original in git history via this commit, not as
+a live alternative), and report the clean-cohort, union-corrected statistics (31.1% mean / 12.4%
+median / 28.7% >50%) as Experiment 3's headline numbers, superseding the manuscript's current
+figures. Note for Section 5 (Discussion): the corrected numbers still show real, non-trivial
+window contamination (nearly 1 in 3 decision points have majority-contaminated windows) — the
+qualitative finding survives even though the specific figures must be revised down.
+
 ## Note — separate schema-autodetect bug found during notebook re-run (2026-08-15)
 
 Cell 5's BigQuery load used schema autodetection, which mapped intime/outtime/deathtime to
