@@ -121,6 +121,17 @@ local re-run environment (original data collection ran in Google Colab with diff
 google-cloud-bigquery/db_dtypes versions) -- unlikely to be connected to the WRITE_APPEND/join-
 fanout issue documented above, which is a separate, already-confirmed root cause.
 
+## Note — switching Experiment 5 execution to Google Colab (2026-08-17)
+
+Today's local execution hit a hard memory ceiling (1.4GB free, mostly Chrome+VS Code contention)
+that caused cell 21 (Experiment 2) to slow from ~35min to 72min+ across repeated runs, timing out
+entirely on the attempt meant to produce the Experiment 5 checkpoint. Switching Experiment 5
+execution to Google Colab -- the notebook's originally-intended environment, per cell 2's
+`google.colab.auth` flow -- rather than continuing to fight local resource constraints. Cells 0-23
+are already verified reproducible across five separate local runs (identical cohort/vitals/labs/
+dose counts, Experiment 1/2/3 statistics every time), so this is a resource/environment switch,
+not a re-validation of anything already confirmed.
+
 - [ ] **3.2 Data source** — exact MIMIC-IV version + PhysioNet DOI, extraction date range, CITI/credentialing reference, pipeline commit hash
 - [ ] **3.3 Cohort definition** — confirm adult-age threshold and any exclusions not yet documented
 - [ ] **3.4 Temporal discretization** — confirm bin anchoring (ICU admission vs. clock time), overlapping vs. non-overlapping bins, missing-bin handling, whether decision points span the full stay or only the vasopressor-eligible window
