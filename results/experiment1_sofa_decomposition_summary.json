@@ -1,0 +1,14 @@
+{
+  "_note": "Aggregate cohort-level statistics only. No patient-level rows. See ../DATA_ACCESS.md for what can/can't be published from this project.",
+  "cohort_size": 11354,
+  "verified_2026_08_16": {
+    "pct_dose_determined_4h_window": 0.323,
+    "pct_dose_determined_24h_window": 0.286,
+    "pct_dose_determined_among_treated_timesteps": 1.0
+  },
+  "manuscript_draft_figures_superseded": {
+    "pct_dose_determined_4h_window": 0.305,
+    "pct_dose_determined_24h_window": 0.263,
+    "note": "Superseded after re-extraction against a verified-clean cohort table (see ROADMAP.md, WRITE_APPEND join-fanout fix)."
+  }
+}

@@ -1,0 +1,6 @@
+variant,probe,auroc,macro_f1,ece,mutual_info
+A_full,gb,0.900,0.830,0.011,0.031
+B_no_total_sofa,gb,0.900,0.828,0.012,0.026
+C_no_cardio_sofa,gb,0.885,0.811,0.034,0.023
+D_treatment_decomposed,gb,0.792,0.711,0.015,0.018
+E_physiology_only,gb,0.791,0.711,0.015,0.017

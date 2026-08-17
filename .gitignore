@@ -1,0 +1,37 @@
+.ipynb_checkpoints/
+.DS_Store
+__pycache__/
+*.pyc
+.vscode/
+
+# ---------------------------------------------------------------------------
+# MIMIC-IV governance — see DATA_ACCESS.md before removing anything below.
+# Row-level / patient-level derived data must never be committed. results/ is
+# blocked by default; only specific, hand-reviewed aggregate files under
+# results/ are explicitly allowed back in via the negations at the bottom of
+# this file (git evaluates rules in file order, so negations must come after
+# every rule that could otherwise re-catch them — don't move these above the
+# *.csv/*.parquet lines below).
+# ---------------------------------------------------------------------------
+results/*
+# The notebook's own working output directory (OUT_DIR in cell 3) -- separate from the curated
+# top-level results/ folder above. Blocked entirely, no negation exceptions: everything written
+# here is a full-cohort/full-decision-point extraction (row-level), never hand-reviewed for
+# publication. If a file from here needs to be published, copy the aggregate to results/ instead
+# of un-ignoring anything under this path.
+notebook/results/
+data/
+*.csv
+*.parquet
+*.feather
+# GCP / BigQuery credentials — never commit these regardless of data sensitivity
+*.json.key
+service-account*.json
+.env
+bigquery-credentials*
+
+# Explicitly allowed aggregate-only files (reviewed — see results/README.md)
+!results/README.md
+!results/experiment1_sofa_decomposition_summary.json
+!results/experiment2_action_recoverability_best_probe.csv
+!results/experiment3_summary.json

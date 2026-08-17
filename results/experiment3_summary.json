@@ -1,0 +1,16 @@
+{
+  "_note": "Aggregate cohort-level statistics only. experiment3_window_provenance.csv (one row per decision point, patient-level granularity) is deliberately NOT published here -- see ../DATA_ACCESS.md.",
+  "cohort_size": 11354,
+  "n_decision_points_24h": 204372,
+  "verified_2026_08_16_union_corrected": {
+    "mean_window_overlap": 0.311,
+    "median_window_overlap": 0.124,
+    "pct_gt50pct_overlap": 0.287
+  },
+  "manuscript_draft_figures_superseded": {
+    "mean_window_overlap": 0.561,
+    "median_window_overlap": 1.00,
+    "pct_gt50pct_overlap": 0.557,
+    "note": "Superseded after two confirmed bugs were fixed: (1) a WRITE_APPEND join-fanout that could silently duplicate cohort rows on re-run, and (2) a sum-vs-union overlap computation that double-counted time when a patient had overlapping multi-drug pressor therapy (34.8% of stays). See ROADMAP.md, 'Resolved -- Experiment 3 window-overlap discrepancy explained' for the full diagnostic trail, including a synthetic duplication test (N=1/2/5/15) that reproduced the original figures almost exactly at the independently-derived duplication ratio."
+  }
+}
