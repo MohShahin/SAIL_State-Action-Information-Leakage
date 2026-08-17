@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Does the Score Already Know the Treatment? — A Sepsis-RL Data Audit</title>
+<meta name="description" content="A plain-language, interactive walkthrough of a methodological audit of SOFA-based state representations in offline reinforcement learning for sepsis treatment, from the MIT Laboratory for Computational Physiology and the Boston University School of Public Health.">
+<meta property="og:title" content="Does the Score Already Know the Treatment?">
+<meta property="og:description" content="An interactive audit of information leakage in SOFA-based sepsis reinforcement learning, MIT LCP × BU SPH.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --bg:#faf9f6;
+    --paper:#ffffff;
+    --line:#dcd8cd;
+    --line-soft:#ece9e0;
+    --ink:#201f1c;
+    --ink-soft:#5a564c;
+    --ink-faint:#948f80;
+    --accent:#7c1d2e;        /* deep academic crimson */
+    --accent-soft:#f4e6e3;
+    --physio:#2f5d50;        /* muted academic green — "physiology" */
+    --physio-soft:#e7efe9;
+    --treat:#7c1d2e;         /* same crimson — "treatment-linked" */
+    --treat-soft:#f4e2e0;
+    --gold:#8a6d1f;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", Times, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); }
+  ::selection{ background:var(--accent-soft); color:var(--accent); }
+
+  .masthead{
+    background:var(--paper); border-bottom:3px double var(--line);
+  }
+  .masthead-inner{
+    max-width:760px; margin:0 auto; padding:22px 24px 16px;
+  }
+  .affil{
+    display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px 24px;
+    font-family:var(--sans); font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);
+    border-bottom:1px solid var(--line-soft); padding-bottom:12px; margin-bottom:14px;
+  }
+  .affil span b{ color:var(--ink); font-weight:700; }
+  .masthead h1{
+    font-family:var(--serif); font-weight:400; font-size:26px; line-height:1.32; margin:0 0 8px; color:var(--ink);
+  }
+  .masthead p.deck{
+    font-family:var(--sans); font-size:14px; color:var(--ink-soft); line-height:1.6; margin:0 0 4px; max-width:640px;
+  }
+  .status-line{
+    display:inline-flex; align-items:center; gap:7px; font-size:11.5px; color:var(--ink-faint);
+    margin-top:10px; font-style:italic;
+  }
+  .status-line .sw{ width:7px; height:7px; border-radius:50%; background:var(--gold); }
+  .resource-links{ margin-top:12px; display:flex; gap:18px; flex-wrap:wrap; }
+  .resource-links a{
+    font-size:12.5px; color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft);
+    padding-bottom:1px;
+  }
+  .resource-links a:hover{ border-bottom-color:var(--accent); }
+
+  /* progress */
+  .progress-wrap{ max-width:760px; margin:0 auto; padding:16px 24px 0; }
+  .progress-steps{ display:flex; gap:6px; }
+  .pstep{ flex:1; height:4px; border-radius:2px; background:var(--line); cursor:pointer; border:none; padding:0; }
+  .pstep.done{ background:var(--accent); }
+  .pstep:hover{ opacity:.75; }
+  .pstep:focus-visible, .navbtn:focus-visible, .sdot:focus-visible, .toggle:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .progress-label{
+    display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-faint); margin-top:7px;
+    font-family:var(--sans);
+  }
+
+  main{ max-width:760px; margin:0 auto; padding:26px 24px 40px; }
+  .stage{ animation:rise .3s ease; }
+  @keyframes rise{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
+
+  .step-eyebrow{ font-family:var(--sans); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 6px; font-weight:600;}
+  h2{ font-family:var(--serif); font-weight:400; font-size:25px; margin:0 0 12px; line-height:1.3; color:var(--ink); }
+  .plain{ font-size:15px; line-height:1.7; color:var(--ink-soft); margin:0 0 18px; }
+  .plain b{ color:var(--ink); font-weight:600; }
+  .plain .term{ border-bottom:1px dotted var(--ink-faint); }
+
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:4px;
+    padding:22px 24px; margin-bottom:18px;
+  }
+  .card h3{
+    font-family:var(--sans); margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-soft); font-weight:700; border-bottom:1px solid var(--line-soft); padding-bottom:9px;
+  }
+
+  /* one control at a time */
+  .single-ctrl{ margin:6px 0 20px; }
+  .ctrl-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .ctrl-name{ font-size:13.5px; color:var(--ink); font-weight:600; }
+  .ctrl-value{ font-family:var(--serif); font-size:16px; color:var(--accent); }
+  input[type=range]{
+    width:100%; height:3px; -webkit-appearance:none; background:var(--line); border-radius:2px; outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--paper);
+    border:2.5px solid var(--accent); cursor:pointer; margin-top:-7px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; background:var(--paper); border:2.5px solid var(--accent); cursor:pointer;
+  }
+
+  .toggle-row{ display:flex; align-items:center; gap:12px; margin:14px 0; }
+  .toggle{
+    position:relative; width:44px; height:24px; border-radius:12px; background:var(--line); cursor:pointer; flex:0 0 auto;
+    transition:background .2s;
+  }
+  .toggle.on{ background:var(--accent); }
+  .toggle .knob{
+    position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:var(--paper);
+    transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2);
+  }
+  .toggle.on .knob{ left:22px; }
+  .toggle-label{ font-size:13.5px; color:var(--ink); }
+
+  /* readout */
+  .readout{
+    display:flex; align-items:center; gap:18px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line-soft);
+    flex-wrap:wrap;
+  }
+  .readout-num{
+    font-family:var(--serif); font-size:42px; color:var(--ink); min-width:70px; line-height:1;
+  }
+  .readout-num.hi{ color:var(--treat); }
+  .readout-num small{ font-family:var(--sans); font-size:11px; color:var(--ink-faint); display:block; margin-top:4px; text-transform:uppercase; letter-spacing:.05em;}
+  .readout-txt{ flex:1; min-width:230px; font-size:14px; color:var(--ink-soft); line-height:1.65; }
+  .readout-txt b{ color:var(--ink); }
+
+  .flag{
+    display:inline-flex; align-items:center; gap:7px; font-size:12px; padding:5px 11px; border-radius:3px;
+    border:1px solid var(--line);
+  }
+  .flag.physio{ border-color:var(--physio); color:var(--physio); background:var(--physio-soft); }
+  .flag.treat{ border-color:var(--treat); color:var(--treat); background:var(--treat-soft); }
+  .flag .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  /* facts row */
+  .facts{ display:flex; gap:14px; flex-wrap:wrap; margin-top:16px; }
+  .fact{ flex:1 1 150px; border-left:2px solid var(--accent); padding-left:12px; }
+  .fact .n{ font-family:var(--serif); font-size:22px; color:var(--ink); }
+  .fact .l{ font-size:11.5px; color:var(--ink-faint); line-height:1.4; margin-top:2px; }
+
+  /* timeline (act 2) */
+  .timeline{
+    position:relative; height:58px; background:var(--bg); border:1px solid var(--line); border-radius:3px;
+    margin-top:6px;
+  }
+  .tl-vaso{ position:absolute; top:20px; height:16px; background:var(--treat-soft); border:1px solid var(--treat); border-radius:2px; }
+  .tl-window{ position:absolute; top:0; bottom:0; background:rgba(47,93,80,.10); border-left:1.5px dashed var(--physio); border-right:1.5px dashed var(--physio); }
+  .tl-decision{ position:absolute; top:0; bottom:0; width:2px; background:var(--gold); }
+  .tl-decision-label{ position:absolute; bottom:-18px; font-family:var(--serif); font-size:12px; color:var(--gold); }
+  .tl-axis{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); margin-top:22px; }
+
+  /* stepper for variants (Act 4) */
+  .stepper-track{ position:relative; margin:22px 4px 8px; height:6px; background:var(--line); border-radius:3px; }
+  .stepper-fill{ position:absolute; left:0; top:0; bottom:0; background:var(--accent); border-radius:3px; transition:width .35s; }
+  .stepper-dots{ display:flex; justify-content:space-between; margin-top:-3px; position:relative; }
+  .sdot{
+    width:12px; height:12px; border-radius:50%; background:var(--paper); border:2px solid var(--line); cursor:pointer;
+    transition:border-color .2s, transform .2s;
+  }
+  .sdot.on{ border-color:var(--accent); transform:scale(1.15); background:var(--accent); }
+  .stepper-caption{ text-align:center; margin-top:14px; }
+  .stepper-caption .big{ font-family:var(--serif); font-size:17px; color:var(--ink); }
+  .stepper-caption .small{ font-size:12.5px; color:var(--ink-faint); margin-top:3px;}
+
+  .group-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; justify-content:center; }
+  .group-chip{
+    font-size:12.5px; padding:8px 14px; border-radius:3px; border:1px solid var(--line); color:var(--ink-soft);
+    background:var(--bg);
+  }
+  .group-chip.included{ border-color:var(--physio); color:var(--physio); background:var(--physio-soft); }
+  .group-chip.flagged{ border-color:var(--treat); color:var(--treat); background:var(--treat-soft); font-weight:600;}
+  .group-chip.removed{ text-decoration:line-through; opacity:.5; }
+
+  .predict-bar-wrap{ margin-top:20px; }
+  .predict-bar{ position:relative; height:34px; background:var(--bg); border:1px solid var(--line); border-radius:3px; overflow:hidden; }
+  .predict-fill{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,var(--physio),var(--treat)); opacity:.85; transition:width .4s; }
+  .predict-marker{ position:absolute; top:-16px; transform:translateX(-50%); font-family:var(--serif); font-size:14px; color:var(--ink); transition:left .4s; }
+  .predict-scale{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); margin-top:6px; }
+
+  /* nav */
+  .navbar{
+    max-width:760px; margin:0 auto; padding:0 24px 44px; display:flex; justify-content:space-between; align-items:center;
+  }
+  .navbtn{
+    font-family:var(--sans); font-size:13.5px; padding:11px 22px; border-radius:3px; cursor:pointer;
+    border:1px solid var(--ink); background:var(--paper); color:var(--ink);
+  }
+  .navbtn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .navbtn:disabled{ opacity:.3; cursor:default; }
+  .nav-step-lbl{ font-size:12px; color:var(--ink-faint); font-family:var(--sans); }
+
+  footer.page-footer{
+    border-top:1px solid var(--line); padding:22px 24px 30px; text-align:center;
+    font-size:11.5px; color:var(--ink-faint); line-height:1.6;
+  }
+  footer.page-footer a{ color:var(--ink-soft); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  @media (max-width:520px){ .masthead h1{ font-size:21px; } h2{ font-size:21px; } .readout-num{ font-size:34px; } }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="affil">
+      <span><b>MIT</b> Laboratory for Computational Physiology</span>
+      <span><b>Boston University</b> School of Public Health</span>
+    </div>
+    <h1>Does the Severity Score Already Know the Treatment?</h1>
+    <p class="deck">A plain-language walkthrough of a methodological audit of SOFA-based state
+    representations used in offline reinforcement learning for sepsis treatment, conducted on MIMIC-IV.</p>
+    <div class="status-line"><span class="sw"></span>Preliminary results — internal audit, prepared for conference presentation. Figures independently re-extracted and reproducibility-checked; see ROADMAP.md.</div>
+    <div class="resource-links">
+      <a href="paper/SOFA_Leakage_Sepsis_RL_Manuscript_DRAFT.pdf">Read the manuscript draft (PDF)</a>
+      <a href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb">View the analysis notebook</a>
+      <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning">Source repository</a>
+    </div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps"></div>
+  <div class="progress-label"><span id="progLeft"></span><span id="progRight"></span></div>
+</div>
+
+<main id="main"></main>
+
+<div class="navbar">
+  <button class="navbtn" id="prevBtn">Back</button>
+  <span class="nav-step-lbl" id="stepLbl"></span>
+  <button class="navbtn primary" id="nextBtn">Continue</button>
+</div>
+
+<footer class="page-footer">
+  <p style="margin:0 0 8px;">Cohort: 11,354 adult, first-ICU-stay, Sepsis-3–qualifying stays with vasopressor exposure, MIMIC-IV.<br>
+  Prepared as a companion walkthrough to the accompanying manuscript draft — not itself a peer-reviewed publication.</p>
+  <p style="margin:0;">
+    <a href="paper/SOFA_Leakage_Sepsis_RL_Manuscript_DRAFT.pdf">Manuscript (PDF)</a> &nbsp;·&nbsp;
+    <a href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb">Notebook</a> &nbsp;·&nbsp;
+    <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning">GitHub repository</a>
+  </p>
+</footer>
+
+<script>
+/* ============================= DATA ============================= */
+const STEPS = [
+  { key:"intro", label:"Why this study" },
+  { key:"score", label:"How the score works" },
+  { key:"clock", label:"The timing problem" },
+  { key:"guess", label:"Can a computer peek?" },
+  { key:"check", label:"Checking ourselves" },
+  { key:"takeaway", label:"What should change" },
+];
+
+const VARIANTS = [
+  { id:"A", short:"Everything, as usually built", detail:"Vital signs, lab results, and the full severity score — including the part that reflects today's treatment.",
+    auroc:0.900, groups:["vitals","labs","total","cardio"] },
+  { id:"B", short:"Remove the overall total", detail:"Drop the single combined severity number. The treatment-linked piece is still hiding inside the other fields.",
+    auroc:0.900, groups:["vitals","labs","cardio"] },
+  { id:"C", short:"Remove the treatment-linked piece", detail:"Drop the cardiovascular subscore directly. Prediction barely moves — the total (kept in variant A/B logic) can still reconstruct it.",
+    auroc:0.885, groups:["vitals","labs"] },
+  { id:"D", short:"Replace it with a treatment-free version", detail:"Swap the treatment-linked subscore for a version based on blood pressure alone, and recompute the total from scratch so nothing is smuggled back in.",
+    auroc:0.792, groups:["vitals","labs","map-only"] },
+  { id:"E", short:"Physiology only — nothing about treatment", detail:"Vital signs and labs only. No severity-score field derived from treatment in any form. This is the honest floor for a pre-decision snapshot.",
+    auroc:0.791, groups:["vitals","labs"] },
+];
+const GROUP_LABEL = {
+  vitals:"Vital signs", labs:"Lab results", total:"Overall severity score",
+  cardio:"Treatment-linked severity piece", "map-only":"Blood-pressure-only severity piece"
+};
+
+let stepIdx = 0;
+let variantIdx = 0; // 0..4 across VARIANTS
+
+/* ============================= SOFA rule (simplified, single-drug demo) ============================= */
+function cardioScore(map, vasoOn, dose){
+  if(!vasoOn) return map<70 ? 1 : 0;
+  if(dose<=0) return map<70 ? 1 : 0;
+  if(dose<=5) return 2;
+  if(dose<=12) return 3;
+  return 4;
+}
+
+/* ============================= PROGRESS ============================= */
+function buildProgress(){
+  const wrap = document.getElementById('progressSteps');
+  wrap.innerHTML = STEPS.map((s,i)=>
+    `<button class="pstep ${i<=stepIdx?'done':''}" data-i="${i}" aria-label="Go to step ${i+1}: ${s.label}" title="${s.label}"></button>`
+  ).join('');
+  wrap.querySelectorAll('.pstep').forEach(el=>{
+    el.addEventListener('click', ()=>goTo(parseInt(el.dataset.i)));
+  });
+  document.getElementById('progLeft').textContent = `Step ${stepIdx+1} of ${STEPS.length}: ${STEPS[stepIdx].label}`;
+  document.getElementById('progRight').textContent = stepIdx===STEPS.length-1 ? "Last step" : `Next: ${STEPS[stepIdx+1].label}`;
+  document.getElementById('stepLbl').textContent = `${stepIdx+1} / ${STEPS.length}`;
+  document.getElementById('prevBtn').disabled = stepIdx===0;
+  document.getElementById('nextBtn').textContent = stepIdx===STEPS.length-1 ? "Start over" : "Continue";
+}
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowRight'){ if(stepIdx<STEPS.length-1) goTo(stepIdx+1); }
+  if(e.key==='ArrowLeft'){ if(stepIdx>0) goTo(stepIdx-1); }
+});
+
+function goTo(i){
+  stepIdx = ((i % STEPS.length) + STEPS.length) % STEPS.length;
+  buildProgress();
+  RENDER[STEPS[stepIdx].key]();
+  document.body.scrollTop = 0; document.documentElement.scrollTop = 0;
+}
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(stepIdx>0) goTo(stepIdx-1); });
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(stepIdx===STEPS.length-1){ goTo(0); } else { goTo(stepIdx+1); }
+});
+
+/* ============================= STEP 1 — INTRO ============================= */
+function renderIntro(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">Getting oriented</p>
+    <h2>A treatment algorithm learns from patterns in past patient records.</h2>
+    <p class="plain">Researchers have proposed teaching a computer to recommend sepsis treatments — how much
+    fluid and medication (called <b>vasopressors</b>) to give — by showing it thousands of real ICU cases from the
+    past. The computer looks at each patient's <b>condition right before a decision</b> and learns which
+    treatments tended to help.</p>
+    <p class="plain">That approach only works if the <b>"condition right before a decision"</b> really only
+    describes the patient — and doesn't already contain a clue about what treatment is about to happen. This
+    walkthrough asks one question, in six short steps: <b>does it?</b></p>
+
+    <div class="card">
+      <h3>The three-box picture</h3>
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:14px 0 4px;">
+        <div style="text-align:center;padding:14px 18px;border:1px solid var(--physio);border-radius:3px;background:var(--physio-soft);min-width:130px;">
+          <div style="font-family:var(--serif);font-size:14px;">Patient's condition</div>
+        </div>
+        <div style="padding:0 12px;color:var(--ink-faint);font-size:20px;">&rarr;</div>
+        <div style="text-align:center;padding:14px 18px;border:1px solid var(--treat);border-radius:3px;background:var(--treat-soft);min-width:130px;">
+          <div style="font-family:var(--serif);font-size:14px;">Treatment given</div>
+        </div>
+        <div style="padding:0 12px;color:var(--ink-faint);font-size:20px;">&rarr;</div>
+        <div style="text-align:center;padding:14px 18px;border:1px solid var(--line);border-radius:3px;background:var(--bg);min-width:130px;">
+          <div style="font-family:var(--serif);font-size:14px;">What happens next</div>
+        </div>
+      </div>
+      <p class="plain" style="margin:14px 0 0;text-align:center;">The question this study asks: does the first box
+      secretly already contain the answer to the second box?</p>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><div class="n">11,354</div><div class="l">ICU stays studied (MIMIC-IV, a public research database)</div></div>
+      <div class="fact"><div class="n">2</div><div class="l">separate ways this leak could be happening</div></div>
+      <div class="fact"><div class="n">6</div><div class="l">steps in this walkthrough</div></div>
+    </div>
+  </div>`;
+}
+
+/* ============================= STEP 2 — SOFA SCORE ============================= */
+function renderScore(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">First leak &nbsp;·&nbsp; the score's own rulebook</p>
+    <h2>Meet the SOFA score — a report card for organ function.</h2>
+    <p class="plain">Clinicians use the <span class="term">SOFA score</span> to summarize how unwell a patient is.
+    One part of it — the <b>cardiovascular piece</b> — is meant to reflect blood pressure. But the official rule
+    for scoring it also looks at <b>whether the patient is already on medication to raise blood pressure</b>, and
+    how much. Try it below.</p>
+
+    <div class="card">
+      <h3>Try it yourself</h3>
+      <div class="single-ctrl">
+        <div class="ctrl-row"><span class="ctrl-name">Blood pressure (MAP)</span><span class="ctrl-value" id="mapVal">68 mmHg</span></div>
+        <input type="range" id="mapSlider" min="40" max="100" value="68">
+      </div>
+      <div class="toggle-row">
+        <div class="toggle" id="vasoToggle"><div class="knob"></div></div>
+        <span class="toggle-label">Patient is currently on a blood-pressure medication</span>
+      </div>
+      <div class="single-ctrl" id="doseCtrl" style="display:none;">
+        <div class="ctrl-row"><span class="ctrl-name">Medication dose</span><span class="ctrl-value" id="doseVal">0</span></div>
+        <input type="range" id="doseSlider" min="0" max="20" value="0" step="0.5">
+      </div>
+
+      <div class="readout">
+        <div class="readout-num" id="scoreVal">0<small>score, 0&ndash;4</small></div>
+        <div class="readout-txt" id="scoreExplain">At a normal blood pressure with no medication, this piece of the score reads 0 — a clean physiology reading.</div>
+      </div>
+      <div id="scoreFlag" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>Why it matters</h3>
+      <p class="plain" style="margin-bottom:0;">In the 11,354 ICU stays studied, for patients <b>already receiving</b>
+      this medication, the cardiovascular piece of the score was <b>always</b> determined by the medication —
+      not by blood pressure — 100% of the time. Overall, across every patient-moment measured, that was true for
+      roughly <b>3 in 10 moments</b> (32.3% using a tightly-aligned time window; 28.6% using the more common,
+      wider window).</p>
+    </div>
+  </div>`;
+
+  const mapSlider = document.getElementById('mapSlider');
+  const toggle = document.getElementById('vasoToggle');
+  const doseSlider = document.getElementById('doseSlider');
+  let vasoOn = false, dose = 0;
+
+  function update(){
+    const map = parseInt(mapSlider.value);
+    document.getElementById('mapVal').textContent = map + " mmHg";
+    const score = cardioScore(map, vasoOn, dose);
+    const el = document.getElementById('scoreVal');
+    el.innerHTML = score + "<small>score, 0&ndash;4</small>";
+    el.className = "readout-num" + (score>=2 ? " hi" : "");
+
+    const explain = document.getElementById('scoreExplain');
+    const flag = document.getElementById('scoreFlag');
+    if(!vasoOn){
+      explain.innerHTML = map<70
+        ? `Blood pressure is low (${map} mmHg) with no medication running — score reads 1. This is a genuine physiology reading.`
+        : `Blood pressure is normal (${map} mmHg), no medication — score reads 0. This is a genuine physiology reading.`;
+      flag.innerHTML = `<span class="flag physio"><span class="dot"></span>reflects the patient only</span>`;
+    } else {
+      explain.innerHTML = `Blood pressure is ${map} mmHg — but the score is now being driven by the <b>medication dose</b>, not by blood pressure. A patient whose pressure is well-controlled by medication can still score high here, simply because the medication is running.`;
+      flag.innerHTML = `<span class="flag treat"><span class="dot"></span>reflects the treatment already given, not just the patient</span>`;
+    }
+  }
+  mapSlider.addEventListener('input', update);
+  toggle.addEventListener('click', ()=>{
+    vasoOn = !vasoOn;
+    toggle.classList.toggle('on', vasoOn);
+    document.getElementById('doseCtrl').style.display = vasoOn ? 'block' : 'none';
+    if(!vasoOn){ dose = 0; doseSlider.value = 0; }
+    update();
+  });
+  doseSlider.addEventListener('input', ()=>{
+    dose = parseFloat(doseSlider.value);
+    document.getElementById('doseVal').textContent = dose.toFixed(1);
+    update();
+  });
+  update();
+}
+
+/* ============================= STEP 3 — TIMING / WINDOW ============================= */
+function renderClock(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">Second leak &nbsp;·&nbsp; the timing window</p>
+    <h2>Even without that rule, timing alone can leak information.</h2>
+    <p class="plain">To build a snapshot of "the patient's condition right now," researchers usually average
+    readings over a lookback window — commonly the <b>past 24 hours</b>. If medication was already running
+    earlier in that window, the snapshot can reflect the medication's effects even when no scoring rule directly
+    mentions treatment at all.</p>
+
+    <div class="card">
+      <h3>Compare two window lengths</h3>
+      <div class="toggle-row" style="margin-bottom:4px;">
+        <span class="toggle-label" style="font-weight:600;">Lookback window:</span>
+        <button class="navbtn" id="w24" style="padding:7px 14px;font-size:12.5px;border-color:var(--accent);color:var(--accent);">24 hours (common)</button>
+        <button class="navbtn" id="w4" style="padding:7px 14px;font-size:12.5px;">4 hours (tighter)</button>
+      </div>
+      <div class="timeline" id="tl"></div>
+      <div class="tl-axis"><span>24h before</span><span>18h before</span><span>12h before</span><span>6h before</span><span>decision moment</span></div>
+      <div class="facts" id="tlFacts" style="margin-top:22px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>Across the full set of patients (24-hour window)</h3>
+      <div class="facts">
+        <div class="fact"><div class="n">31%</div><div class="l">average share of the lookback window that overlapped earlier medication</div></div>
+        <div class="fact"><div class="n">12%</div><div class="l">typical (median) overlap — most windows are only partly contaminated, not entirely</div></div>
+        <div class="fact"><div class="n">29%</div><div class="l">of moments had more than half their window overlapping earlier medication</div></div>
+      </div>
+      <p class="plain" style="margin:16px 0 0;">These numbers were revised down from an earlier draft (which
+      reported 56% / 100% / 56%) after an internal reproducibility audit caught two real bugs in the extraction
+      pipeline — a data-loading step that could silently duplicate patient records, and a counting step that
+      double-counted overlapping medications given together. Fixing both brought the figures down to what's
+      shown here. The underlying finding — a meaningful share of decision windows are contaminated by earlier
+      treatment — held up; the exact size of the problem was smaller than first measured.</p>
+    </div>
+  </div>`;
+
+  function draw(hours){
+    const tl = document.getElementById('tl');
+    tl.innerHTML = "";
+    const segs = [ {s:-20,e:-9}, {s:-7,e:0} ];
+    segs.forEach(seg=>{
+      const left = ((seg.s+24)/24)*100, width = ((seg.e-seg.s)/24)*100;
+      const bar = document.createElement('div');
+      bar.className = 'tl-vaso'; bar.style.left = left+'%'; bar.style.width = width+'%';
+      bar.title = "medication running";
+      tl.appendChild(bar);
+    });
+    const winStart = -hours;
+    const win = document.createElement('div');
+    win.className = 'tl-window';
+    win.style.left = (((winStart+24)/24)*100)+'%'; win.style.width = ((hours/24)*100)+'%';
+    tl.appendChild(win);
+    const dec = document.createElement('div');
+    dec.className = 'tl-decision'; dec.style.left = '100%';
+    const decLbl = document.createElement('div');
+    decLbl.className = 'tl-decision-label'; decLbl.style.left='100%'; decLbl.style.transform='translateX(-100%)';
+    decLbl.textContent = 'decision';
+    tl.appendChild(dec); tl.appendChild(decLbl);
+
+    let overlap = 0;
+    segs.forEach(seg=>{ const s=Math.max(seg.s,winStart), e=Math.min(seg.e,0); if(e>s) overlap += e-s; });
+    const pct = Math.round((overlap/hours)*100);
+    document.getElementById('tlFacts').innerHTML = `
+      <div class="fact"><div class="n">${hours}h</div><div class="l">length of this lookback window</div></div>
+      <div class="fact"><div class="n">${pct}%</div><div class="l">of this window overlaps medication given earlier</div></div>
+      <div class="fact"><div class="n">${overlap.toFixed(1)}h</div><div class="l">hours inside the window already under medication</div></div>
+    `;
+  }
+  document.getElementById('w24').addEventListener('click', function(){
+    this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';
+    document.getElementById('w4').style.borderColor='var(--ink)'; document.getElementById('w4').style.color='var(--ink)';
+    draw(24);
+  });
+  document.getElementById('w4').addEventListener('click', function(){
+    this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';
+    document.getElementById('w24').style.borderColor='var(--ink)'; document.getElementById('w24').style.color='var(--ink)';
+    draw(4);
+  });
+  draw(24);
+}
+
+/* ============================= STEP 4 — GUESSABILITY ============================= */
+function renderGuess(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">Putting it to the test</p>
+    <h2>Can a computer guess the next treatment just from the snapshot?</h2>
+    <p class="plain">Researchers tested this directly: using only the patient snapshot at one moment, how well
+    can a computer predict whether medication will be running <b>four hours later</b>? They tried five versions
+    of the snapshot, each one removing a bit more treatment-linked information. Slide through them.</p>
+
+    <div class="card">
+      <h3>Drag through the five versions</h3>
+      <div class="stepper-track"><div class="stepper-fill" id="stepFill"></div></div>
+      <div class="stepper-dots" id="stepDots"></div>
+      <input type="range" id="variantSlider" min="0" max="4" value="0" step="1" style="opacity:0;position:absolute;pointer-events:none;">
+      <div class="stepper-caption">
+        <div class="big" id="vBig"></div>
+        <div class="small" id="vSmall"></div>
+      </div>
+
+      <div class="group-row" id="groupRow"></div>
+
+      <div class="predict-bar-wrap">
+        <div class="predict-bar"><div class="predict-fill" id="predFill"></div><div class="predict-marker" id="predMarker"></div></div>
+        <div class="predict-scale"><span>0.50 — random guessing</span><span>1.00 — perfect prediction</span></div>
+      </div>
+      <p class="plain" style="margin:14px 0 0;text-align:center;" id="predSentence"></p>
+    </div>
+
+    <div class="card">
+      <h3>The headline comparison</h3>
+      <p class="plain" style="margin-bottom:0;">Full snapshot: correctly predicts the next dose with a score of
+      <b>0.900</b> (out of 1.00). Physiology-only, properly cleaned up: <b>0.791</b>. That gap — <b>about 0.11</b>
+      — is the study's current best estimate of how much predictive power comes specifically from treatment
+      information embedded in the snapshot, not from the patient's actual condition. It is treated as an
+      <b>upper limit</b> until the double-checks in Step 5 are finished.</p>
+    </div>
+  </div>`;
+
+  const dotsWrap = document.getElementById('stepDots');
+  dotsWrap.innerHTML = VARIANTS.map((v,i)=>`<div class="sdot" data-i="${i}" title="${v.id}"></div>`).join('');
+
+  function render(i){
+    variantIdx = i;
+    const v = VARIANTS[i];
+    document.getElementById('stepFill').style.width = (i/4*100)+'%';
+    dotsWrap.querySelectorAll('.sdot').forEach((d,j)=>d.classList.toggle('on', j<=i));
+    document.getElementById('vBig').textContent = `${i+1}. ${v.short}`;
+    document.getElementById('vSmall').textContent = v.detail;
+
+    document.getElementById('groupRow').innerHTML = Object.keys(GROUP_LABEL).map(g=>{
+      const included = v.groups.includes(g);
+      const flagged = (g==='cardio');
+      let cls = included ? (flagged?'included flagged':'included') : 'removed';
+      let label = GROUP_LABEL[g];
+      if(g==='cardio' && !included) label += " — removed";
+      if(g==='map-only' && included) label = "Blood-pressure-only version added";
+      return `<span class="group-chip ${cls}">${label}</span>`;
+    }).join('');
+
+    const pct = (v.auroc-0.5)/0.5*100;
+    document.getElementById('predFill').style.width = pct+'%';
+    document.getElementById('predMarker').style.left = pct+'%';
+    document.getElementById('predMarker').textContent = v.auroc.toFixed(3);
+    document.getElementById('predSentence').innerHTML =
+      `On this version of the snapshot, a computer predicts the next dose correctly with a score of
+       <b>${v.auroc.toFixed(3)}</b> (1.00 = perfect, 0.50 = a coin flip).`;
+  }
+  dotsWrap.querySelectorAll('.sdot').forEach(d=>{
+    d.addEventListener('click', ()=>render(parseInt(d.dataset.i)));
+  });
+  render(variantIdx || 0);
+}
+
+/* ============================= STEP 5 — CHECKING OURSELVES ============================= */
+function renderCheck(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">Being careful</p>
+    <h2>Is that gap really "leakage" — or just ordinary medical routine?</h2>
+    <p class="plain">A cautious reader should ask: maybe the computer isn't detecting a flaw in the score at all —
+    maybe it's just noticing that <b>medication courses run for hours</b>, so "still on medication soon" is easy
+    to predict for any reasonable set of patient information. To tell these apart, the study plans a set of
+    double-checks that should all report back <b>close to 0.50 (random guessing)</b> if the gap really is a
+    scoring artifact.</p>
+
+    <div class="card">
+      <h3>Planned double-checks</h3>
+      <div class="facts">
+        <div class="fact"><div class="n" style="font-size:15px;">Shuffle the outcomes</div><div class="l">scramble which treatment happened when, and see if the "prediction" disappears &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
+        <div class="fact"><div class="n" style="font-size:15px;">Predict further ahead</div><div class="l">check whether predictive power fades the further out you try to predict &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
+        <div class="fact"><div class="n" style="font-size:15px;">Physiology-only baseline</div><div class="l">already measured in Step 4 &nbsp;·&nbsp; <span class="flag physio" style="margin-top:6px;"><span class="dot"></span>done — 0.791</span></div></div>
+        <div class="fact"><div class="n" style="font-size:15px;">Decoy features</div><div class="l">test made-up fields with a similar frequency to medication use &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>A false start, corrected</h3>
+      <p class="plain" style="margin-bottom:10px;">The first version of the "predict further ahead" check used a
+      single fixed gap of 8 hours, and still scored <b>0.862</b> — not much lower than the full snapshot's 0.900.
+      That result was ambiguous: it fits <i>both</i> "the snapshot specifically leaks this treatment" and "medication
+      courses are simply long, so almost anything nearby in time is predictable."</p>
+      <p class="plain" style="margin-bottom:0;">The check was redesigned to test <b>several</b> time gaps (0, 4, 8,
+      16, and 32 hours) rather than one. A score that <b>drops quickly</b> across those gaps points to a genuine
+      scoring artifact; a score that <b>stays high and fades slowly</b> points to ordinary medication persistence —
+      itself a useful, honestly reported finding either way.</p>
+    </div>
+
+    <div class="card" style="border-color:var(--gold);">
+      <h3 style="color:var(--gold);">Why report unfinished work at all</h3>
+      <p class="plain" style="margin-bottom:0;">Because the honest state of an ongoing audit is more useful to a
+      scientific audience than a polished number with the uncertainty quietly removed. The 0.11-point gap in
+      Step 4 is reported as an <b>upper bound</b>, not a final answer, until this checklist is complete.</p>
+    </div>
+  </div>`;
+}
+
+/* ============================= STEP 6 — TAKEAWAY ============================= */
+function renderTakeaway(){
+  document.getElementById('main').innerHTML = `
+  <div class="stage">
+    <p class="step-eyebrow">Where this leaves us</p>
+    <h2>Two mechanisms. One practical checklist.</h2>
+
+    <div class="card">
+      <h3>What was found</h3>
+      <p class="plain" style="margin-bottom:10px;"><b>Scoring-rule leak:</b> for patients already on medication, the
+      relevant piece of the severity score was determined by the medication, not blood pressure, 100% of the
+      time — and this affected roughly 3 in 10 patient-moments overall.</p>
+      <p class="plain" style="margin-bottom:10px;"><b>Timing-window leak:</b> under the common 24-hour window,
+      more than half of decision moments had over half their window already overlapping earlier medication.</p>
+      <p class="plain" style="margin-bottom:0;"><b>Predictability:</b> a computer's ability to guess the next
+      dose drops from 0.900 to 0.791 once the snapshot is properly cleaned of treatment information — a gap of
+      about 0.11, currently an upper-bound estimate pending the double-checks in Step 5.</p>
+    </div>
+
+    <div class="card">
+      <h3>Recommendations for teams building similar systems</h3>
+      <div class="facts">
+        <div class="fact"><div class="n" style="font-size:14px;">Decompose the score</div><div class="l">separate the blood-pressure-based part from the medication-based part; recompute any combined total from scratch</div></div>
+        <div class="fact"><div class="n" style="font-size:14px;">Shorten the window</div><div class="l">prefer tightly time-aligned snapshots over wide 24-hour averages, and report the overlap fraction</div></div>
+        <div class="fact"><div class="n" style="font-size:14px;">Run the double-checks</div><div class="l">a shuffle test and a multi-gap prediction curve are cheap ways to separate leakage from routine persistence</div></div>
+        <div class="fact"><div class="n" style="font-size:14px;">Report the gap</div><div class="l">a simple "full snapshot vs. physiology-only" comparison, alongside the usual performance numbers</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <h3 style="border:none;">In one sentence</h3>
+      <p class="plain" style="max-width:560px;margin:0 auto;">This audit does not evaluate or discredit any
+      specific published treatment algorithm. It measures, on independent data, how much of a widely used patient
+      snapshot is already informative about the treatment it's supposed to precede — so that result should be
+      considered when reading this line of research.</p>
+    </div>
+  </div>`;
+}
+
+const RENDER = { intro:renderIntro, score:renderScore, clock:renderClock, guess:renderGuess, check:renderCheck, takeaway:renderTakeaway };
+
+/* ============================= INIT ============================= */
+goTo(0);
+</script>
+</body>
+</html>
