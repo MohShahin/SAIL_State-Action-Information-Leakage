@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reproducibility — SAIL</title>
+<link rel="icon" href="assets/img/logo-cropped.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .pipeline{ display:flex; flex-wrap:wrap; border:1px solid var(--line); border-radius:4px; overflow:hidden; margin:16px 0; }
+  .pipe-step{ flex:1 1 130px; background:var(--bg); border-right:1px solid var(--line); padding:14px; text-align:center; text-decoration:none; color:inherit; }
+  .pipe-step:last-child{ border-right:none; }
+  .pipe-step:hover{ background:var(--accent-soft); }
+  .pipe-step .n{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+  .pipe-step .t{ font-size:13px; font-weight:600; margin-top:4px; }
+  .codewin{ background:#0f172a; border-radius:4px; overflow:hidden; margin:14px 0; }
+  .codewin .bar{ display:flex; justify-content:space-between; align-items:center; padding:9px 16px; border-bottom:1px solid #1e293b; }
+  .codewin .bar span{ font-family:var(--mono); font-size:11.5px; color:#94a3b8; }
+  .codewin pre{ padding:16px; font-family:var(--mono); font-size:12px; line-height:1.6; color:#cbd5e1; overflow-x:auto; margin:0; }
+</style>
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SAIL</a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="mechanisms.html">Mechanisms</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html">Demo</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="proof.html">Proof</a>
+    <a href="reproducibility.html" class="active">Reproducibility</a>
+    <a href="papers.html">Papers</a>
+    <a href="about.html">About</a>
+    <a href="status.html">Status</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>Reproducibility</h1>
+  <p class="deck">Every extraction query is public. Patient-level data is not — MIMIC-IV is
+  credentialed-access, and this project treats that boundary as a hard rule, not a suggestion.</p>
+</div></div>
+
+<main class="wide">
+
+<h3 class="section" style="margin-top:0;">The pipeline</h3>
+<div class="pipeline">
+  <a class="pipe-step" href="https://physionet.org/content/mimiciv/" target="_blank" rel="noopener"><div class="n">00</div><div class="t">MIMIC-IV</div></a>
+  <a class="pipe-step" href="queries/01_cohort.sql"><div class="n">01</div><div class="t">Cohort</div></a>
+  <a class="pipe-step" href="queries/02_vitals_labs_fio2.sql"><div class="n">02</div><div class="t">Variables</div></a>
+  <a class="pipe-step" href="queries/03_vasopressor_doses.sql"><div class="n">03</div><div class="t">Dose extraction</div></a>
+  <a class="pipe-step" href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">04</div><div class="t">Aggregation</div></a>
+  <a class="pipe-step" href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">05</div><div class="t">State variants</div></a>
+  <a class="pipe-step" href="mechanisms.html"><div class="n">06</div><div class="t">Leakage analysis</div></a>
+  <a class="pipe-step" href="evidence.html"><div class="n">07</div><div class="t">Evidence</div></a>
+</div>
+
+<h3 class="section">Extraction queries</h3>
+<div class="card">
+  <p class="plain">Four standalone SQL files, safe to publish — code isn't data. See
+  <a href="queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
+  order and a substitution script that avoids the placeholder bugs this project hit early on.</p>
+
+  <div class="codewin">
+    <div class="bar"><span>queries/01_cohort.sql</span><span>SQL</span></div>
+    <pre>-- adult, first-ICU-stay, Sepsis-3-qualifying, vasopressor-exposed stays
+WITH ranked_icu AS (
+  SELECT ie.subject_id, ie.hadm_id, ie.stay_id,
+    ROW_NUMBER() OVER (PARTITION BY ie.subject_id ORDER BY ie.intime) AS rn
+  FROM `physionet-data.mimiciv_3_1_icu.icustays` ie
+  JOIN `physionet-data.mimiciv_3_1_hosp.patients` p USING(subject_id)
+  WHERE p.anchor_age &gt;= 18
+)
+SELECT f.* FROM ranked_icu f WHERE f.rn = 1;
+-- verified: 11,354 stays, exact match across five independent runs</pre>
+  </div>
+
+  <div class="codewin">
+    <div class="bar"><span>queries/03_vasopressor_doses.sql (excerpt)</span><span>SQL</span></div>
+    <pre>-- six vasopressor/inotrope agents; four are dose-scored by the 1996
+-- Vincent cardiovascular SOFA rule (norepi, epi, dopamine, dobutamine)
+SELECT ie.stay_id, ie.itemid, ie.starttime, ie.endtime, ie.rate, ie.amount
+FROM `physionet-data.mimiciv_3_1_icu.inputevents` ie
+JOIN `{SCRATCH_DATASET}.sepsis_cohort` c USING(stay_id)
+WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
+  AND ie.amount &gt; 0 AND ie.endtime IS NOT NULL;</pre>
+  </div>
+
+  <a href="queries/" class="navbtn" style="margin-top:8px;">Browse all queries →</a>
+</div>
+
+<h3 class="section">Data governance</h3>
+<div class="card">
+  <p class="plain">MIMIC-IV requires PhysioNet credentialing. This repository publishes queries and
+  aggregate-only results — never row-level or patient-level data, enforced by an explicit
+  <code class="mono" style="background:var(--bg); padding:2px 5px; border-radius:3px;">.gitignore</code>
+  policy, not just intention.</p>
+  <div class="facts">
+    <div class="fact"><div class="n" style="font-size:14px;">Safe to publish</div><div class="l">SQL queries, analysis code, aggregate statistics reported in the manuscript</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Never published</div><div class="l">Any file with one row per patient or per decision-point — enforced by an explicit gitignore block, verified against full git history before every push</div></div>
+  </div>
+  <a href="DATA_ACCESS.md" class="navbtn" style="margin-top:8px;">Full governance policy →</a>
+</div>
+
+<h3 class="section">Getting your own access</h3>
+<div class="card">
+  <ol class="plain" style="padding-left:20px;">
+    <li>Complete CITI "Data or Specimens Only Research" training</li>
+    <li>Apply for credentialed MIMIC-IV access via <a href="https://physionet.org/content/mimiciv/" style="color:var(--accent);" target="_blank" rel="noopener">PhysioNet</a></li>
+    <li>Request BigQuery access to the <code class="mono">physionet-data</code> project</li>
+    <li>Run <code class="mono">scripts/check_setup.sh</code> to verify your environment before touching any query</li>
+  </ol>
+</div>
+
+</main>
+
+<div class="pagenav">
+  <a href="evidence.html">← Evidence</a>
+  <a href="papers.html" class="primary">Papers →</a>
+</div>
+
+<footer class="page-footer">
+  MIT Laboratory for Computational Physiology × Boston University School of Public Health
+</footer>
+
+</body>
+</html>
