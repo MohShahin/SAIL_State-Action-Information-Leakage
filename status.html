@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status & Roadmap — State–Action Leakage in Sepsis RL</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .phase{ display:flex; gap:16px; padding:16px 0; border-bottom:1px solid var(--line-soft); }
+  .phase:last-child{ border-bottom:none; }
+  .phase-badge{ flex:0 0 auto; width:96px; font-family:var(--mono); font-size:11px; padding:5px 0; text-align:center; border-radius:3px; height:fit-content; }
+  .phase-badge.done{ background:var(--physio-soft); color:var(--physio); border:1px solid var(--physio); }
+  .phase-badge.open{ background:#f7f0df; color:var(--gold); border:1px solid var(--gold); }
+  .phase-badge.next{ background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent); }
+  .phase-body h4{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0 0 4px; }
+  .phase-body p{ font-size:13px; color:var(--ink-soft); margin:0; line-height:1.55; }
+</style>
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html">Live visualizer</a>
+    <a href="proof.html">Formal proof</a>
+    <a href="status.html" class="active">Status & roadmap</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <div class="affil">
+    <span><b>MIT</b> Laboratory for Computational Physiology</span>
+    <span><b>Boston University</b> School of Public Health</span>
+  </div>
+  <h1>Where things actually stand</h1>
+  <p class="deck">The honest version, including two real bugs found and fixed along the way.
+  Full history in <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
+</div></div>
+
+<main>
+
+<h3 class="section" style="margin-top:0;">Verified figures — before and after correction</h3>
+<div class="card">
+  <table class="data">
+    <tr><th>Statistic</th><th>Manuscript draft</th><th>Verified (re-extraction)</th><th>Status</th></tr>
+    <tr><td class="label">Cohort size</td><td>11,354</td><td>11,354</td><td>exact match</td></tr>
+    <tr><td class="label">Exp 1 — dose-determined, 4h</td><td>30.5%</td><td>32.3%</td><td>revised</td></tr>
+    <tr><td class="label">Exp 1 — dose-determined, 24h</td><td>26.3%</td><td>28.6%</td><td>revised</td></tr>
+    <tr><td class="label">Exp 2 — AUROC A_full</td><td>0.900</td><td>0.900</td><td>exact match</td></tr>
+    <tr><td class="label">Exp 2 — AUROC E_physiology</td><td>0.791</td><td>0.791</td><td>exact match</td></tr>
+    <tr><td class="label">Exp 2 — gap</td><td>≈0.108</td><td>0.109</td><td>essentially exact</td></tr>
+    <tr><td class="label">Exp 3 — mean overlap (24h)</td><td>56.1%</td><td>31.1%</td><td>revised down</td></tr>
+    <tr><td class="label">Exp 3 — median overlap (24h)</td><td>100%</td><td>12.4%</td><td>revised down</td></tr>
+    <tr><td class="label">Exp 3 — % &gt;50% overlap</td><td>55.7%</td><td>28.7%</td><td>revised down</td></tr>
+  </table>
+  <p class="plain" style="margin:14px 0 0; font-size:13px;">Experiment 2's gap survived almost
+  untouched despite a 15x difference in underlying row counts — strong evidence it's a robust,
+  ratio-based effect, not an artifact of the bugs described below.</p>
+</div>
+
+<h3 class="section">What was found and fixed</h3>
+<div class="card">
+  <div class="facts">
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 1 — WRITE_APPEND</div><div class="l">The cohort table's BigQuery load had no write_disposition set. A re-run against an already-populated table silently duplicated rows (~15x), inflating every downstream join. Confirmed twice: once by code inspection, once by recovering the original buggy Colab run and reproducing the exact inflated figures.</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 2 — schema autodetect</div><div class="l">BigQuery's schema autodetection mapped timestamp columns to the wrong type, breaking joins against source tables. Fixed with an explicit schema.</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 3 — sum vs. union</div><div class="l">The window-overlap calculation summed overlapping intervals instead of taking their union, double-counting patients on multiple simultaneous vasopressors (34.8% of the cohort). A smaller, present-day contributor alongside Bug 1.</div></div>
+  </div>
+</div>
+
+<h3 class="section">Project phases</h3>
+
+<div class="phase">
+  <div class="phase-badge done">Done</div>
+  <div class="phase-body">
+    <h4>Phase 0 — Foundation</h4>
+    <p>Cohort extraction, interactive demo, manuscript draft, repo scaffold.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge done">Done</div>
+  <div class="phase-body">
+    <h4>Phase 1–3 — Extraction, verification, bug fixes</h4>
+    <p>Full pipeline re-run five+ times end to end. Cohort, Experiment 1, Experiment 2, and
+    Experiment 3 all independently reproduced. Two real bugs found, fixed, and confirmed against
+    the original source run recovered from an earlier commit.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge next">In progress</div>
+  <div class="phase-body">
+    <h4>Phase 4 — Experiment 5 (negative controls)</h4>
+    <p>Four controls: shuffled labels, a 5-offset temporal decay curve, physiology-only
+    cross-reference, and prevalence-matched placebo features. This is the test that resolves H3 —
+    see the <a href="proof.html" style="color:var(--accent);">formal proof page</a>'s
+    pre-registered decision rule. Checkpointed for resumable execution; moving to Google Colab for
+    the compute-heavy pieces.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge open">Open</div>
+  <div class="phase-body">
+    <h4>Phase 5 — Statistical rigor pass</h4>
+    <p>Clustered bootstrap CIs for mutual information, multiple-comparisons correction, the
+    matched 4-hour window-overlap statistic.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge open">Open</div>
+  <div class="phase-body">
+    <h4>Phase 6 — Literature completion</h4>
+    <p>Verified citation table of related sepsis-RL work, causal-inference and window-bias
+    references, the Appendix A literature audit.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge open">Open</div>
+  <div class="phase-body">
+    <h4>Phase 7 — Manuscript finalization</h4>
+    <p>Sweep every remaining placeholder, rewrite the Abstract and Results with the verified
+    figures above, remove the internal-draft watermark.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge open">Open</div>
+  <div class="phase-body">
+    <h4>Phase 8 — Thesis-scale extensions</h4>
+    <p>Cross-dataset replication on eICU, fluid administration (the other half of the action
+    space), reward-function leakage, a formal policy-sensitivity study.</p>
+  </div>
+</div>
+
+</main>
+
+<div class="pagenav">
+  <a href="proof.html">← Formal proof</a>
+  <a href="demo.html" class="primary">Back to the walkthrough →</a>
+</div>
+
+<footer class="page-footer">
+  Full history, including every commit message and diagnostic trail, in <a href="ROADMAP.md">ROADMAP.md</a>.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Mechanism Visualizer — State–Action Leakage in Sepsis RL</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .viz-grid{ display:grid; grid-template-columns:1fr; gap:18px; }
+  .ctrl{ margin:14px 0; }
+  .ctrl-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+  .ctrl-name{ font-size:13px; color:var(--ink); font-weight:600; }
+  .ctrl-value{ font-family:var(--serif); font-size:15px; color:var(--accent); }
+  input[type=range]{ width:100%; height:3px; -webkit-appearance:none; background:var(--line); border-radius:2px; outline:none; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:var(--paper); border:2.5px solid var(--accent); cursor:pointer; margin-top:-6px; }
+  .toggle{ position:relative; width:42px; height:23px; border-radius:12px; background:var(--line); cursor:pointer; flex:0 0 auto; transition:background .2s; }
+  .toggle.on{ background:var(--accent); }
+  .toggle .knob{ position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:50%; background:var(--paper); transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .toggle.on .knob{ left:21px; }
+  .toggle-row{ display:flex; align-items:center; gap:11px; margin:12px 0; }
+  .variant-row{ display:flex; gap:6px; margin:12px 0; }
+  .vbtn{ flex:1; font-family:var(--mono); font-size:14px; padding:9px 0; text-align:center; border-radius:4px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink-soft); cursor:pointer; }
+  .vbtn.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:700; }
+
+  .statevec{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+  .chip{ font-family:var(--mono); font-size:11px; padding:8px 11px; border-radius:4px; border:1px solid var(--line); background:var(--bg); color:var(--ink-faint); transition:all .3s; text-align:center; min-width:64px; }
+  .chip.clean{ border-color:var(--physio); background:var(--physio-soft); color:var(--physio); }
+  .chip.tainted{ border-color:var(--treat); background:var(--treat-soft); color:var(--treat); font-weight:700; }
+  .chip.removed{ opacity:.35; text-decoration:line-through; }
+
+  .gauge-wrap{ margin-top:8px; }
+  .gauge-track{ position:relative; height:34px; background:var(--bg); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .gauge-fill{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,var(--physio),var(--treat)); opacity:.85; transition:width .4s; }
+  .gauge-num{ position:absolute; right:10px; top:50%; transform:translateY(-50%); font-family:var(--serif); font-size:16px; color:var(--ink); }
+  .gauge-scale{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); margin-top:5px; }
+
+  #dagsvg .e{ transition:stroke-width .3s, opacity .3s; }
+  #dagsvg .box{ transition:opacity .3s; }
+</style>
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html" class="active">Live visualizer</a>
+    <a href="proof.html">Formal proof</a>
+    <a href="status.html">Status & roadmap</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <div class="affil">
+    <span><b>MIT</b> Laboratory for Computational Physiology</span>
+    <span><b>Boston University</b> School of Public Health</span>
+  </div>
+  <h1>Watch the leak happen</h1>
+  <p class="deck">One synthetic patient, three synchronized views. Adjust the controls on the left
+  and watch the causal graph light up, the state vector's cells flip between clean and
+  contaminated, and the predictability gauge move — all three respond to the same underlying
+  mechanism proven on the <a href="proof.html" style="color:var(--accent);">formal proof page</a>.</p>
+</div></div>
+
+<main class="wide">
+
+<div class="card">
+  <h3>Controls</h3>
+
+  <div class="ctrl">
+    <div class="ctrl-row"><span class="ctrl-name">Blood pressure (MAP)</span><span class="ctrl-value" id="mapVal">68 mmHg</span></div>
+    <input type="range" id="mapSlider" min="40" max="100" value="68">
+  </div>
+
+  <div class="toggle-row">
+    <div class="toggle" id="vasoToggle"><div class="knob"></div></div>
+    <span style="font-size:13px;">Vasopressor active</span>
+  </div>
+
+  <div class="ctrl" id="doseCtrl" style="display:none;">
+    <div class="ctrl-row"><span class="ctrl-name">Dose</span><span class="ctrl-value" id="doseVal">0</span></div>
+    <input type="range" id="doseSlider" min="0" max="20" value="0" step="0.5">
+  </div>
+
+  <div class="ctrl-row" style="margin-top:16px;"><span class="ctrl-name">State variant shown to the model</span></div>
+  <div class="variant-row" id="variantRow"></div>
+  <div id="variantCaption" class="plain" style="margin:6px 0 0; font-size:13px;"></div>
+</div>
+
+<div class="viz-grid">
+
+  <div class="card">
+    <h3>1 — Causal graph <span style="font-weight:400; text-transform:none; letter-spacing:0;">(which paths are active right now)</span></h3>
+    <svg width="100%" viewBox="0 0 680 380" role="img" id="dagsvg">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <path id="e-physio-map" class="e" d="M140,64 L140,110" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-map-cardio" class="e" d="M140,144 L140,190" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-cardio-state" class="e" d="M140,234 L140,280" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-state-action" class="e" d="M140,314 L140,340" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah)" opacity="0.35"/>
+      <path id="e-aprev-map" class="e" d="M470,120 L280,148 L240,138" fill="none" stroke="#948f80" stroke-width="1.2" marker-end="url(#ah)"/>
+      <path id="e-aprev-cardio" class="e" d="M470,132 L240,208" fill="none" stroke="#7c1d2e" stroke-width="1" marker-end="url(#ah)" opacity="0.2"/>
+      <path id="e-aprev-action" class="e" d="M500,150 C500,280 320,330 244,338" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah)" opacity="0.4"/>
+
+      <g class="box"><rect x="40" y="20" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">True physiology U_t</text>
+      <text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">unobserved</text></g>
+
+      <g class="box"><rect x="40" y="110" width="200" height="34" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="140" y="131" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428" id="mapNodeLabel">MAP_t = 68</text></g>
+
+      <g class="box" id="cardioBox"><rect x="40" y="190" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="140" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428" id="cardioNodeLabel">sofa_cardio_t = 0</text>
+      <text x="140" y="223" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c" id="cardioNodeSub">reflects MAP only</text></g>
+
+      <g class="box"><rect x="40" y="280" width="200" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+      <text x="140" y="301" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">State S_t</text></g>
+
+      <g class="box"><rect x="40" y="340" width="200" height="34" rx="6" fill="#faf9f6" stroke="#948f80" stroke-width="0.75"/>
+      <text x="140" y="361" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#201f1c">Next action A_t</text></g>
+
+      <g class="box"><rect x="440" y="98" width="220" height="52" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+      <text x="550" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">Prior action A_(t-1)</text>
+      <text x="550" y="136" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040" id="aprevSub">no vasopressor</text></g>
+    </svg>
+    <p class="plain" id="dagNote" style="margin-top:8px; font-size:13px;"></p>
+  </div>
+
+  <div class="card">
+    <h3>2 — State vector <span style="font-weight:400; text-transform:none; letter-spacing:0;">(what the model actually sees)</span></h3>
+    <div class="statevec" id="statevec"></div>
+    <p class="plain" style="margin:12px 0 0; font-size:12.5px;">
+      <span class="flag physio" style="margin-right:8px;"><span class="dot"></span>clean physiology</span>
+      <span class="flag treat"><span class="dot"></span>treatment-contaminated right now</span>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>3 — Predictability <span style="font-weight:400; text-transform:none; letter-spacing:0;">(Experiment 2's measured AUROC for this variant)</span></h3>
+    <div class="gauge-wrap">
+      <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div><div class="gauge-num" id="gaugeNum">—</div></div>
+      <div class="gauge-scale"><span>0.50 — random guessing</span><span>1.00 — perfect prediction</span></div>
+    </div>
+    <p class="plain" style="margin-top:10px; font-size:13px;" id="gaugeNote"></p>
+  </div>
+
+</div>
+</main>
+
+<div class="pagenav">
+  <a href="demo.html">← Interactive walkthrough</a>
+  <a href="proof.html" class="primary">Formal proof →</a>
+</div>
+
+<footer class="page-footer">
+  All figures verified against the live extraction pipeline — see <a href="status.html">Status & roadmap</a> for the full provenance history.
+</footer>
+
+<script>
+const VARIANTS = [
+  { id:"A", auroc:0.900, groups:["vitals","cardio","total"] },
+  { id:"B", auroc:0.900, groups:["vitals","cardio"] },
+  { id:"C", auroc:0.885, groups:["vitals"] },
+  { id:"D", auroc:0.792, groups:["vitals","maponly"] },
+  { id:"E", auroc:0.791, groups:["vitals"] },
+];
+const VARIANT_CAPTION = {
+  A: "Everything, including the treatment-linked severity piece and the overall total.",
+  B: "Overall total removed — the treatment-linked piece is still hiding inside the other fields.",
+  C: "Treatment-linked piece removed directly — but the total (kept here) can reconstruct it by subtraction (Theorem 2).",
+  D: "Treatment-linked piece replaced with a blood-pressure-only version, and the total recomputed from scratch.",
+  E: "Physiology only — nothing derived from treatment in any form.",
+};
+
+let variantIdx = 0;
+let vasoOn = false, dose = 0, map = 68;
+
+function cardioScore(map, vasoOn, dose){
+  if(!vasoOn || dose<=0) return map<70 ? 1 : 0;
+  if(dose<=5) return 2;
+  if(dose<=12) return 3;
+  return 4;
+}
+
+function buildVariantRow(){
+  const row = document.getElementById('variantRow');
+  row.innerHTML = VARIANTS.map((v,i)=>`<div class="vbtn ${i===variantIdx?'on':''}" data-i="${i}">${v.id}</div>`).join('');
+  row.querySelectorAll('.vbtn').forEach(b=>{
+    b.addEventListener('click', ()=>{ variantIdx = parseInt(b.dataset.i); render(); });
+  });
+}
+
+function render(){
+  const v = VARIANTS[variantIdx];
+  const score = cardioScore(map, vasoOn, dose);
+  const dosedEnough = vasoOn && dose > 0;
+  const treatmentDetermined = dosedEnough && score >= 2; // matches the >=2 branch, dose-driven not MAP-driven
+
+  document.getElementById('mapVal').textContent = map + " mmHg";
+  document.getElementById('mapNodeLabel').textContent = `MAP_t = ${map}`;
+  document.getElementById('cardioNodeLabel').textContent = `sofa_cardio_t = ${score}`;
+  document.getElementById('cardioNodeSub').textContent = treatmentDetermined ? "reflects dose, not MAP" : "reflects MAP only";
+  document.getElementById('aprevSub').textContent = vasoOn ? `dose ${dose.toFixed(1)} mcg/kg/min` : "no vasopressor";
+
+  // DAG edge states
+  document.getElementById('e-aprev-cardio').setAttribute('opacity', treatmentDetermined ? '1' : '0.2');
+  document.getElementById('e-aprev-cardio').setAttribute('stroke-width', treatmentDetermined ? '2.4' : '1');
+  document.getElementById('e-map-cardio').setAttribute('opacity', treatmentDetermined ? '0.25' : '1');
+  document.getElementById('e-aprev-action').setAttribute('opacity', vasoOn ? '0.85' : '0.25');
+  document.getElementById('cardioBox').style.opacity = v.groups.includes('cardio') || v.groups.includes('maponly') ? '1' : '0.3';
+
+  const included = v.groups.includes('cardio');
+  document.getElementById('dagNote').innerHTML = treatmentDetermined && included
+    ? `<b style="color:var(--treat);">Active right now:</b> the direct definitional path (bold) is carrying information straight from the prior action into the state — bypassing physiology entirely, exactly as proven in Theorem 1.`
+    : (!included ? `Variant ${v.id} doesn't include the treatment-linked feature at all — this path has nothing to carry.` : `No vasopressor above threshold — the score currently reflects physiology only.`);
+
+  // State vector
+  const chips = [
+    {name:"vitals/labs", key:"vitals"},
+    {name:"sofa_resp", key:"other"},
+    {name:"sofa_coag", key:"other"},
+    {name:"sofa_liver", key:"other"},
+    {name:"sofa_renal", key:"other"},
+    {name:"sofa_cns", key:"other"},
+    {name: v.groups.includes('maponly') ? "cardio (MAP-only)" : "sofa_cardio", key:"cardio"},
+    {name:"sofa_total", key:"total"},
+  ];
+  const sv = document.getElementById('statevec');
+  sv.innerHTML = chips.map(c=>{
+    if(c.key==="vitals" || c.key==="other") return `<div class="chip clean">${c.name}</div>`;
+    if(c.key==="cardio"){
+      if(v.groups.includes('maponly')) return `<div class="chip clean">${c.name}</div>`;
+      if(!v.groups.includes('cardio')) return `<div class="chip removed">${c.name}</div>`;
+      return `<div class="chip ${treatmentDetermined?'tainted':'clean'}">${c.name}</div>`;
+    }
+    if(c.key==="total"){
+      if(!v.groups.includes('total') && !v.groups.includes('maponly')) return `<div class="chip removed">${c.name}</div>`;
+      const totalTainted = treatmentDetermined && v.groups.includes('total');
+      return `<div class="chip ${totalTainted?'tainted':'clean'}">${c.name}</div>`;
+    }
+  }).join('');
+
+  // Gauge
+  const pct = (v.auroc-0.5)/0.5*100;
+  document.getElementById('gaugeFill').style.width = pct+'%';
+  document.getElementById('gaugeNum').textContent = v.auroc.toFixed(3);
+  document.getElementById('gaugeNote').textContent = `Variant ${v.id}: ${VARIANT_CAPTION[v.id]}`;
+  document.getElementById('variantCaption').textContent = `Variant ${v.id} — ${VARIANT_CAPTION[v.id]}`;
+
+  buildVariantRow();
+}
+
+document.getElementById('mapSlider').addEventListener('input', function(){ map = parseInt(this.value); render(); });
+document.getElementById('vasoToggle').addEventListener('click', function(){
+  vasoOn = !vasoOn;
+  this.classList.toggle('on', vasoOn);
+  document.getElementById('doseCtrl').style.display = vasoOn ? 'block' : 'none';
+  if(!vasoOn){ dose = 0; document.getElementById('doseSlider').value = 0; }
+  render();
+});
+document.getElementById('doseSlider').addEventListener('input', function(){
+  dose = parseFloat(this.value);
+  document.getElementById('doseVal').textContent = dose.toFixed(1);
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
