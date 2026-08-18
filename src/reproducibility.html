@@ -3,6 +3,8 @@ layout: base.njk
 title: "Reproducibility"
 activeNav: reproducibility
 templateEngineOverride: false
+extraHead: |
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 ---
 
 <style>
@@ -14,8 +16,17 @@ templateEngineOverride: false
   .pipe-step .t{ font-size:13px; font-weight:600; margin-top:4px; }
   .codewin{ background:#0f172a; border-radius:4px; overflow:hidden; margin:14px 0; }
   .codewin .bar{ display:flex; justify-content:space-between; align-items:center; padding:9px 16px; border-bottom:1px solid #1e293b; }
-  .codewin .bar span{ font-family:var(--mono); font-size:11.5px; color:#94a3b8; }
-  .codewin pre{ padding:16px; font-family:var(--mono); font-size:12px; line-height:1.6; color:#cbd5e1; overflow-x:auto; margin:0; }
+  .codewin .bar-left{ display:flex; align-items:center; gap:10px; }
+  .codewin .bar span.fname{ font-family:var(--mono); font-size:11.5px; color:#94a3b8; }
+  .codewin .bar span.flang{ font-family:var(--mono); font-size:10px; color:#64748b; border:1px solid #334155; border-radius:3px; padding:1px 6px; }
+  .codewin pre{ padding:16px; margin:0; max-height:420px; overflow:auto; }
+  .codewin pre, .codewin code{ font-family:var(--mono) !important; font-size:12px !important; line-height:1.6 !important; }
+  .fv-btn{ font-family:var(--mono); font-size:11px; color:#94a3b8; background:transparent; border:1px solid #334155; border-radius:3px; padding:4px 9px; cursor:pointer; text-decoration:none; }
+  .fv-btn:hover{ color:#e2e8f0; border-color:#64748b; }
+  .fv-tabs{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .fv-tab{ font-family:var(--mono); font-size:11.5px; padding:6px 12px; border-radius:3px; border:1px solid var(--line); background:var(--paper); color:var(--ink-soft); cursor:pointer; }
+  .fv-tab.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600; }
+  .fv-status{ font-family:var(--mono); font-size:11.5px; color:#64748b; padding:16px; }
 </style>
 
 <div class="masthead"><div class="masthead-inner">
@@ -40,36 +51,30 @@ templateEngineOverride: false
 
 <h3 class="section">Extraction queries</h3>
 <div class="card">
-  <p class="plain">Four standalone SQL files, safe to publish — code isn't data. See
+  <p class="plain">Five standalone files, safe to publish — code isn't data. Each tab below fetches
+  the actual file live from this same site, not a copy-pasted excerpt — it can never silently go
+  stale the way a hardcoded snippet can. See
   <a href="/queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
   order and a substitution script that avoids the placeholder bugs this project hit early on.</p>
 
+  <div class="fv-tabs" id="fvTabs"></div>
   <div class="codewin">
-    <div class="bar"><span>queries/01_cohort.sql</span><span>SQL</span></div>
-    <pre>-- adult, first-ICU-stay, Sepsis-3-qualifying, vasopressor-exposed stays
-WITH ranked_icu AS (
-  SELECT ie.subject_id, ie.hadm_id, ie.stay_id,
-    ROW_NUMBER() OVER (PARTITION BY ie.subject_id ORDER BY ie.intime) AS rn
-  FROM `physionet-data.mimiciv_3_1_icu.icustays` ie
-  JOIN `physionet-data.mimiciv_3_1_hosp.patients` p USING(subject_id)
-  WHERE p.anchor_age &gt;= 18
-)
-SELECT f.* FROM ranked_icu f WHERE f.rn = 1;
--- verified: 11,354 stays, exact match across five independent runs</pre>
+    <div class="bar">
+      <div class="bar-left">
+        <span class="fname" id="fvFilename">loading…</span>
+        <span class="flang" id="fvLang"></span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="fv-btn" id="fvCopy">Copy</button>
+        <a class="fv-btn" id="fvRaw" href="#" target="_blank" rel="noopener">Raw file</a>
+      </div>
+    </div>
+    <div id="fvBody"><pre><code id="fvCode" class="language-sql"></code></pre></div>
   </div>
-
-  <div class="codewin">
-    <div class="bar"><span>queries/03_vasopressor_doses.sql (excerpt)</span><span>SQL</span></div>
-    <pre>-- six vasopressor/inotrope agents; four are dose-scored by the 1996
--- Vincent cardiovascular SOFA rule (norepi, epi, dopamine, dobutamine)
-SELECT ie.stay_id, ie.itemid, ie.starttime, ie.endtime, ie.rate, ie.amount
-FROM `physionet-data.mimiciv_3_1_icu.inputevents` ie
-JOIN `{SCRATCH_DATASET}.sepsis_cohort` c USING(stay_id)
-WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
-  AND ie.amount &gt; 0 AND ie.endtime IS NOT NULL;</pre>
-  </div>
-
-  <a href="/queries/" class="navbtn" style="margin-top:8px;">Browse all queries →</a>
+  <p class="plain" style="margin:14px 0 0; font-size:12.5px;">This site is an interface to a
+  reproducible research project — not a replacement for the repository.
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" style="color:var(--accent);">Full source →</a></p>
+  <a href="/queries/" class="navbtn" style="margin-top:12px;">Browse all queries →</a>
 </div>
 
 <h3 class="section">Data governance</h3>
@@ -101,3 +106,68 @@ WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
   <a href="/evidence/">← Evidence</a>
   <a href="/papers/" class="primary">Papers →</a>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+const FV_FILES = [
+  { path: "/queries/01_cohort.sql", label: "01_cohort.sql", lang: "sql" },
+  { path: "/queries/01b_cohort_fallback.sql", label: "01b_cohort_fallback.sql", lang: "sql" },
+  { path: "/queries/02_vitals_labs_fio2.sql", label: "02_vitals_labs_fio2.sql", lang: "sql" },
+  { path: "/queries/03_vasopressor_doses.sql", label: "03_vasopressor_doses.sql", lang: "sql" },
+  { path: "/queries/render_query.py", label: "render_query.py", lang: "python" },
+];
+const fvCache = new Map();
+let fvActiveIdx = 0;
+
+function fvRenderTabs(){
+  document.getElementById('fvTabs').innerHTML = FV_FILES.map((f, i) =>
+    `<button class="fv-tab ${i===fvActiveIdx?'on':''}" data-i="${i}">${f.label}</button>`
+  ).join('');
+  document.querySelectorAll('.fv-tab').forEach(btn => {
+    btn.addEventListener('click', () => { fvActiveIdx = parseInt(btn.dataset.i); fvLoad(fvActiveIdx); });
+  });
+}
+
+async function fvLoad(idx){
+  fvActiveIdx = idx;
+  fvRenderTabs();
+  const file = FV_FILES[idx];
+  document.getElementById('fvFilename').textContent = file.label;
+  document.getElementById('fvLang').textContent = file.lang.toUpperCase();
+  document.getElementById('fvRaw').href = file.path;
+
+  const bodyEl = document.getElementById('fvBody');
+  bodyEl.innerHTML = `<div class="fv-status">fetching ${file.path} …</div>`;
+
+  try {
+    let text = fvCache.get(file.path);
+    if (text === undefined) {
+      const res = await fetch(file.path);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      text = await res.text();
+      fvCache.set(file.path, text);
+    }
+    bodyEl.innerHTML = `<pre><code id="fvCode" class="language-${file.lang}"></code></pre>`;
+    const codeEl = document.getElementById('fvCode');
+    codeEl.textContent = text;
+    if (window.Prism) Prism.highlightElement(codeEl);
+  } catch (err) {
+    bodyEl.innerHTML = `<div class="fv-status">Couldn't load this file live (${err.message}). `
+      + `<a href="${file.path}" style="color:#22d3ee;" target="_blank">Open it directly →</a></div>`;
+  }
+}
+
+document.getElementById('fvCopy').addEventListener('click', () => {
+  const file = FV_FILES[fvActiveIdx];
+  const text = fvCache.get(file.path) || '';
+  navigator.clipboard.writeText(text);
+  const btn = document.getElementById('fvCopy');
+  const original = btn.textContent;
+  btn.textContent = 'Copied';
+  setTimeout(() => { btn.textContent = original; }, 1200);
+});
+
+fvRenderTabs();
+fvLoad(0);
+</script>
