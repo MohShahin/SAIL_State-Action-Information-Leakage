@@ -1,20 +1,20 @@
 :root{
-  --bg:#faf9f6;
+  --bg:#ffffff;
   --paper:#ffffff;
-  --line:#dcd8cd;
-  --line-soft:#ece9e0;
-  --ink:#201f1c;
-  --ink-soft:#5a564c;
-  --ink-faint:#948f80;
-  --accent:#7c1d2e;
-  --accent-soft:#f4e6e3;
-  --physio:#2f5d50;
-  --physio-soft:#e7efe9;
-  --treat:#7c1d2e;
-  --treat-soft:#f4e2e0;
+  --line:#e2e8f0;
+  --line-soft:#eef2f6;
+  --ink:#0f172a;
+  --ink-soft:#475569;
+  --ink-faint:#64748b;
+  --accent:#0891B2;
+  --accent-soft:#ecfeff;
+  --physio:#0F766E;
+  --physio-soft:#f0fdfa;
+  --treat:#DC2626;
+  --treat-soft:#fef2f2;
   --gold:#8a6d1f;
-  --serif: Georgia, "Iowan Old Style", "Times New Roman", Times, serif;
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 *{box-sizing:border-box;}
@@ -42,7 +42,7 @@ html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-fam
 
 /* ---------- MASTHEAD ---------- */
 .masthead{ background:var(--paper); border-bottom:3px double var(--line); }
-.masthead-inner{ max-width:760px; margin:0 auto; padding:26px 24px 20px; }
+.masthead-inner{ max-width:840px; margin:0 auto; padding:26px 24px 20px; }
 .affil{
   display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px 24px;
   font-family:var(--sans); font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);
@@ -55,8 +55,8 @@ html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-fam
 .status-line .sw{ width:7px; height:7px; border-radius:50%; background:var(--gold); }
 
 /* ---------- SHARED CONTENT ---------- */
-main{ max-width:760px; margin:0 auto; padding:32px 24px 48px; }
-main.wide{ max-width:960px; }
+main{ max-width:840px; margin:0 auto; padding:32px 24px 48px; }
+main.wide{ max-width:1100px; }
 .step-eyebrow{ font-family:var(--sans); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 6px; font-weight:600; }
 h2{ font-family:var(--serif); font-weight:400; font-size:25px; margin:0 0 12px; line-height:1.3; color:var(--ink); }
 h3.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36px 0 12px; color:var(--ink); }
@@ -114,3 +114,13 @@ table.data td.label{ font-family:var(--sans); font-size:13px; }
 table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 
 @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+/* ---------- v2 brand additions ---------- */
+.section-alt{ background:var(--physio-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.hub-card{ transition:border-color .15s, transform .15s; }
+.navbtn{
+  font-family:var(--sans); font-size:13.5px; padding:11px 22px; border-radius:3px; cursor:pointer;
+  border:1px solid var(--ink); background:var(--paper); color:var(--ink); text-decoration:none; display:inline-block;
+}
+.navbtn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.navbtn:disabled{ opacity:.3; cursor:default; }

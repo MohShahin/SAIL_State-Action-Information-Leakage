@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papers — SAIL</title>
+<link rel="icon" href="assets/img/logo-cropped.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .tag-btn{ font-family:var(--sans); font-size:11.5px; padding:6px 12px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink-soft); cursor:pointer; }
+  .tag-btn.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600; }
+  .paper-card{ border:1px solid var(--line); border-radius:4px; padding:20px; background:var(--paper); }
+  .paper-card .cat{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
+  .cat-leak{ background:var(--treat-soft); color:var(--treat); }
+  .cat-motiv{ background:var(--line-soft); color:var(--ink-soft); }
+  .cat-related{ background:var(--accent-soft); color:var(--accent); }
+  .paper-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
+  .paper-tags span{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); background:var(--bg); border:1px solid var(--line); padding:2px 7px; border-radius:3px; }
+</style>
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SAIL</a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="mechanisms.html">Mechanisms</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html">Demo</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="proof.html">Proof</a>
+    <a href="reproducibility.html">Reproducibility</a>
+    <a href="papers.html" class="active">Papers</a>
+    <a href="about.html">About</a>
+    <a href="status.html">Status</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>Related literature</h1>
+  <p class="deck">Three sources, each doing real work for this project's own claims — not a padded
+  reading list. A fuller literature review (additional sepsis-RL studies, temporal-bias
+  references) is planned; see <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>
+  Phase 6. Nothing below is labeled beyond what's actually verified.</p>
+</div></div>
+
+<main class="wide">
+
+<div class="card" style="margin-bottom:8px;">
+  <div id="tagFilters" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+</div>
+
+<div id="paperGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:16px;"></div>
+
+</main>
+
+<div class="pagenav">
+  <a href="reproducibility.html">← Reproducibility</a>
+  <a href="about.html" class="primary">About →</a>
+</div>
+
+<footer class="page-footer">
+  MIT Laboratory for Computational Physiology × Boston University School of Public Health
+</footer>
+
+<script>
+const PAPERS = [
+  {
+    title: "The SOFA (Sepsis-related Organ Failure Assessment) score to describe organ dysfunction/failure",
+    authors: "Vincent, J.-L. et al.",
+    venue: "Intensive Care Medicine, 1996",
+    category: "Documented leakage source",
+    catClass: "cat-leak",
+    tags: ["SOFA score", "Clinical scoring", "Sepsis"],
+    relevance: "Defines the exact cardiovascular scoring rule proven non-identifiable from MAP alone (Theorem 1) — the source of Mechanism 1.",
+    link: "https://doi.org/10.1007/BF01709751"
+  },
+  {
+    title: "The Artificial Intelligence Clinician learns optimal treatment strategies for sepsis in intensive care",
+    authors: "Komorowski, M. et al.",
+    venue: "Nature Medicine, 2018",
+    category: "Motivating application",
+    catClass: "cat-motiv",
+    tags: ["Clinical AI", "Reinforcement learning", "Sepsis"],
+    relevance: "The offline-RL framework whose state-representation assumptions this audit examines directly.",
+    link: "https://doi.org/10.1038/s41591-018-0213-5"
+  },
+  {
+    title: "Causal Inference: What If",
+    authors: "Hernán, M. A. & Robins, J. M.",
+    venue: "Chapman & Hall/CRC, 2020",
+    category: "Related methodological issue",
+    catClass: "cat-related",
+    tags: ["Causal inference", "Confounding"],
+    relevance: "The general principle — conditioning prediction on a variable affected by treatment — underlying why the state is a descendant of prior action (Proposition 2).",
+    link: "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/"
+  }
+];
+
+const allTags = [...new Set(PAPERS.flatMap(p => p.tags))];
+let activeTag = null;
+
+function renderFilters(){
+  const wrap = document.getElementById('tagFilters');
+  const buttons = ['All', ...allTags];
+  wrap.innerHTML = buttons.map(t => {
+    const isActive = (t==='All' && activeTag===null) || t===activeTag;
+    return `<button class="tag-btn ${isActive?'on':''}" data-tag="${t}">${t}</button>`;
+  }).join('');
+  wrap.querySelectorAll('.tag-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      activeTag = b.dataset.tag === 'All' ? null : b.dataset.tag;
+      renderFilters(); renderGrid();
+    });
+  });
+}
+
+function renderGrid(){
+  const filtered = activeTag ? PAPERS.filter(p => p.tags.includes(activeTag)) : PAPERS;
+  document.getElementById('paperGrid').innerHTML = filtered.map(p => `
+    <div class="paper-card">
+      <span class="cat ${p.catClass}">${p.category}</span>
+      <h3 style="font-family:var(--serif); font-weight:400; font-size:16px; margin:10px 0 4px;">${p.title}</h3>
+      <div style="font-size:12.5px; color:var(--ink-faint);">${p.authors} · ${p.venue}</div>
+      <p style="font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:10px;">${p.relevance}</p>
+      <div class="paper-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <a href="${p.link}" target="_blank" rel="noopener" style="display:inline-block; margin-top:12px; font-size:12.5px; color:var(--accent);">View source →</a>
+    </div>`).join('') || `<p class="plain">No papers match this filter yet.</p>`;
+}
+
+renderFilters();
+renderGrid();
+</script>
+
+</body>
+</html>

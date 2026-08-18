@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence — SAIL</title>
+<link rel="icon" href="assets/img/logo-cropped.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SAIL</a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="mechanisms.html">Mechanisms</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html">Demo</a>
+    <a href="evidence.html" class="active">Evidence</a>
+    <a href="proof.html">Proof</a>
+    <a href="reproducibility.html">Reproducibility</a>
+    <a href="papers.html">Papers</a>
+    <a href="about.html">About</a>
+    <a href="status.html">Status</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>Evidence</h1>
+  <p class="deck">Every figure here has been independently re-extracted from MIMIC-IV and
+  reproduced across five or more separate pipeline runs — not computed once and taken on faith.</p>
+</div></div>
+
+<main class="wide">
+
+<h3 class="section" style="margin-top:0;">Verified figures</h3>
+<div class="card">
+  <table class="data">
+    <tr><th>Statistic</th><th>Manuscript draft</th><th>Verified</th><th>Status</th></tr>
+    <tr><td class="label">Cohort size</td><td>11,354</td><td>11,354</td><td>exact match</td></tr>
+    <tr class="old"><td class="label">Exp. 1 — dose-determined (4h)</td><td>30.5%</td><td style="color:var(--ink); text-decoration:none;">32.3%</td><td style="color:var(--ink-faint); text-decoration:none;">revised</td></tr>
+    <tr class="old"><td class="label">Exp. 1 — dose-determined (24h)</td><td>26.3%</td><td style="color:var(--ink); text-decoration:none;">28.6%</td><td style="color:var(--ink-faint); text-decoration:none;">revised</td></tr>
+    <tr><td class="label">Exp. 2 — AUROC, A_full</td><td>0.900</td><td>0.900</td><td>exact match</td></tr>
+    <tr><td class="label">Exp. 2 — AUROC, E_physiology_only</td><td>0.791</td><td>0.791</td><td>exact match</td></tr>
+    <tr><td class="label">Exp. 2 — recoverability gap</td><td>≈0.108</td><td>0.109</td><td>essentially exact</td></tr>
+    <tr class="old"><td class="label">Exp. 3 — mean window overlap (24h)</td><td>56.1%</td><td style="color:var(--ink); text-decoration:none;">31.1%</td><td style="color:var(--ink-faint); text-decoration:none;">revised down</td></tr>
+    <tr class="old"><td class="label">Exp. 3 — median overlap (24h)</td><td>100%</td><td style="color:var(--ink); text-decoration:none;">12.4%</td><td style="color:var(--ink-faint); text-decoration:none;">revised down</td></tr>
+    <tr class="old"><td class="label">Exp. 3 — % &gt;50% overlap</td><td>55.7%</td><td style="color:var(--ink); text-decoration:none;">28.7%</td><td style="color:var(--ink-faint); text-decoration:none;">revised down</td></tr>
+  </table>
+  <p class="plain" style="margin:14px 0 0; font-size:13px;">Struck-through cells are the original
+  manuscript draft's figures, superseded after two extraction bugs were found and fixed — not
+  hidden, just clearly marked as historical.</p>
+</div>
+
+<h3 class="section">Why Experiment 2's gap is the strongest single result</h3>
+<div class="card">
+  <p class="plain">The AUROC gap (0.900 → 0.791) survived a <b>15× difference</b> in underlying
+  vasopressor-dose row counts almost untouched — 0.109 verified vs. ≈0.108 in the original,
+  inflated-data run. A result that's this stable despite a large upstream data bug is strong
+  evidence it reflects something structural (Theorems 1–2), not an artifact of how the data was
+  extracted.</p>
+  <div class="facts">
+    <div class="fact"><div class="n">351,720</div><div class="l">verified vasopressor-dose rows (clean cohort)</div></div>
+    <div class="fact"><div class="n">5,428,937</div><div class="l">original (bugged) row count — 15.44× inflated</div></div>
+    <div class="fact"><div class="n">0.001</div><div class="l">difference between the two runs' AUROC gap</div></div>
+  </div>
+</div>
+
+<h3 class="section">The three bugs, found and fixed in the open</h3>
+<div class="card">
+  <div class="facts">
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 1 — WRITE_APPEND</div><div class="l">The cohort table's BigQuery load had no write_disposition. A re-run against an already-populated table silently duplicated rows (~15x). Confirmed twice — by code inspection, and by recovering the original buggy Colab run and reproducing its exact inflated numbers.</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 2 — schema autodetect</div><div class="l">BigQuery's schema autodetection mapped a timestamp column to the wrong type, breaking downstream joins. Fixed with an explicit schema.</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Bug 3 — sum vs. union</div><div class="l">The window-overlap calculation summed overlapping intervals instead of taking their union, double-counting patients on simultaneous multi-drug vasopressor therapy (34.8% of the cohort).</div></div>
+  </div>
+  <p class="plain" style="margin-top:16px;">Full diagnostic trail — including the false starts —
+  in <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
+</div>
+
+<h3 class="section">What's still open</h3>
+<div class="card">
+  <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
+  decay curve, physiology-only cross-reference, prevalence-matched placebo features) has not yet
+  run — this is what resolves H3. See the <a href="proof.html#h3" style="color:var(--accent);">pre-registered
+  decision procedure</a> and <a href="status.html" style="color:var(--accent);">current status</a>.</p>
+</div>
+
+</main>
+
+<div class="pagenav">
+  <a href="mechanisms.html">← Mechanisms</a>
+  <a href="reproducibility.html" class="primary">Reproducibility →</a>
+</div>
+
+<footer class="page-footer">
+  MIT Laboratory for Computational Physiology × Boston University School of Public Health
+</footer>
+
+</body>
+</html>
