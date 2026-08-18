@@ -1,38 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mechanisms — SAIL</title>
-<link rel="icon" href="assets/img/logo-cropped.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
-<script>window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SAIL</a>
-  <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html" class="active">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
+---
+layout: base.njk
+title: "Mechanisms"
+activeNav: mechanisms
+templateEngineOverride: false
+needsMathJax: true
+---
 
 <div class="masthead"><div class="masthead-inner">
   <h1>The two mechanisms</h1>
-  <p class="deck">Both are provable — see the <a href="proof.html" style="color:var(--accent);">formal proof page</a>
+  <p class="deck">Both are provable — see the <a href="/proof/" style="color:var(--accent);">formal proof page</a>
   for the full theorems. This page is the intuitive deep-dive: what each mechanism is, why it
   happens, and how much it actually measures out to.</p>
 </div></div>
@@ -57,7 +33,7 @@
   variant D (total recomputed from a treatment-independent proxy) drops close to the physiology
   floor (0.792 vs. 0.791).</p>
   <p class="plain">$$\sigma_{cardio} = \text{sofa\_total} - \sum_{i \ne cardio}\text{subscore}_i$$</p>
-  <p class="plain">Full statement and proof: <a href="proof.html#thm1" style="color:var(--accent);">Theorem 1</a> and <a href="proof.html#thm2" style="color:var(--accent);">Theorem 2</a>.</p>
+  <p class="plain">Full statement and proof: <a href="/proof/#thm1" style="color:var(--accent);">Theorem 1</a> and <a href="/proof/#thm2" style="color:var(--accent);">Theorem 2</a>.</p>
 </div>
 
 <h3 class="section">Mechanism 2 — Overlapping temporal windows</h3>
@@ -77,7 +53,7 @@
   average density accumulated so far, the same relationship as a marginal-cost curve crossing an
   average-cost curve. This is why a 4-hour window measured higher &gt;50%-contamination than the
   24-hour window in this project's own data.</p>
-  <p class="plain">Full statement and proof: <a href="proof.html#sec5" style="color:var(--accent);">Section 5, window-overlap leakage</a>.</p>
+  <p class="plain">Full statement and proof: <a href="/proof/#sec5" style="color:var(--accent);">Section 5, window-overlap leakage</a>.</p>
 </div>
 
 <h3 class="section">Try both yourself</h3>
@@ -86,21 +62,14 @@
   are on the guided walkthrough. The full synchronized model — causal graph, state vector, and
   live predictability gauge moving together — is on the interactive demo.</p>
   <div style="display:flex; gap:12px; flex-wrap:wrap;">
-    <a href="demo.html" class="navbtn primary" style="text-decoration:none; display:inline-block;">Guided walkthrough →</a>
-    <a href="visualizer.html" class="navbtn" style="text-decoration:none; display:inline-block; border-color:var(--ink); color:var(--ink);">Live mechanism visualizer →</a>
+    <a href="/demo/" class="navbtn primary" style="text-decoration:none; display:inline-block;">Guided walkthrough →</a>
+    <a href="/visualizer/" class="navbtn" style="text-decoration:none; display:inline-block; border-color:var(--ink); color:var(--ink);">Live mechanism visualizer →</a>
   </div>
 </div>
 
 </main>
 
 <div class="pagenav">
-  <a href="index.html">← Home</a>
-  <a href="evidence.html" class="primary">Evidence →</a>
+  <a href="/">← Home</a>
+  <a href="/evidence/" class="primary">Evidence →</a>
 </div>
-
-<footer class="page-footer">
-  MIT Laboratory for Computational Physiology × Boston University School of Public Health
-</footer>
-
-</body>
-</html>

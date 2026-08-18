@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reproducibility — SAIL</title>
-<link rel="icon" href="assets/img/logo-cropped.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+---
+layout: base.njk
+title: "Reproducibility"
+activeNav: reproducibility
+templateEngineOverride: false
+---
+
 <style>
   .pipeline{ display:flex; flex-wrap:wrap; border:1px solid var(--line); border-radius:4px; overflow:hidden; margin:16px 0; }
   .pipe-step{ flex:1 1 130px; background:var(--bg); border-right:1px solid var(--line); padding:14px; text-align:center; text-decoration:none; color:inherit; }
@@ -21,24 +17,6 @@
   .codewin .bar span{ font-family:var(--mono); font-size:11.5px; color:#94a3b8; }
   .codewin pre{ padding:16px; font-family:var(--mono); font-size:12px; line-height:1.6; color:#cbd5e1; overflow-x:auto; margin:0; }
 </style>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SAIL</a>
-  <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html" class="active">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Reproducibility</h1>
@@ -51,19 +29,19 @@
 <h3 class="section" style="margin-top:0;">The pipeline</h3>
 <div class="pipeline">
   <a class="pipe-step" href="https://physionet.org/content/mimiciv/" target="_blank" rel="noopener"><div class="n">00</div><div class="t">MIMIC-IV</div></a>
-  <a class="pipe-step" href="queries/01_cohort.sql"><div class="n">01</div><div class="t">Cohort</div></a>
-  <a class="pipe-step" href="queries/02_vitals_labs_fio2.sql"><div class="n">02</div><div class="t">Variables</div></a>
-  <a class="pipe-step" href="queries/03_vasopressor_doses.sql"><div class="n">03</div><div class="t">Dose extraction</div></a>
-  <a class="pipe-step" href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">04</div><div class="t">Aggregation</div></a>
-  <a class="pipe-step" href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">05</div><div class="t">State variants</div></a>
-  <a class="pipe-step" href="mechanisms.html"><div class="n">06</div><div class="t">Leakage analysis</div></a>
-  <a class="pipe-step" href="evidence.html"><div class="n">07</div><div class="t">Evidence</div></a>
+  <a class="pipe-step" href="/queries/01_cohort.sql"><div class="n">01</div><div class="t">Cohort</div></a>
+  <a class="pipe-step" href="/queries/02_vitals_labs_fio2.sql"><div class="n">02</div><div class="t">Variables</div></a>
+  <a class="pipe-step" href="/queries/03_vasopressor_doses.sql"><div class="n">03</div><div class="t">Dose extraction</div></a>
+  <a class="pipe-step" href="/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">04</div><div class="t">Aggregation</div></a>
+  <a class="pipe-step" href="/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">05</div><div class="t">State variants</div></a>
+  <a class="pipe-step" href="/mechanisms/"><div class="n">06</div><div class="t">Leakage analysis</div></a>
+  <a class="pipe-step" href="/evidence/"><div class="n">07</div><div class="t">Evidence</div></a>
 </div>
 
 <h3 class="section">Extraction queries</h3>
 <div class="card">
   <p class="plain">Four standalone SQL files, safe to publish — code isn't data. See
-  <a href="queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
+  <a href="/queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
   order and a substitution script that avoids the placeholder bugs this project hit early on.</p>
 
   <div class="codewin">
@@ -91,7 +69,7 @@ WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
   AND ie.amount &gt; 0 AND ie.endtime IS NOT NULL;</pre>
   </div>
 
-  <a href="queries/" class="navbtn" style="margin-top:8px;">Browse all queries →</a>
+  <a href="/queries/" class="navbtn" style="margin-top:8px;">Browse all queries →</a>
 </div>
 
 <h3 class="section">Data governance</h3>
@@ -104,7 +82,7 @@ WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
     <div class="fact"><div class="n" style="font-size:14px;">Safe to publish</div><div class="l">SQL queries, analysis code, aggregate statistics reported in the manuscript</div></div>
     <div class="fact"><div class="n" style="font-size:14px;">Never published</div><div class="l">Any file with one row per patient or per decision-point — enforced by an explicit gitignore block, verified against full git history before every push</div></div>
   </div>
-  <a href="DATA_ACCESS.md" class="navbtn" style="margin-top:8px;">Full governance policy →</a>
+  <a href="/DATA_ACCESS.md" class="navbtn" style="margin-top:8px;">Full governance policy →</a>
 </div>
 
 <h3 class="section">Getting your own access</h3>
@@ -120,13 +98,6 @@ WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)
 </main>
 
 <div class="pagenav">
-  <a href="evidence.html">← Evidence</a>
-  <a href="papers.html" class="primary">Papers →</a>
+  <a href="/evidence/">← Evidence</a>
+  <a href="/papers/" class="primary">Papers →</a>
 </div>
-
-<footer class="page-footer">
-  MIT Laboratory for Computational Physiology × Boston University School of Public Health
-</footer>
-
-</body>
-</html>

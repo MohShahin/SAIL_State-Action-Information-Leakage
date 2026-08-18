@@ -1,32 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evidence — SAIL</title>
-<link rel="icon" href="assets/img/logo-cropped.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SAIL</a>
-  <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html" class="active">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
+---
+layout: base.njk
+title: "Evidence"
+activeNav: evidence
+templateEngineOverride: false
+---
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Evidence</h1>
@@ -77,27 +54,20 @@
     <div class="fact"><div class="n" style="font-size:14px;">Bug 3 — sum vs. union</div><div class="l">The window-overlap calculation summed overlapping intervals instead of taking their union, double-counting patients on simultaneous multi-drug vasopressor therapy (34.8% of the cohort).</div></div>
   </div>
   <p class="plain" style="margin-top:16px;">Full diagnostic trail — including the false starts —
-  in <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
+  in <a href="/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
 </div>
 
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
   decay curve, physiology-only cross-reference, prevalence-matched placebo features) has not yet
-  run — this is what resolves H3. See the <a href="proof.html#h3" style="color:var(--accent);">pre-registered
-  decision procedure</a> and <a href="status.html" style="color:var(--accent);">current status</a>.</p>
+  run — this is what resolves H3. See the <a href="/proof/#h3" style="color:var(--accent);">pre-registered
+  decision procedure</a> and <a href="/status/" style="color:var(--accent);">current status</a>.</p>
 </div>
 
 </main>
 
 <div class="pagenav">
-  <a href="mechanisms.html">← Mechanisms</a>
-  <a href="reproducibility.html" class="primary">Reproducibility →</a>
+  <a href="/mechanisms/">← Mechanisms</a>
+  <a href="/reproducibility/" class="primary">Reproducibility →</a>
 </div>
-
-<footer class="page-footer">
-  MIT Laboratory for Computational Physiology × Boston University School of Public Health
-</footer>
-
-</body>
-</html>

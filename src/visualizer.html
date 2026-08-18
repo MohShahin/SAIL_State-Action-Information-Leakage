@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Mechanism Visualizer — State–Action Leakage in Sepsis RL</title>
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+---
+layout: base.njk
+title: "Live Mechanism Visualizer"
+activeNav: visualizer
+templateEngineOverride: false
+---
+
 <style>
   .viz-grid{ display:grid; grid-template-columns:1fr; gap:18px; }
   .ctrl{ margin:14px 0; }
@@ -41,24 +37,6 @@
   #dagsvg .e{ transition:stroke-width .3s, opacity .3s; }
   #dagsvg .box{ transition:opacity .3s; }
 </style>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
-      <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html" class="active">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
 
 <div class="masthead"><div class="masthead-inner">
   <div class="affil">
@@ -69,7 +47,7 @@
   <p class="deck">One synthetic patient, three synchronized views. Adjust the controls on the left
   and watch the causal graph light up, the state vector's cells flip between clean and
   contaminated, and the predictability gauge move — all three respond to the same underlying
-  mechanism proven on the <a href="proof.html" style="color:var(--accent);">formal proof page</a>.</p>
+  mechanism proven on the <a href="/proof/" style="color:var(--accent);">formal proof page</a>.</p>
 </div></div>
 
 <main class="wide">
@@ -161,13 +139,9 @@
 </main>
 
 <div class="pagenav">
-  <a href="demo.html">← Interactive walkthrough</a>
-  <a href="proof.html" class="primary">Formal proof →</a>
+  <a href="/demo/">← Interactive walkthrough</a>
+  <a href="/proof/" class="primary">Formal proof →</a>
 </div>
-
-<footer class="page-footer">
-  All figures verified against the live extraction pipeline — see <a href="status.html">Status & roadmap</a> for the full provenance history.
-</footer>
 
 <script>
 const VARIANTS = [
@@ -279,6 +253,3 @@ document.getElementById('doseSlider').addEventListener('input', function(){
 
 render();
 </script>
-
-</body>
-</html>
