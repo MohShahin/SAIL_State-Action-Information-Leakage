@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: >-
+  This is a preliminary, non-peer-reviewed working draft. If you use or
+  reference this work, please cite it as a preprint/working paper and note
+  its draft status.
+title: >-
+  State–Action Information Leakage in Sepsis Reinforcement Learning: An
+  Empirical Audit of SOFA-Derived Clinical State Representations in MIMIC-IV
+authors:
+  - name: Mohammad Shahin
+    affiliation: >-
+      MIT Laboratory for Computational Physiology; Boston University School
+      of Public Health
+type: software
+repository-code: >-
+  https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning
+license: MIT
+date-released: 2026-08-15
+keywords:
+  - offline reinforcement learning
+  - sepsis
+  - SOFA score
+  - information leakage
+  - target leakage
+  - MIMIC-IV
+  - clinical decision support
