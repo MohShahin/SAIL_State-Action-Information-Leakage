@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Does the Score Already Know the Treatment? — A Sepsis-RL Data Audit</title>
-<meta name="description" content="A plain-language, interactive walkthrough of a methodological audit of SOFA-based state representations in offline reinforcement learning for sepsis treatment, from the MIT Laboratory for Computational Physiology and the Boston University School of Public Health.">
-<meta property="og:title" content="Does the Score Already Know the Treatment?">
-<meta property="og:description" content="An interactive audit of information leakage in SOFA-based sepsis reinforcement learning, MIT LCP × BU SPH.">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+---
+layout: base.njk
+title: "Interactive Walkthrough"
+activeNav: demo
+templateEngineOverride: false
+---
+
 <style>
   :root{
     --bg:#faf9f6;
@@ -216,24 +207,6 @@
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
   @media (max-width:520px){ .masthead h1{ font-size:21px; } h2{ font-size:21px; } .readout-num{ font-size:34px; } }
 </style>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
-    <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html" class="active">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
 
 <div class="masthead">
   <div class="masthead-inner">
@@ -246,8 +219,8 @@
     representations used in offline reinforcement learning for sepsis treatment, conducted on MIMIC-IV.</p>
     <div class="status-line"><span class="sw"></span>Preliminary results — internal audit, prepared for conference presentation. Figures independently re-extracted and reproducibility-checked; see ROADMAP.md.</div>
     <div class="resource-links">
-      <a href="paper/SOFA_Leakage_Sepsis_RL_Manuscript_DRAFT.pdf">Read the manuscript draft (PDF)</a>
-      <a href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb">View the analysis notebook</a>
+      <a href="/paper/SOFA_Leakage_Sepsis_RL_Manuscript_DRAFT.pdf">Read the manuscript draft (PDF)</a>
+      <a href="/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb">View the analysis notebook</a>
       <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning">Source repository</a>
     </div>
   </div>
@@ -267,19 +240,9 @@
 </div>
 
 <div class="pagenav">
-  <a href="index.html">← Project hub</a>
-  <a href="visualizer.html" class="primary">Try the live mechanism visualizer →</a>
+  <a href="/">← Project hub</a>
+  <a href="/visualizer/" class="primary">Try the live mechanism visualizer →</a>
 </div>
-
-<footer class="page-footer">
-  <p style="margin:0 0 8px;">Cohort: 11,354 adult, first-ICU-stay, Sepsis-3–qualifying stays with vasopressor exposure, MIMIC-IV.<br>
-  Prepared as a companion walkthrough to the accompanying manuscript draft — not itself a peer-reviewed publication.</p>
-  <p style="margin:0;">
-    <a href="paper/SOFA_Leakage_Sepsis_RL_Manuscript_DRAFT.pdf">Manuscript (PDF)</a> &nbsp;·&nbsp;
-    <a href="notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb">Notebook</a> &nbsp;·&nbsp;
-    <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning">GitHub repository</a>
-  </p>
-</footer>
 
 <script>
 /* ============================= DATA ============================= */
@@ -722,5 +685,3 @@ const RENDER = { intro:renderIntro, score:renderScore, clock:renderClock, guess:
 /* ============================= INIT ============================= */
 goTo(0);
 </script>
-</body>
-</html>

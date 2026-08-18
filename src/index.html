@@ -1,3 +1,9 @@
+---
+layout: false
+title: "SAIL"
+templateEngineOverride: false
+---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +13,7 @@
 <meta name="description" content="A formal and empirical audit of state-action information leakage in offline reinforcement learning for sepsis treatment. MIT Laboratory for Computational Physiology × Boston University School of Public Health.">
 <meta property="og:title" content="SAIL — State-Action Information Leakage">
 <meta property="og:type" content="website">
-<link rel="icon" href="assets/img/logo-cropped.png">
+<link rel="icon" href="/assets/img/logo-cropped.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,19 +38,19 @@
 <!-- ============ NAV ============ -->
 <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200" aria-label="Primary">
   <div class="wide-w mx-auto px-6 py-3.5 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-2.5">
-      <img src="assets/img/logo-cropped.png" alt="SAIL logo" class="h-7 w-auto">
+    <a href="/" class="flex items-center gap-2.5">
+      <img src="/assets/img/logo-cropped.png" alt="SAIL logo" class="h-7 w-auto">
       <span class="font-bold tracking-tight text-base">SAIL</span>
     </a>
     <div class="hidden lg:flex items-center gap-1 text-sm">
       <a href="#core-question" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Why leakage?</a>
-      <a href="mechanisms.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Mechanisms</a>
-      <a href="visualizer.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Demo</a>
-      <a href="evidence.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Evidence</a>
-      <a href="proof.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Proof</a>
-      <a href="reproducibility.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Reproducibility</a>
-      <a href="papers.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Papers</a>
-      <a href="about.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">About</a>
+      <a href="/mechanisms/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Mechanisms</a>
+      <a href="/visualizer/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Demo</a>
+      <a href="/evidence/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Evidence</a>
+      <a href="/proof/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Proof</a>
+      <a href="/reproducibility/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Reproducibility</a>
+      <a href="/papers/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Papers</a>
+      <a href="/about/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">About</a>
     </div>
     <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="hidden sm:flex items-center gap-1.5 text-sm font-medium border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 px-3.5 py-1.5 rounded">
       View source
@@ -58,7 +64,7 @@
 <header class="border-b border-slate-200">
   <div class="wide-w mx-auto px-6 py-16 md:py-24">
     <div class="flex items-center gap-3 mb-8">
-      <img src="assets/img/logo-cropped.png" alt="" class="h-10 w-auto">
+      <img src="/assets/img/logo-cropped.png" alt="" class="h-10 w-auto">
       <span class="mono text-xs tracking-wide text-teal-700 border border-teal-700/25 bg-teal-50 px-2.5 py-1 rounded">MIT LCP × BU SPH</span>
     </div>
     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.12] prose-w">
@@ -71,7 +77,7 @@
     </p>
     <div class="mt-9 flex flex-wrap gap-3">
       <a href="#mechanisms" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-sm px-6 py-3 rounded">Explore the mechanism</a>
-      <a href="visualizer.html" class="border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 font-semibold text-sm px-6 py-3 rounded">Try the interactive demo</a>
+      <a href="/visualizer/" class="border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 font-semibold text-sm px-6 py-3 rounded">Try the interactive demo</a>
       <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 font-semibold text-sm px-6 py-3 rounded">View the code</a>
     </div>
     <div class="mt-10 flex flex-wrap gap-x-8 gap-y-2 text-sm text-slate-500">
@@ -149,7 +155,7 @@
 <!-- ============ 4. TWO MECHANISMS ============ -->
 <section id="mechanisms" class="border-b border-slate-200 bg-slate-50">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">The two mechanisms of state–action leakage</h2><a href="mechanisms.html" class="text-sm font-medium text-cyan-600 hover:underline">Full deep-dive →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">The two mechanisms of state–action leakage</h2><a href="/mechanisms/" class="text-sm font-medium text-cyan-600 hover:underline">Full deep-dive →</a></div>
 
     <!-- Mechanism 1 -->
     <div class="mt-12 bg-white border border-slate-200 rounded overflow-hidden">
@@ -239,7 +245,7 @@
     window overlap — come from the full 11,354-patient extraction; see
     <a href="#evidence" class="text-cyan-600 hover:underline">Evidence</a>. The complete synchronized
     model (causal graph + live AUROC) is on the
-    <a href="visualizer.html" class="text-cyan-600 hover:underline">full interactive demo</a>.</p>
+    <a href="/visualizer/" class="text-cyan-600 hover:underline">full interactive demo</a>.</p>
   </div>
 </section>
 
@@ -271,7 +277,7 @@
       <p>This is a <b>proven</b> non-identifiability result (Theorem 1), not a statistical
       tendency — verifiable by inspecting the scoring rule's branches directly. Full statement,
       proof, and the algebraic reconstruction argument for why naive feature removal doesn't fix it
-      (Theorem 2) are on the <a href="proof.html" class="text-cyan-600 hover:underline">formal proof page</a>.</p>
+      (Theorem 2) are on the <a href="/proof/" class="text-cyan-600 hover:underline">formal proof page</a>.</p>
     </div>
   </div>
 </section>
@@ -279,7 +285,7 @@
 <!-- ============ 6. EVIDENCE ============ -->
 <section id="evidence" class="border-b border-slate-200 bg-slate-50">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Evidence</h2><a href="evidence.html" class="text-sm font-medium text-cyan-600 hover:underline">Full evidence page →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Evidence</h2><a href="/evidence/" class="text-sm font-medium text-cyan-600 hover:underline">Full evidence page →</a></div>
     <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">Every figure below has been
     independently re-extracted from MIMIC-IV and reproduced across five or more separate pipeline
     runs — including two real extraction bugs found, diagnosed, and fixed along the way.</p>
@@ -301,36 +307,36 @@
     <p class="text-sm text-slate-500 mt-4 max-w-2xl">The Experiment 2 gap survived a 15× difference
     in underlying row counts almost untouched — evidence it's a real, ratio-based effect rather
     than an artifact of the two extraction bugs that inflated the raw counts. Full diagnostic
-    history in <a href="ROADMAP.md" class="text-cyan-600 hover:underline">ROADMAP.md</a> and
-    <a href="status.html" class="text-cyan-600 hover:underline">status.html</a>.</p>
+    history in <a href="/ROADMAP.md" class="text-cyan-600 hover:underline">ROADMAP.md</a> and
+    <a href="/status/" class="text-cyan-600 hover:underline">status.html</a>.</p>
   </div>
 </section>
 
 <!-- ============ 7. REPRODUCIBILITY ============ -->
 <section class="border-b border-slate-200">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Reproducibility</h2><a href="reproducibility.html" class="text-sm font-medium text-cyan-600 hover:underline">Full reproducibility page →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Reproducibility</h2><a href="/reproducibility/" class="text-sm font-medium text-cyan-600 hover:underline">Full reproducibility page →</a></div>
     <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">Every extraction query is
     public. Patient-level data is not — MIMIC-IV is credentialed-access, and row-level output is
-    never published. See <a href="DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>
+    never published. See <a href="/DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>
     for the exact governance policy.</p>
 
     <div class="mt-10 flex flex-wrap items-stretch gap-0 border border-slate-200 rounded overflow-hidden">
-      <a href="queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">01</div><div class="text-sm font-medium mt-1">MIMIC-IV</div></a>
-      <a href="queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">02</div><div class="text-sm font-medium mt-1">Cohort</div></a>
-      <a href="queries/02_vitals_labs_fio2.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/queries/02_vitals_labs_fio2.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">03</div><div class="text-sm font-medium mt-1">Variables</div></a>
-      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">04</div><div class="text-sm font-medium mt-1">Aggregation</div></a>
-      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">05</div><div class="text-sm font-medium mt-1">State rep.</div></a>
-      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">06</div><div class="text-sm font-medium mt-1">Action labels</div></a>
-      <a href="proof.html" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+      <a href="/proof/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">07</div><div class="text-sm font-medium mt-1">Leakage analysis</div></a>
-      <a href="status.html" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 p-4 text-center">
+      <a href="/status/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 p-4 text-center">
         <div class="text-xs mono text-slate-500">08</div><div class="text-sm font-medium mt-1">Evaluation</div></a>
     </div>
 
@@ -340,7 +346,7 @@
         <div class="flex items-center gap-3">
           <span class="mono text-xs text-slate-500">SQL</span>
           <button onclick="navigator.clipboard.writeText(document.getElementById('sqlSnippet').textContent)" class="mono text-xs text-slate-400 hover:text-cyan-400 border border-slate-700 hover:border-cyan-400 px-2 py-1 rounded">Copy</button>
-          <a href="queries/01_cohort.sql" class="mono text-xs text-slate-400 hover:text-cyan-400 border border-slate-700 hover:border-cyan-400 px-2 py-1 rounded">View full file</a>
+          <a href="/queries/01_cohort.sql" class="mono text-xs text-slate-400 hover:text-cyan-400 border border-slate-700 hover:border-cyan-400 px-2 py-1 rounded">View full file</a>
         </div>
       </div>
       <pre class="p-5 text-xs mono leading-relaxed overflow-x-auto text-slate-300" id="sqlSnippet"><span class="text-slate-500">-- adult, first-ICU-stay, Sepsis-3-qualifying, vasopressor-exposed stays</span>
@@ -362,7 +368,7 @@
 <!-- ============ 8. PAPERS ============ -->
 <section id="papers" class="border-b border-slate-200 bg-slate-50">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Related literature</h2><a href="papers.html" class="text-sm font-medium text-cyan-600 hover:underline">Full paper library →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">Related literature</h2><a href="/papers/" class="text-sm font-medium text-cyan-600 hover:underline">Full paper library →</a></div>
     <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">A full literature review
     (additional sepsis-RL studies, window-bias references) is planned but not yet complete — see
     ROADMAP.md Phase 6. Shown here are the three sources this project's own claims directly rest
@@ -394,7 +400,7 @@
 <!-- ============ 9. ABOUT ============ -->
 <section id="about" class="border-b border-slate-200">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">About SAIL</h2><a href="about.html" class="text-sm font-medium text-cyan-600 hover:underline">Full about page →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">About SAIL</h2><a href="/about/" class="text-sm font-medium text-cyan-600 hover:underline">Full about page →</a></div>
     <div class="mt-8 grid md:grid-cols-2 gap-10 prose-w">
       <div>
         <h3 class="font-semibold mb-2">Research question</h3>
@@ -406,14 +412,14 @@
         <h3 class="font-semibold mb-2">Open science</h3>
         <p class="text-sm text-slate-600 leading-relaxed">Every extraction query, the full
         notebook, and the complete bug-fix history are public. Patient-level data is not — see
-        <a href="DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>.</p>
+        <a href="/DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>.</p>
       </div>
     </div>
     <div class="mt-8 text-sm text-slate-500 prose-w">
       Research conducted at the <b class="text-slate-700">MIT Laboratory for Computational
       Physiology</b> and the <b class="text-slate-700">Boston University School of Public
       Health</b>. Full author and citation metadata in
-      <a href="CITATION.cff" class="text-cyan-600 hover:underline">CITATION.cff</a>.
+      <a href="/CITATION.cff" class="text-cyan-600 hover:underline">CITATION.cff</a>.
     </div>
   </div>
 </section>
@@ -424,9 +430,9 @@
   <div class="wide-w mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
     <span>MIT Laboratory for Computational Physiology × Boston University School of Public Health</span>
     <div class="flex gap-5">
-      <a href="LICENSE" class="hover:text-cyan-600">License</a>
-      <a href="CITATION.cff" class="hover:text-cyan-600">Citation</a>
-      <a href="ROADMAP.md" class="hover:text-cyan-600">Roadmap</a>
+      <a href="/LICENSE" class="hover:text-cyan-600">License</a>
+      <a href="/CITATION.cff" class="hover:text-cyan-600">Citation</a>
+      <a href="/ROADMAP.md" class="hover:text-cyan-600">Roadmap</a>
       <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="hover:text-cyan-600">GitHub</a>
     </div>
   </div>

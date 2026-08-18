@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formal Proof — State–Action Leakage in Sepsis RL</title>
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+---
+layout: base.njk
+title: "Formal Proof"
+activeNav: proof
+templateEngineOverride: false
+needsMathJax: true
+---
+
 <style>
   .proof-block{ background:var(--bg); border-left:3px solid var(--accent); padding:14px 18px; margin:14px 0; }
   .proof-block .label{ font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; margin-bottom:6px; }
@@ -19,28 +16,6 @@
   .qed{ text-align:right; font-family:var(--serif); }
   mjx-container{ font-size:105% !important; }
 </style>
-<script>
-window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
-      <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html" class="active">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html">Status</a>
-  </div>
-</div></nav>
 
 <div class="masthead"><div class="masthead-inner">
   <div class="affil">
@@ -50,7 +25,7 @@ window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } 
   <h1>A Formal and Causal Analysis of State–Action Leakage</h1>
   <p class="deck">Theoretical foundations and pre-registered predictions for the empirical audit.
   Two of the project's three claims are proven outright; the third is stated as a falsifiable test.
-  Full source (with references and an appendix) lives in <a href="FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md</a>.</p>
+  Full source (with references and an appendix) lives in <a href="/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md</a>.</p>
 </div></div>
 
 <main>
@@ -108,7 +83,7 @@ arterial pressure and active drug/dose $D$:</p>
 threshold, $S_t$'s cardiovascular feature is a deterministic function of $A_{t-1}$, independent of
 $U_t$. Empirically, this domain condition holds for 32.3% (4h window) / 28.6% (24h window) of
 eligible timesteps overall, and 100% of already-treated timesteps — see the live calculator on the
-<a href="demo.html" style="color:var(--accent);">walkthrough page</a> to verify this yourself.</p>
+<a href="/demo/" style="color:var(--accent);">walkthrough page</a> to verify this yourself.</p>
 
 <h3 class="section" id="thm2">Theorem 2 — reconstructibility under naive feature removal</h3>
 <p class="plain">$\text{sofa\_total} = \sum_{i=1}^{6}\text{subscore}_i$, a deterministic linear sum
@@ -232,13 +207,6 @@ graph — none require trusting code execution. Only H3 depends on running an ex
 </main>
 
 <div class="pagenav">
-  <a href="visualizer.html">← Live mechanism visualizer</a>
-  <a href="status.html" class="primary">Status & roadmap →</a>
+  <a href="/visualizer/">← Live mechanism visualizer</a>
+  <a href="/status/" class="primary">Status & roadmap →</a>
 </div>
-
-<footer class="page-footer">
-  Full source with references and notation appendix: <a href="FORMAL_ANALYSIS.md">FORMAL_ANALYSIS.md</a>
-</footer>
-
-</body>
-</html>

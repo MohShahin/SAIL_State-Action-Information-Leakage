@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Status & Roadmap — State–Action Leakage in Sepsis RL</title>
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+---
+layout: base.njk
+title: "Status & Roadmap"
+activeNav: status
+templateEngineOverride: false
+---
+
 <style>
   .phase{ display:flex; gap:16px; padding:16px 0; border-bottom:1px solid var(--line-soft); }
   .phase:last-child{ border-bottom:none; }
@@ -19,24 +15,6 @@
   .phase-body h4{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0 0 4px; }
   .phase-body p{ font-size:13px; color:var(--ink-soft); margin:0; line-height:1.55; }
 </style>
-</head>
-<body>
-
-<nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
-      <div class="sitenav-links">
-    <a href="index.html">Home</a>
-    <a href="mechanisms.html">Mechanisms</a>
-    <a href="demo.html">Walkthrough</a>
-    <a href="visualizer.html">Demo</a>
-    <a href="evidence.html">Evidence</a>
-    <a href="proof.html">Proof</a>
-    <a href="reproducibility.html">Reproducibility</a>
-    <a href="papers.html">Papers</a>
-    <a href="about.html">About</a>
-    <a href="status.html" class="active">Status</a>
-  </div>
-</div></nav>
 
 <div class="masthead"><div class="masthead-inner">
   <div class="affil">
@@ -45,7 +23,7 @@
   </div>
   <h1>Where things actually stand</h1>
   <p class="deck">The honest version, including two real bugs found and fixed along the way.
-  Full history in <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
+  Full history in <a href="/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
 </div></div>
 
 <main>
@@ -104,7 +82,7 @@
     <h4>Phase 4 — Experiment 5 (negative controls)</h4>
     <p>Four controls: shuffled labels, a 5-offset temporal decay curve, physiology-only
     cross-reference, and prevalence-matched placebo features. This is the test that resolves H3 —
-    see the <a href="proof.html" style="color:var(--accent);">formal proof page</a>'s
+    see the <a href="/proof/" style="color:var(--accent);">formal proof page</a>'s
     pre-registered decision rule. Checkpointed for resumable execution; moving to Google Colab for
     the compute-heavy pieces.</p>
   </div>
@@ -149,13 +127,6 @@
 </main>
 
 <div class="pagenav">
-  <a href="proof.html">← Formal proof</a>
-  <a href="demo.html" class="primary">Back to the walkthrough →</a>
+  <a href="/proof/">← Formal proof</a>
+  <a href="/demo/" class="primary">Back to the walkthrough →</a>
 </div>
-
-<footer class="page-footer">
-  Full history, including every commit message and diagnostic trail, in <a href="ROADMAP.md">ROADMAP.md</a>.
-</footer>
-
-</body>
-</html>

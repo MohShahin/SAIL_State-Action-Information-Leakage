@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} — SAIL</title>
+<link rel="icon" href="/assets/img/logo-cropped.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+{%- if needsMathJax %}
+<script>window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+{%- endif %}
+{%- if extraHead %}
+{{ extraHead | safe }}
+{%- endif %}
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="/">SAIL</a>
+  <div class="sitenav-links">
+    <a href="/"{% if activeNav == "home" %} class="active"{% endif %}>Home</a>
+    <a href="/mechanisms/"{% if activeNav == "mechanisms" %} class="active"{% endif %}>Mechanisms</a>
+    <a href="/demo/"{% if activeNav == "demo" %} class="active"{% endif %}>Walkthrough</a>
+    <a href="/visualizer/"{% if activeNav == "visualizer" %} class="active"{% endif %}>Demo</a>
+    <a href="/evidence/"{% if activeNav == "evidence" %} class="active"{% endif %}>Evidence</a>
+    <a href="/proof/"{% if activeNav == "proof" %} class="active"{% endif %}>Proof</a>
+    <a href="/reproducibility/"{% if activeNav == "reproducibility" %} class="active"{% endif %}>Reproducibility</a>
+    <a href="/papers/"{% if activeNav == "papers" %} class="active"{% endif %}>Papers</a>
+    <a href="/about/"{% if activeNav == "about" %} class="active"{% endif %}>About</a>
+    <a href="/status/"{% if activeNav == "status" %} class="active"{% endif %}>Status</a>
+  </div>
+</div></nav>
+
+{{ content | safe }}
+
+<footer class="page-footer">
+  MIT Laboratory for Computational Physiology × Boston University School of Public Health
+</footer>
+
+</body>
+</html>

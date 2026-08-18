@@ -5,6 +5,13 @@ __pycache__/
 .vscode/
 
 # ---------------------------------------------------------------------------
+# Eleventy build — GitHub Actions builds this fresh on every push (see
+# .github/workflows/deploy.yml). Never commit build output or node_modules.
+# ---------------------------------------------------------------------------
+node_modules/
+_site/
+
+# ---------------------------------------------------------------------------
 # MIMIC-IV governance — see DATA_ACCESS.md before removing anything below.
 # Row-level / patient-level derived data must never be committed. results/ is
 # blocked by default; only specific, hand-reviewed aggregate files under
