@@ -15,7 +15,7 @@
   .paper-card{ border:1px solid var(--line); border-radius:4px; padding:20px; background:var(--paper); }
   .paper-card .cat{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
   .cat-leak{ background:var(--treat-soft); color:var(--treat); }
-  .cat-motiv{ background:var(--line-soft); color:var(--ink-soft); }
+  .cat-context{ background:var(--line-soft); color:var(--ink-soft); }
   .cat-related{ background:var(--accent-soft); color:var(--accent); }
   .paper-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
   .paper-tags span{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); background:var(--bg); border:1px solid var(--line); padding:2px 7px; border-radius:3px; }
@@ -41,7 +41,7 @@
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Related literature</h1>
-  <p class="deck">Three sources, each doing real work for this project's own claims — not a padded
+  <p class="deck">Five sources, each doing real work for this project's own claims — not a padded
   reading list. A fuller literature review (additional sepsis-RL studies, temporal-bias
   references) is planned; see <a href="ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>
   Phase 6. Nothing below is labeled beyond what's actually verified.</p>
@@ -82,8 +82,8 @@ const PAPERS = [
     title: "The Artificial Intelligence Clinician learns optimal treatment strategies for sepsis in intensive care",
     authors: "Komorowski, M. et al.",
     venue: "Nature Medicine, 2018",
-    category: "Motivating application",
-    catClass: "cat-motiv",
+    category: "Included for context",
+    catClass: "cat-context",
     tags: ["Clinical AI", "Reinforcement learning", "Sepsis"],
     relevance: "The offline-RL framework whose state-representation assumptions this audit examines directly.",
     link: "https://doi.org/10.1038/s41591-018-0213-5"
@@ -97,6 +97,26 @@ const PAPERS = [
     tags: ["Causal inference", "Confounding"],
     relevance: "The general principle — conditioning prediction on a variable affected by treatment — underlying why the state is a descendant of prior action (Proposition 2).",
     link: "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/"
+  },
+  {
+    title: "Guidelines for reinforcement learning in healthcare",
+    authors: "Gottesman, O., Johansson, F., Komorowski, M., Faisal, A., Sontag, D., Doshi-Velez, F. & Celi, L. A.",
+    venue: "Nature Medicine, 2019",
+    category: "Related methodological issue",
+    catClass: "cat-related",
+    tags: ["Reinforcement learning", "Off-policy evaluation", "Clinical AI", "Guidelines"],
+    relevance: "Field-level guidance on confounding, distributional shift, and off-policy evaluation pitfalls in clinical RL — the general methodological concerns this project's Experiment 5 negative controls are designed to address for one specific mechanism.",
+    link: "https://doi.org/10.1038/s41591-018-0310-5"
+  },
+  {
+    title: "Does the \"Artificial Intelligence Clinician\" learn optimal treatment strategies for sepsis in intensive care?",
+    authors: "Jeter, R., Josef, C., Shashikumar, S. & Nemati, S.",
+    venue: "arXiv:1902.03271, 2019",
+    category: "Related methodological issue",
+    catClass: "cat-related",
+    tags: ["Reinforcement learning", "Off-policy evaluation", "Sepsis", "Temporal binning", "Critique"],
+    relevance: "An independent critique of the AI Clinician's methodology. Section 6.1 documents a related but mechanistically distinct temporal-binning confound: a 4-hour bin can average over a MAP crash and its vasopressor-driven recovery, so the bin's summary looks normal despite the treatment that occurred within it — within-bin masking, not the cross-bin window overlap this project's Mechanism 2 proves.",
+    link: "https://arxiv.org/abs/1902.03271"
   }
 ];
 
