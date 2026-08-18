@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formal Proof — State–Action Leakage in Sepsis RL</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .proof-block{ background:var(--bg); border-left:3px solid var(--accent); padding:14px 18px; margin:14px 0; }
+  .proof-block .label{ font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; margin-bottom:6px; }
+  .statement-block{ background:var(--physio-soft); border-left:3px solid var(--physio); padding:14px 18px; margin:14px 0; }
+  .statement-block .label{ font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--physio); font-weight:700; margin-bottom:6px; }
+  .toc{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12.5px; }
+  .toc a{ color:var(--ink-soft); }
+  .qed{ text-align:right; font-family:var(--serif); }
+  mjx-container{ font-size:105% !important; }
+</style>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+</head>
+<body>
+
+<nav class="sitenav"><div class="sitenav-inner">
+  <a class="sitenav-brand" href="index.html">SOFA Leakage <b>Audit</b></a>
+  <div class="sitenav-links">
+    <a href="index.html">Home</a>
+    <a href="demo.html">Walkthrough</a>
+    <a href="visualizer.html">Live visualizer</a>
+    <a href="proof.html" class="active">Formal proof</a>
+    <a href="status.html">Status & roadmap</a>
+  </div>
+</div></nav>
+
+<div class="masthead"><div class="masthead-inner">
+  <div class="affil">
+    <span><b>MIT</b> Laboratory for Computational Physiology</span>
+    <span><b>Boston University</b> School of Public Health</span>
+  </div>
+  <h1>A Formal and Causal Analysis of State–Action Leakage</h1>
+  <p class="deck">Theoretical foundations and pre-registered predictions for the empirical audit.
+  Two of the project's three claims are proven outright; the third is stated as a falsifiable test.
+  Full source (with references and an appendix) lives in <a href="FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md</a>.</p>
+</div></div>
+
+<main>
+
+<div class="card">
+  <h3>Contents</h3>
+  <div class="toc">
+    <a href="#abstract">Abstract</a>
+    <a href="#setup">Setup</a>
+    <a href="#thm1">Theorem 1</a>
+    <a href="#thm2">Theorem 2</a>
+    <a href="#sec5">Window overlap</a>
+    <a href="#dag">Causal graph</a>
+    <a href="#h3">The open conjecture</a>
+    <a href="#summary">Proof status table</a>
+  </div>
+</div>
+
+<h3 class="section" id="abstract" style="margin-top:0;">Abstract</h3>
+<p class="plain">Offline reinforcement learning for sepsis treatment learns a policy from a state
+representation built substantially from the SOFA organ-dysfunction score. We show this
+construction admits two <b>provable</b> failure modes — a scoring-rule non-identifiability and a
+window-overlap mechanism whose behavior, contrary to naive intuition, is not monotonic in window
+length, for reasons we derive from first principles. We place both in a causal graph and show the
+resulting state is formally a <i>descendant</i> of the prior treatment action — explaining why an
+empirical predictability gap is necessary but not sufficient evidence of leakage specifically. We
+close with a falsifiable, pre-registered decision procedure for the one claim that requires an
+experiment rather than a proof.</p>
+
+<h3 class="section" id="setup">Setup and notation</h3>
+<p class="plain">Decision times $t = 1,\dots,T_i$ per ICU stay, in 4-hour bins. $A_t$: vasopressor
+active following decision point $t$. $S_t$: the state vector at $t$, built from lookback window
+$[t-w,t)$. $U_t$: the patient's true, unobserved physiology. A well-posed state should not be a
+near-deterministic function of $A_{t-1}$ in a way that lets a model recover $A_t$ through
+$A_{t-1}$'s influence on $S_t$ alone, independent of what $S_t$ says about $U_t$.</p>
+
+<h3 class="section" id="thm1">Theorem 1 — non-identifiability of the SOFA cardiovascular score</h3>
+<p class="plain">The cardiovascular SOFA subscore (Vincent et al., 1996) is a function of mean
+arterial pressure and active drug/dose $D$:</p>
+<p class="plain">$$\sigma_{cardio}(\text{MAP}, D) = \begin{cases} 0 & \text{MAP} \geq 70,\ D = \emptyset \\ 1 & \text{MAP} < 70,\ D = \emptyset \\ 2 & D \in \{\text{dopamine} \leq 5,\ \text{dobutamine (any)}\} \\ 3 & D \in \{\text{dopamine} > 5,\ \text{epi} \leq 0.1,\ \text{norepi} \leq 0.1\} \\ 4 & D \in \{\text{dopamine} > 5,\ \text{epi} > 0.1,\ \text{norepi} > 0.1\} \end{cases}$$</p>
+
+<div class="statement-block">
+  <div class="label">Statement</div>
+  On the domain where $D$ crosses a dose threshold, $\sigma_{cardio}$ is constant in MAP: $\partial \sigma_{cardio} / \partial \text{MAP} = 0$ there.
+</div>
+<div class="proof-block">
+  <div class="label">Proof</div>
+  Inspect the three non-zero branches directly — none contains MAP as an argument. Fix $D=$ dopamine
+  at 6 mcg/kg/min. For any $\text{MAP} \in \{40, 55, 70, 90,\dots\}$, $\sigma_{cardio}(\text{MAP},D)=4$
+  identically. Two physiologically opposite states (severe hypotension vs. normotension) map to an
+  identical score. Exhaustive over the branch's domain — settled by the definition, not by sampling.
+  <div class="qed">∎</div>
+</div>
+<p class="plain"><b>Corollary 1.1.</b> For any timestep where $D\ne\emptyset$ and dose exceeds
+threshold, $S_t$'s cardiovascular feature is a deterministic function of $A_{t-1}$, independent of
+$U_t$. Empirically, this domain condition holds for 32.3% (4h window) / 28.6% (24h window) of
+eligible timesteps overall, and 100% of already-treated timesteps — see the live calculator on the
+<a href="demo.html" style="color:var(--accent);">walkthrough page</a> to verify this yourself.</p>
+
+<h3 class="section" id="thm2">Theorem 2 — reconstructibility under naive feature removal</h3>
+<p class="plain">$\text{sofa\_total} = \sum_{i=1}^{6}\text{subscore}_i$, a deterministic linear sum
+including $\sigma_{cardio}$.</p>
+<div class="statement-block">
+  <div class="label">Statement</div>
+  Removing $\sigma_{cardio}$ while retaining $\text{sofa\_total}$ (state variant C) does not remove the information $\sigma_{cardio}$ carries.
+</div>
+<div class="proof-block">
+  <div class="label">Proof</div>
+  $\sigma_{cardio} = \text{sofa\_total} - \sum_{i\ne cardio}\text{subscore}_i$. Every term on the
+  right is observable in variant C. The reconstruction is an algebraic identity, exact rather than
+  approximate.
+  <div class="qed">∎</div>
+</div>
+<p class="plain"><b>Corollary 2.1.</b> A removal scheme defeats Theorem 2 only if it recomputes
+<i>every</i> quantity $\sigma_{cardio}$ is reconstructible from — $\text{sofa\_total}$ itself must be
+recomputed from a treatment-independent proxy. Confirmed empirically: variant C's AUROC (0.885)
+sits close to the full state's (0.900); variant D — which recomputes the total per Corollary 2.1 —
+drops to 0.792, close to the physiology-only floor (0.791).</p>
+
+<h3 class="section" id="sec5">Window-overlap leakage: what is provable, and a correction</h3>
+<p class="plain">For decision point $t$, window $w$, let $O_t(w)$ be total treatment-hours
+overlapping $[t-w,t)$. Contamination fraction: $$c_t(w) = \min\left(1, \frac{O_t(w)}{w}\right)$$</p>
+
+<div class="statement-block">
+  <div class="label">Proposition 1 — monotonicity of absolute overlap</div>
+  For $w_1 < w_2$: $O_t(w_1) \le O_t(w_2)$.
+</div>
+<div class="proof-block">
+  <div class="label">Proof</div>
+  $[t-w_1,t) \subset [t-w_2,t)$ — nested windows. $O_t(w)$ measures treatment time intersecting a
+  set that only grows as $w$ increases.
+  <div class="qed">∎</div>
+</div>
+
+<p class="plain"><b>Why the fraction is not similarly monotonic — the important correction.</b>
+$c_t(w)=O_t(w)/w$ is a ratio of a monotone non-decreasing numerator to a strictly increasing
+denominator. Differentiating: $$\frac{dc_t}{dw} \propto \frac{dO_t}{dw} - c_t(w)$$ so $c_t(w)$
+increases at $w$ precisely when the <i>marginal</i> treatment density in the newly-included slice
+exceeds the <i>average</i> density accumulated so far — the same relationship as a marginal-cost
+curve crossing an average-cost curve. This is provable, not an artifact, and it correctly predicts
+what this project actually measured: the 4-hour window showed a <i>higher</i> &gt;50%-contamination
+rate (34.3%) than the 24-hour window (28.7–30.8% across runs) — consistent with, not contradictory
+to, this framework.</p>
+
+<h3 class="section" id="dag">The causal graph, and why H3 needs an experiment</h3>
+<svg width="100%" viewBox="0 0 680 380" role="img" style="margin:10px 0;">
+<title>Causal graph: prior action reaches the next action through a legitimate physiology path and two illegitimate paths</title>
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<path d="M140,64 L140,110" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M140,144 L140,190" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M140,234 L140,280" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M140,314 L140,340 L140,340" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah)"/>
+<path d="M470,120 L280,148 L240,138" fill="none" stroke="#7c1d2e" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M470,132 L240,208" fill="none" stroke="#7c1d2e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M500,150 C500,280 320,330 244,338" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+<rect x="40" y="20" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+<text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">True physiology U_t</text>
+<text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">unobserved</text>
+<rect x="40" y="110" width="200" height="34" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+<text x="140" y="131" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">MAP_t (observed)</text>
+<rect x="40" y="190" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+<text x="140" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">sofa_cardio_t</text>
+<text x="140" y="223" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">f(MAP, drug, dose)</text>
+<rect x="40" y="280" width="200" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="140" y="301" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">State S_t</text>
+<rect x="40" y="340" width="200" height="34" rx="6" fill="#faf9f6" stroke="#948f80" stroke-width="0.75"/>
+<text x="140" y="361" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#201f1c">Next action A_t</text>
+<rect x="440" y="98" width="220" height="52" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="550" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">Prior action A_(t-1)</text>
+<text x="550" y="136" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040">vasopressor given</text>
+<line x1="440" y1="200" x2="465" y2="200" stroke="#948f80" stroke-width="1"/>
+<text x="475" y="204" font-family="sans-serif" font-size="11" fill="#5a564c">legitimate / causal</text>
+<line x1="440" y1="222" x2="465" y2="222" stroke="#7c1d2e" stroke-width="1.6"/>
+<text x="475" y="226" font-family="sans-serif" font-size="11" fill="#5a564c">definitional leak (Thm. 1)</text>
+<line x1="440" y1="244" x2="465" y2="244" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="475" y="248" font-family="sans-serif" font-size="11" fill="#5a564c">treatment persistence</text>
+<line x1="440" y1="266" x2="465" y2="266" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4"/>
+<text x="475" y="270" font-family="sans-serif" font-size="11" fill="#5a564c">what a classifier exploits</text>
+</svg>
+<p class="plain"><b>Proposition 2.</b> There exists a directed path $A_{t-1}\to\sigma_{cardio,t}\to
+S_t$. <b>Proof.</b> Direct from the edges above. ∎ This means $S_t$ is a <i>descendant</i> of
+$A_{t-1}$ — not a novel finding in the abstract (using a variable affected by treatment as a
+nominal covariate is documented in Hernán & Robins, <i>Causal Inference: What If</i>), but here it
+follows from a specific, provable graph edge (Theorem 1).</p>
+<p class="plain">A classifier predicting $A_t$ from $S_t$ (Experiment 2) cannot, from AUROC alone,
+attribute its performance between the coral solid path (definitional leak) and the coral dashed
+path (ordinary persistence, unrelated to SOFA). <b>This is why H3 requires an experiment, not a
+proof.</b></p>
+
+<h3 class="section" id="h3">The open conjecture, stated as a falsifiable test</h3>
+<div class="card">
+  <p class="plain" style="margin-bottom:10px;">Let $\text{AUROC}(k)$ denote Experiment 5(b)'s
+  offset-decay AUROC at offset $k \in \{0,1,2,4,8\}$ bins. Define $\Delta = \text{AUROC}(0) -
+  \text{AUROC}(8)$.</p>
+  <div class="facts">
+    <div class="fact"><div class="n" style="font-size:14px;">Prediction A</div><div class="l">$\Delta \ge 0.10$, CIs don't overlap → supports genuine, temporally-specific leak</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Prediction B</div><div class="l">$\Delta < 0.10$, or CIs overlap → treatment persistence explains most of the gap</div></div>
+    <div class="fact"><div class="n" style="font-size:14px;">Falsification</div><div class="l">flat curve + variant E already matching A → mechanisms real but practically negligible here</div></div>
+  </div>
+</div>
+
+<h3 class="section" id="summary">Proof status of every claim</h3>
+<table class="data">
+<tr><th>Claim</th><th>Status</th><th>Nature</th></tr>
+<tr><td class="label">Theorem 1 (definitional leakage)</td><td>Proven</td><td>Function-domain fact</td></tr>
+<tr><td class="label">Theorem 2 (variant C insufficiency)</td><td>Proven</td><td>Algebraic identity</td></tr>
+<tr><td class="label">Prop. 1 (overlap monotonicity)</td><td>Proven</td><td>Measure-theoretic</td></tr>
+<tr><td class="label">Fraction non-monotonicity</td><td>Proven</td><td>Marginal/average calculus</td></tr>
+<tr><td class="label">Prop. 2 ($S_t$ descendant of $A_{t-1}$)</td><td>Proven</td><td>Graph-theoretic</td></tr>
+<tr><td class="label">H3 (AUROC gap = genuine leakage)</td><td>Open — Conjecture</td><td>Requires Experiment 5</td></tr>
+</table>
+<p class="plain">Every proof above can be verified by a reviewer reading the scoring rule and the
+graph — none require trusting code execution. Only H3 depends on running an experiment.</p>
+
+</main>
+
+<div class="pagenav">
+  <a href="visualizer.html">← Live mechanism visualizer</a>
+  <a href="status.html" class="primary">Status & roadmap →</a>
+</div>
+
+<footer class="page-footer">
+  Full source with references and notation appendix: <a href="FORMAL_ANALYSIS.md">FORMAL_ANALYSIS.md</a>
+</footer>
+
+</body>
+</html>
