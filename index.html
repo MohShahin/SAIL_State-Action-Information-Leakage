@@ -3,305 +3,508 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAIL — State-Action Information Leakage in Sepsis RL</title>
-<meta name="description" content="SAIL: a formal and empirical audit of state-action information leakage in offline reinforcement learning for sepsis treatment. MIT Laboratory for Computational Physiology × Boston University School of Public Health.">
+<title>SAIL — State-Action Information Leakage in Sepsis Reinforcement Learning</title>
+<meta name="description" content="A formal and empirical audit of state-action information leakage in offline reinforcement learning for sepsis treatment. MIT Laboratory for Computational Physiology × Boston University School of Public Health.">
 <meta property="og:title" content="SAIL — State-Action Information Leakage">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/logo-cropped.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Helvetica','Arial','sans-serif'] },
-        colors: { navy: { 950: '#020617' }, slate: { 900:'#0f172a', 950:'#020617' } }
-      }
-    }
-  }
-</script>
 <style>
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
   .mono{ font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
-  ::selection{ background:#0e5c66; color:#ecfeff; }
-  .nav-link{ transition:color 0ms; }
-  .glow-cyan{ box-shadow: 0 0 0 1px rgba(34,211,238,.25); }
+  .prose-w{ max-width:46rem; } /* ~740px comfortable reading width */
+  .wide-w{ max-width:72rem; } /* ~1150px for diagrams / interactive panels */
+  :focus-visible{ outline:2px solid #0891B2; outline-offset:2px; }
+  .toggle-track{ position:relative; width:46px; height:25px; border-radius:13px; background:#e2e8f0; cursor:pointer; transition:background .2s; }
+  .toggle-track.on{ background:#0891B2; }
+  .toggle-track .knob{ position:absolute; top:2.5px; left:2.5px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); transition:left .2s; }
+  .toggle-track.on .knob{ left:23.5px; }
 </style>
 </head>
-<body class="bg-slate-950 text-slate-400 font-sans antialiased">
+<body class="bg-white text-slate-900 antialiased">
+
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-cyan-600 text-white px-3 py-2 z-50">Skip to content</a>
 
 <!-- ============ NAV ============ -->
-<nav class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur border-b border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-3">
-      <img src="assets/img/logo-cropped.png" alt="SAIL" class="h-8 w-auto">
-      <span class="text-slate-50 font-bold tracking-tight text-lg">SAIL</span>
+<nav class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200" aria-label="Primary">
+  <div class="wide-w mx-auto px-6 py-3.5 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5">
+      <img src="assets/img/logo-cropped.png" alt="SAIL logo" class="h-7 w-auto">
+      <span class="font-bold tracking-tight text-base">SAIL</span>
     </a>
-    <div class="hidden md:flex items-center gap-1 text-sm">
-      <a href="index.html" class="nav-link text-cyan-400 px-3 py-2 border-b border-cyan-400">Home</a>
-      <a href="demo.html" class="nav-link text-slate-400 hover:text-cyan-400 px-3 py-2 border-b border-transparent hover:border-cyan-400">Walkthrough</a>
-      <a href="visualizer.html" class="nav-link text-slate-400 hover:text-cyan-400 px-3 py-2 border-b border-transparent hover:border-cyan-400">Visualizer</a>
-      <a href="proof.html" class="nav-link text-slate-400 hover:text-cyan-400 px-3 py-2 border-b border-transparent hover:border-cyan-400">Proof</a>
-      <a href="status.html" class="nav-link text-slate-400 hover:text-cyan-400 px-3 py-2 border-b border-transparent hover:border-cyan-400">Status</a>
+    <div class="hidden lg:flex items-center gap-1 text-sm">
+      <a href="#core-question" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Why leakage?</a>
+      <a href="#mechanisms" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Mechanisms</a>
+      <a href="visualizer.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Interactive demo</a>
+      <a href="#evidence" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Evidence</a>
+      <a href="proof.html" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Formal proof</a>
+      <a href="#papers" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Papers</a>
+      <a href="#about" class="px-3 py-2 text-slate-600 hover:text-cyan-600">About</a>
     </div>
-    <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning" class="hidden sm:flex items-center gap-2 text-xs mono text-slate-400 hover:text-cyan-400 border border-slate-800 hover:border-cyan-400 px-3 py-1.5">
-      GITHUB
+    <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="hidden sm:flex items-center gap-1.5 text-sm font-medium border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 px-3.5 py-1.5 rounded">
+      View source
     </a>
   </div>
 </nav>
 
-<!-- ============ SECTION 1 — HERO ============ -->
-<header class="border-b border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
-    <div class="flex items-center gap-4 mb-8">
-      <img src="assets/img/logo-cropped.png" alt="" class="h-14 w-auto">
-      <span class="mono text-xs tracking-[0.2em] text-teal-400 border border-teal-400/30 px-2.5 py-1">MIT LCP × BU SPH</span>
+<main id="main">
+
+<!-- ============ 1. HERO ============ -->
+<header class="border-b border-slate-200">
+  <div class="wide-w mx-auto px-6 py-16 md:py-24">
+    <div class="flex items-center gap-3 mb-8">
+      <img src="assets/img/logo-cropped.png" alt="" class="h-10 w-auto">
+      <span class="mono text-xs tracking-wide text-teal-700 border border-teal-700/25 bg-teal-50 px-2.5 py-1 rounded">MIT LCP × BU SPH</span>
     </div>
-    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-slate-50 leading-[1.05] max-w-4xl">
-      SAIL<span class="text-slate-600">:</span> State<span class="text-cyan-400">→</span>Action Information Leakage
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.12] prose-w">
+      SAIL: State–Action Information Leakage
     </h1>
-    <p class="mt-6 text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed">
-      The severity score a sepsis RL policy learns from already encodes the treatment it's about
-      to recommend — closing a circular loop between action and state that undermines the
-      premise the whole framework rests on.
+    <p class="mt-6 text-lg md:text-xl text-slate-600 leading-relaxed prose-w">
+      A reinforcement-learning model can appear to learn a sound sepsis treatment policy when the
+      state it's given already contains information about the treatment it's about to recommend.
+      This project measures — and in two cases, proves outright — how often that happens.
     </p>
-    <div class="mt-10 flex flex-wrap gap-3">
-      <a href="visualizer.html" class="bg-cyan-400 text-slate-950 font-bold text-sm px-6 py-3 hover:bg-teal-400 transition-colors">
-        Watch the leak happen →
-      </a>
-      <a href="proof.html" class="border border-slate-700 text-slate-200 text-sm px-6 py-3 hover:border-cyan-400 hover:text-cyan-400 transition-colors">
-        Read the formal proof
-      </a>
+    <div class="mt-9 flex flex-wrap gap-3">
+      <a href="#mechanisms" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-sm px-6 py-3 rounded">Explore the mechanism</a>
+      <a href="visualizer.html" class="border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 font-semibold text-sm px-6 py-3 rounded">Try the interactive demo</a>
+      <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="border border-slate-300 hover:border-cyan-600 hover:text-cyan-600 font-semibold text-sm px-6 py-3 rounded">View the code</a>
     </div>
-    <div class="mt-10 flex flex-wrap gap-x-8 gap-y-2 mono text-xs text-slate-500">
-      <span><span class="text-slate-200">11,354</span> ICU stays audited</span>
-      <span><span class="text-slate-200">2</span> mechanisms proven</span>
-      <span><span class="text-slate-200">3</span> bugs found &amp; fixed in our own pipeline</span>
-      <span class="text-teal-400">status: preliminary audit</span>
+    <div class="mt-10 flex flex-wrap gap-x-8 gap-y-2 text-sm text-slate-500">
+      <span><span class="text-slate-900 font-semibold">11,354</span> ICU stays audited</span>
+      <span><span class="text-slate-900 font-semibold">2</span> mechanisms proven mathematically</span>
+      <span><span class="text-slate-900 font-semibold">3</span> pipeline bugs found and fixed in the open</span>
+      <span class="text-teal-700 font-medium">preliminary, non-peer-reviewed working draft</span>
     </div>
   </div>
 </header>
 
-<!-- ============ SECTION 2 — CORE MECHANICS ============ -->
-<section class="border-b border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="flex items-baseline justify-between mb-10">
-      <h2 class="text-2xl font-bold tracking-tight text-slate-50">The core mechanics</h2>
-      <span class="mono text-xs text-slate-500">02 / proven mechanisms</span>
-    </div>
-    <div class="grid md:grid-cols-2 gap-px bg-slate-800">
+<!-- ============ 2. THE CORE QUESTION ============ -->
+<section id="core-question" class="border-b border-slate-200 bg-slate-50">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">Is the model learning the patient — or learning the treatment?</h2>
+    <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">Both pipelines below look
+    identical from the outside — same architecture, same training procedure. The difference is
+    invisible unless you look at what the state actually contains.</p>
 
-      <div class="bg-slate-900 p-8">
-        <div class="mono text-xs text-cyan-400 mb-3">MECHANISM 01</div>
-        <h3 class="text-xl font-bold text-slate-50 mb-3">State → action confounding</h3>
-        <p class="text-sm leading-relaxed mb-4">The cardiovascular SOFA subscore is scored directly
-        from vasopressor dose, not only blood pressure. Once a dose threshold is crossed, the score
-        stops responding to physiology at all.</p>
-        <ul class="text-sm space-y-2 mb-6">
-          <li class="flex gap-2"><span class="text-cyan-400">→</span> Provable: two opposite MAP values, identical dose, identical score</li>
-          <li class="flex gap-2"><span class="text-cyan-400">→</span> Removing the subscore alone isn't enough — the total reconstructs it by subtraction</li>
-        </ul>
-        <div class="flex gap-6 border-t border-slate-800 pt-4">
-          <div><div class="text-2xl font-black text-slate-50 mono">100%</div><div class="text-xs text-slate-500">of treated timesteps, dose-determined</div></div>
-          <div><div class="text-2xl font-black text-slate-50 mono">32.3%</div><div class="text-xs text-slate-500">of all eligible timesteps (4h window)</div></div>
-        </div>
+    <div class="mt-10 grid md:grid-cols-2 gap-6">
+      <div class="bg-white border border-slate-200 rounded p-6">
+        <div class="mono text-xs text-slate-500 mb-4">INTENDED PIPELINE</div>
+        <svg width="100%" viewBox="0 0 400 190" role="img" aria-label="Patient state flows into the model, producing an action, without shortcuts">
+          <rect x="20" y="20" width="360" height="46" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="200" y="48" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="600">Patient state (physiology)</text>
+          <line x1="200" y1="66" x2="200" y2="92" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr1)"/>
+          <rect x="20" y="92" width="360" height="46" rx="4" fill="#ecfeff" stroke="#0891B2"/>
+          <text x="200" y="120" text-anchor="middle" font-size="14" fill="#0e7490" font-weight="600">Model</text>
+          <line x1="200" y1="138" x2="200" y2="164" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr1)"/>
+          <rect x="20" y="164" width="360" height="24" rx="4" fill="#f0fdfa" stroke="#0F766E"/>
+          <text x="200" y="180" text-anchor="middle" font-size="12.5" fill="#0f766e" font-weight="600">Action</text>
+          <defs><marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3b8"/></marker></defs>
+        </svg>
+        <p class="text-sm text-slate-600 mt-4">The model learns a genuine mapping from a patient's
+        condition to a clinical decision.</p>
       </div>
 
-      <div class="bg-slate-900 p-8">
-        <div class="mono text-xs text-teal-400 mb-3">MECHANISM 02</div>
-        <h3 class="text-xl font-bold text-slate-50 mb-3">Overlapping temporal windows</h3>
-        <p class="text-sm leading-relaxed mb-4">Aggregation windows built to summarize "the current
-        state" routinely overlap periods when treatment was already running — contaminating a
-        supposedly pre-decision snapshot with treatment history.</p>
-        <ul class="text-sm space-y-2 mb-6">
-          <li class="flex gap-2"><span class="text-teal-400">→</span> Provably nonzero at the limits; not simply monotonic in window length in between</li>
-          <li class="flex gap-2"><span class="text-teal-400">→</span> Verified twice, corrected once after a real extraction bug was found and fixed</li>
-        </ul>
-        <div class="flex gap-6 border-t border-slate-800 pt-4">
-          <div><div class="text-2xl font-black text-slate-50 mono">31.1%</div><div class="text-xs text-slate-500">mean window contamination (24h)</div></div>
-          <div><div class="text-2xl font-black text-slate-50 mono">28.7%</div><div class="text-xs text-slate-500">decision points &gt;50% contaminated</div></div>
-        </div>
+      <div class="bg-white border border-red-200 rounded p-6">
+        <div class="mono text-xs text-red-600 mb-4">WHAT SAIL FINDS INSTEAD</div>
+        <svg width="100%" viewBox="0 0 400 190" role="img" aria-label="Patient state plus hidden action information flows into the model, producing an apparently intelligent action">
+          <rect x="20" y="20" width="360" height="46" rx="4" fill="#fef2f2" stroke="#DC2626"/>
+          <text x="200" y="42" text-anchor="middle" font-size="13" fill="#991b1b" font-weight="600">Patient state</text>
+          <text x="200" y="58" text-anchor="middle" font-size="11" fill="#b91c1c">+ hidden prior-treatment information</text>
+          <line x1="200" y1="66" x2="200" y2="92" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <rect x="20" y="92" width="360" height="46" rx="4" fill="#ecfeff" stroke="#0891B2"/>
+          <text x="200" y="120" text-anchor="middle" font-size="14" fill="#0e7490" font-weight="600">Model</text>
+          <line x1="200" y1="138" x2="200" y2="164" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <rect x="20" y="164" width="360" height="24" rx="4" fill="#fef2f2" stroke="#DC2626"/>
+          <text x="200" y="180" text-anchor="middle" font-size="12.5" fill="#991b1b" font-weight="600">"Apparently intelligent" action</text>
+          <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#DC2626"/></marker></defs>
+        </svg>
+        <p class="text-sm text-slate-600 mt-4">The model partly recovers the answer from the
+        question — SOFA's own construction and window timing both provably do this.</p>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ============ SECTION 3 — INTERACTIVE PROOF WALKTHROUGH ============ -->
-<section class="border-b border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="flex items-baseline justify-between mb-10">
-      <h2 class="text-2xl font-bold tracking-tight text-slate-50">Interactive proof walkthrough</h2>
-      <span class="mono text-xs text-slate-500">03 / live calculator</span>
+<!-- ============ 3. WHY THIS MATTERS ============ -->
+<section class="border-b border-slate-200">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">Why this matters</h2>
+    <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">The concern isn't prediction
+    accuracy on its own — it's whether apparent performance reflects genuine patient information, or
+    something else entirely.</p>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 border border-slate-200 rounded overflow-hidden">
+      <div class="bg-white p-6"><div class="text-xs mono text-slate-500 mb-2">01</div><h3 class="font-semibold mb-1.5">Clinical state</h3><p class="text-sm text-slate-600">What the patient's physiology actually tells us — vitals, labs, organ function.</p></div>
+      <div class="bg-white p-6"><div class="text-xs mono text-red-600 mb-2">02</div><h3 class="font-semibold mb-1.5">Treatment history</h3><p class="text-sm text-slate-600">Information that indirectly reveals what was already given, not what the patient needs next.</p></div>
+      <div class="bg-white p-6"><div class="text-xs mono text-red-600 mb-2">03</div><h3 class="font-semibold mb-1.5">Temporal structure</h3><p class="text-sm text-slate-600">Artifacts created by measurement timing and overlapping aggregation windows.</p></div>
+      <div class="bg-white p-6"><div class="text-xs mono text-slate-500 mb-2">04</div><h3 class="font-semibold mb-1.5">Model performance</h3><p class="text-sm text-slate-600">The resulting apparent predictability — which mixes all three of the above.</p></div>
     </div>
-
-    <div class="bg-slate-900 border border-slate-800">
-      <div class="border-b border-slate-800 px-6 py-3 flex items-center justify-between">
-        <span class="mono text-xs text-slate-500">window_overlap_simulator.py</span>
-        <span class="mono text-xs text-teal-400">● live</span>
-      </div>
-      <div class="p-6 md:p-8 grid md:grid-cols-3 gap-8">
-
-        <div class="md:col-span-1 space-y-6">
-          <div>
-            <div class="flex justify-between mono text-xs mb-2">
-              <span class="text-slate-400">window_length_hours</span>
-              <span id="winVal" class="text-cyan-400">24</span>
-            </div>
-            <input type="range" id="winSlider" min="1" max="24" value="24" class="w-full accent-cyan-400">
-          </div>
-          <div>
-            <div class="flex justify-between mono text-xs mb-2">
-              <span class="text-slate-400">treatment_start_h</span>
-              <span id="startVal" class="text-cyan-400">-18</span>
-            </div>
-            <input type="range" id="startSlider" min="-24" max="0" value="-18" class="w-full accent-cyan-400">
-          </div>
-          <div>
-            <div class="flex justify-between mono text-xs mb-2">
-              <span class="text-slate-400">treatment_duration_h</span>
-              <span id="durVal" class="text-cyan-400">10</span>
-            </div>
-            <input type="range" id="durSlider" min="1" max="24" value="10" class="w-full accent-cyan-400">
-          </div>
-          <div class="pt-4 border-t border-slate-800">
-            <div class="mono text-xs text-slate-500 mb-1">contamination_fraction</div>
-            <div id="pctOut" class="text-4xl font-black text-slate-50 mono">0.00</div>
-          </div>
-        </div>
-
-        <div class="md:col-span-2">
-          <svg id="tl" width="100%" viewBox="0 0 600 160" class="border border-slate-800 bg-slate-950">
-            <line x1="40" y1="130" x2="560" y2="130" stroke="#334155" stroke-width="1"/>
-            <rect id="winRect" x="0" y="40" width="0" height="70" fill="#22d3ee" fill-opacity="0.12" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3 3"/>
-            <rect id="treatRect" x="0" y="60" width="0" height="30" fill="#2dd4bf" fill-opacity="0.55"/>
-            <rect id="overlapRect" x="0" y="60" width="0" height="30" fill="#22d3ee"/>
-            <line x1="560" y1="20" x2="560" y2="140" stroke="#f8fafc" stroke-width="1.5"/>
-            <text x="560" y="14" text-anchor="middle" fill="#f8fafc" font-size="10" font-family="ui-monospace,monospace">t (decision)</text>
-            <text x="40" y="150" fill="#64748b" font-size="10" font-family="ui-monospace,monospace">-24h</text>
-            <text x="560" y="150" text-anchor="end" fill="#64748b" font-size="10" font-family="ui-monospace,monospace">0h</text>
-          </svg>
-          <div class="flex gap-6 mt-4 mono text-xs">
-            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-cyan-400 inline-block"></span>lookback window</span>
-            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-teal-400 inline-block opacity-55"></span>treatment interval</span>
-            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-cyan-400 inline-block"></span>overlap (contaminated)</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <p class="text-xs text-slate-500 mt-4">Simplified two-interval model for illustration — the
-    verified 31.1%/28.7% figures above come from the full 11,354-patient extraction, not this
-    toy simulator. Full mechanism (state vector + causal graph + live AUROC) on the
-    <a href="visualizer.html" class="text-cyan-400 hover:underline">visualizer page</a>.</p>
   </div>
 </section>
 
-<!-- ============ SECTION 4 — REPRODUCIBILITY ============ -->
-<section>
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="flex items-baseline justify-between mb-10">
-      <h2 class="text-2xl font-bold tracking-tight text-slate-50">Reproducibility &amp; data governance</h2>
-      <span class="mono text-xs text-slate-500">04 / open pipeline</span>
-    </div>
+<!-- ============ 4. TWO MECHANISMS ============ -->
+<section id="mechanisms" class="border-b border-slate-200 bg-slate-50">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">The two mechanisms of state–action leakage</h2>
 
-    <div class="grid md:grid-cols-2 gap-8">
-      <div>
-        <p class="text-sm leading-relaxed mb-4">Every extraction query is public. Every result
-        figure has been independently re-derived and reproduced across five or more separate
-        pipeline runs — including two real extraction bugs found, diagnosed, and fixed in the
-        open.</p>
-        <ul class="text-sm space-y-3">
-          <li class="flex gap-3"><span class="text-teal-400 mono">01</span><span><b class="text-slate-200">Queries are public.</b> Full BigQuery SQL for cohort, vitals/labs, and dose extraction.</span></li>
-          <li class="flex gap-3"><span class="text-teal-400 mono">02</span><span><b class="text-slate-200">Patient data is not.</b> MIMIC-IV is credentialed-access; row-level output is never published — see governance policy.</span></li>
-          <li class="flex gap-3"><span class="text-teal-400 mono">03</span><span><b class="text-slate-200">History is unfiltered.</b> Bugs, dead ends, and corrections are documented, not hidden.</span></li>
-        </ul>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="DATA_ACCESS.md" class="text-xs mono border border-slate-700 text-slate-300 hover:border-cyan-400 hover:text-cyan-400 px-3 py-2">DATA_ACCESS.md</a>
-          <a href="queries/" class="text-xs mono border border-slate-700 text-slate-300 hover:border-cyan-400 hover:text-cyan-400 px-3 py-2">queries/</a>
-          <a href="ROADMAP.md" class="text-xs mono border border-slate-700 text-slate-300 hover:border-cyan-400 hover:text-cyan-400 px-3 py-2">ROADMAP.md</a>
+    <!-- Mechanism 1 -->
+    <div class="mt-12 bg-white border border-slate-200 rounded overflow-hidden">
+      <div class="p-6 md:p-8 border-b border-slate-200">
+        <div class="mono text-xs text-cyan-600 mb-2">MECHANISM 1</div>
+        <h3 class="text-xl font-bold">State → action confounding</h3>
+        <p class="text-sm text-slate-600 mt-2 max-w-2xl">The SOFA cardiovascular subscore is scored
+        directly from vasopressor dose, not from blood pressure alone. Above a dose threshold, the
+        score stops responding to physiology entirely — this is a proven fact about the scoring
+        function's definition, not a measured tendency.</p>
+      </div>
+      <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-sm font-medium text-slate-700">Treatment information</span>
+            <div class="toggle-track" id="mech1Toggle" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle treatment information present or absent">
+              <div class="knob"></div>
+            </div>
+            <span class="text-sm font-medium" id="mech1Label">absent</span>
+          </div>
+          <div class="space-y-2" id="mech1Vec">
+            <!-- populated by JS -->
+          </div>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 rounded p-5">
+          <div class="text-xs mono text-slate-500 mb-2">what this means</div>
+          <p class="text-sm text-slate-700" id="mech1Caption">With no vasopressor active, the
+          cardiovascular subscore reflects blood pressure only — a genuine physiology signal.</p>
         </div>
       </div>
+    </div>
 
-      <div class="bg-slate-900 border border-slate-800">
-        <div class="border-b border-slate-800 px-4 py-2.5 flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-          <span class="mono text-xs text-slate-500 ml-2">queries/01_cohort.sql</span>
+    <!-- Mechanism 2 -->
+    <div class="mt-8 bg-white border border-slate-200 rounded overflow-hidden">
+      <div class="p-6 md:p-8 border-b border-slate-200">
+        <div class="mono text-xs text-teal-700 mb-2">MECHANISM 2</div>
+        <h3 class="text-xl font-bold">Overlapping temporal windows</h3>
+        <p class="text-sm text-slate-600 mt-2 max-w-2xl">A "current state" snapshot is built by
+        aggregating over a lookback window. When that window overlaps a period when treatment was
+        already running, the snapshot is contaminated with treatment history it was supposed to
+        precede.</p>
+      </div>
+      <div class="p-6 md:p-8">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="space-y-5">
+            <div>
+              <div class="flex justify-between text-xs mono mb-1.5"><span class="text-slate-500">state_window_hours</span><span class="text-cyan-600" id="m2WinVal">24</span></div>
+              <input type="range" id="m2Win" min="1" max="24" value="24" class="w-full accent-cyan-600">
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mono mb-1.5"><span class="text-slate-500">treatment_start_h</span><span class="text-cyan-600" id="m2StartVal">-18</span></div>
+              <input type="range" id="m2Start" min="-24" max="0" value="-18" class="w-full accent-cyan-600">
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mono mb-1.5"><span class="text-slate-500">treatment_duration_h</span><span class="text-cyan-600" id="m2DurVal">10</span></div>
+              <input type="range" id="m2Dur" min="1" max="24" value="10" class="w-full accent-cyan-600">
+            </div>
+            <div class="pt-3 border-t border-slate-200">
+              <div class="text-xs mono text-slate-500">contamination_fraction</div>
+              <div class="text-3xl font-extrabold mono" id="m2Pct">0.00</div>
+            </div>
+          </div>
+          <div class="md:col-span-2">
+            <svg id="m2svg" width="100%" viewBox="0 0 600 150" role="img" aria-label="Timeline showing the state window, the treatment window, and their overlap" class="border border-slate-200 rounded bg-slate-50">
+              <line x1="40" y1="118" x2="560" y2="118" stroke="#cbd5e1" stroke-width="1"/>
+              <rect id="m2WinRect" x="0" y="35" width="0" height="60" fill="#0891B2" fill-opacity="0.10" stroke="#0891B2" stroke-width="1" stroke-dasharray="3 3"/>
+              <rect id="m2TreatRect" x="0" y="55" width="0" height="24" fill="#0F766E" fill-opacity="0.5"/>
+              <rect id="m2OverlapRect" x="0" y="55" width="0" height="24" fill="#DC2626" fill-opacity="0.75"/>
+              <line x1="560" y1="18" x2="560" y2="128" stroke="#0f172a" stroke-width="1.5"/>
+              <text x="560" y="12" text-anchor="middle" font-size="10" fill="#0f172a" class="mono">decision, t</text>
+              <text x="40" y="140" font-size="10" fill="#64748b" class="mono">-24h</text>
+              <text x="560" y="140" text-anchor="end" font-size="10" fill="#64748b" class="mono">0h</text>
+            </svg>
+            <div class="flex flex-wrap gap-5 mt-3 text-xs mono">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-cyan-600 opacity-40 inline-block rounded-sm"></span>state window</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-teal-700 opacity-50 inline-block rounded-sm"></span>treatment window</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-red-600 opacity-75 inline-block rounded-sm"></span>overlap (leaked)</span>
+            </div>
+            <p class="text-sm text-slate-600 mt-4 bg-slate-50 border border-slate-200 rounded p-3" id="m2Caption"></p>
+          </div>
         </div>
-        <pre class="p-5 text-xs mono leading-relaxed overflow-x-auto"><code><span class="text-slate-600">-- adult, first-ICU-stay, Sepsis-3-qualifying,</span>
-<span class="text-slate-600">-- vasopressor-exposed ICU stays</span>
-<span class="text-teal-400">WITH</span> <span class="text-slate-200">ranked_icu</span> <span class="text-teal-400">AS</span> (
-  <span class="text-teal-400">SELECT</span>
-    ie.subject_id, ie.hadm_id, ie.stay_id,
-    <span class="text-cyan-400">ROW_NUMBER</span>() <span class="text-teal-400">OVER</span> (
-      <span class="text-teal-400">PARTITION BY</span> ie.subject_id
-      <span class="text-teal-400">ORDER BY</span> ie.intime
-    ) <span class="text-teal-400">AS</span> rn
+      </div>
+    </div>
+
+    <p class="text-sm text-slate-500 mt-6 max-w-2xl">Both widgets are simplified two-parameter
+    illustrations. The verified cohort-wide figures — 32.3% / 28.6% dose-determined, 31.1% mean
+    window overlap — come from the full 11,354-patient extraction; see
+    <a href="#evidence" class="text-cyan-600 hover:underline">Evidence</a>. The complete synchronized
+    model (causal graph + live AUROC) is on the
+    <a href="visualizer.html" class="text-cyan-600 hover:underline">full interactive demo</a>.</p>
+  </div>
+</section>
+
+<!-- ============ 5. FORMALIZE IT ============ -->
+<section class="border-b border-slate-200">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <h2 class="text-2xl md:text-3xl font-bold tracking-tight">Formalize it</h2>
+      <div class="flex items-center gap-3 text-sm">
+        <span id="simpleLabel" class="font-semibold text-cyan-600">Simple</span>
+        <div class="toggle-track" id="mathToggle" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle simple or technical explanation"><div class="knob"></div></div>
+        <span id="techLabel" class="text-slate-500">Technical</span>
+      </div>
+    </div>
+
+    <div id="simpleExplain" class="mt-6 prose-w text-slate-600 leading-relaxed">
+      <p>Think of the cardiovascular part of the SOFA score as a rule with two inputs: blood
+      pressure, and whatever medication is currently running. Once the medication dose crosses a
+      certain level, the rule stops looking at blood pressure at all — the score is entirely
+      determined by the medication. That means the "current condition" the model sees can, in that
+      regime, be nothing more than a readout of what was already prescribed.</p>
+    </div>
+
+    <div id="techExplain" class="mt-6 prose-w text-slate-700 leading-relaxed hidden">
+      <p class="mb-3">The cardiovascular SOFA subscore $\sigma_{cardio}(\text{MAP}, D)$ is
+      piecewise in mean arterial pressure and active drug/dose $D$. On the domain where $D$ crosses
+      a dose threshold, none of the corresponding branches reference MAP:</p>
+      <p class="mb-3">$$\frac{\partial \sigma_{cardio}}{\partial \text{MAP}} = 0 \quad \text{whenever } D \text{ exceeds threshold}$$</p>
+      <p>This is a <b>proven</b> non-identifiability result (Theorem 1), not a statistical
+      tendency — verifiable by inspecting the scoring rule's branches directly. Full statement,
+      proof, and the algebraic reconstruction argument for why naive feature removal doesn't fix it
+      (Theorem 2) are on the <a href="proof.html" class="text-cyan-600 hover:underline">formal proof page</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. EVIDENCE ============ -->
+<section id="evidence" class="border-b border-slate-200 bg-slate-50">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">Evidence</h2>
+    <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">Every figure below has been
+    independently re-extracted from MIMIC-IV and reproduced across five or more separate pipeline
+    runs — including two real extraction bugs found, diagnosed, and fixed along the way.</p>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full text-sm border border-slate-200 bg-white rounded overflow-hidden">
+        <thead><tr class="bg-slate-100 text-left text-xs uppercase tracking-wide text-slate-500">
+          <th class="px-4 py-3 font-medium">Statistic</th><th class="px-4 py-3 font-medium">Manuscript draft</th><th class="px-4 py-3 font-medium">Verified</th><th class="px-4 py-3 font-medium"></th>
+        </tr></thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr><td class="px-4 py-3">Cohort size</td><td class="px-4 py-3 mono">11,354</td><td class="px-4 py-3 mono">11,354</td><td class="px-4 py-3 text-teal-700 text-xs">exact match</td></tr>
+          <tr><td class="px-4 py-3">Exp. 1 — dose-determined (4h)</td><td class="px-4 py-3 mono text-slate-400">30.5%</td><td class="px-4 py-3 mono">32.3%</td><td class="px-4 py-3 text-xs text-slate-500">revised</td></tr>
+          <tr><td class="px-4 py-3">Exp. 1 — dose-determined (24h)</td><td class="px-4 py-3 mono text-slate-400">26.3%</td><td class="px-4 py-3 mono">28.6%</td><td class="px-4 py-3 text-xs text-slate-500">revised</td></tr>
+          <tr><td class="px-4 py-3">Exp. 2 — AUROC, full → physiology-only</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 text-teal-700 text-xs">exact match</td></tr>
+          <tr><td class="px-4 py-3">Exp. 3 — mean window overlap (24h)</td><td class="px-4 py-3 mono text-slate-400">56.1%</td><td class="px-4 py-3 mono">31.1%</td><td class="px-4 py-3 text-xs text-slate-500">revised down</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-slate-500 mt-4 max-w-2xl">The Experiment 2 gap survived a 15× difference
+    in underlying row counts almost untouched — evidence it's a real, ratio-based effect rather
+    than an artifact of the two extraction bugs that inflated the raw counts. Full diagnostic
+    history in <a href="ROADMAP.md" class="text-cyan-600 hover:underline">ROADMAP.md</a> and
+    <a href="status.html" class="text-cyan-600 hover:underline">status.html</a>.</p>
+  </div>
+</section>
+
+<!-- ============ 7. REPRODUCIBILITY ============ -->
+<section class="border-b border-slate-200">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">Reproducibility</h2>
+    <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">Every extraction query is
+    public. Patient-level data is not — MIMIC-IV is credentialed-access, and row-level output is
+    never published. See <a href="DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>
+    for the exact governance policy.</p>
+
+    <div class="mt-10 flex flex-wrap items-stretch gap-0 border border-slate-200 rounded overflow-hidden">
+      <a href="queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">01</div><div class="text-sm font-medium mt-1">MIMIC-IV</div></a>
+      <a href="queries/01_cohort.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">02</div><div class="text-sm font-medium mt-1">Cohort</div></a>
+      <a href="queries/02_vitals_labs_fio2.sql" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">03</div><div class="text-sm font-medium mt-1">Variables</div></a>
+      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">04</div><div class="text-sm font-medium mt-1">Aggregation</div></a>
+      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">05</div><div class="text-sm font-medium mt-1">State rep.</div></a>
+      <a href="notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">06</div><div class="text-sm font-medium mt-1">Action labels</div></a>
+      <a href="proof.html" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
+        <div class="text-xs mono text-slate-500">07</div><div class="text-sm font-medium mt-1">Leakage analysis</div></a>
+      <a href="status.html" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 p-4 text-center">
+        <div class="text-xs mono text-slate-500">08</div><div class="text-sm font-medium mt-1">Evaluation</div></a>
+    </div>
+
+    <div class="mt-10 bg-slate-900 rounded overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-slate-700">
+        <span class="mono text-xs text-slate-400">queries/01_cohort.sql</span>
+        <div class="flex items-center gap-3">
+          <span class="mono text-xs text-slate-500">SQL</span>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('sqlSnippet').textContent)" class="mono text-xs text-slate-400 hover:text-cyan-400 border border-slate-700 hover:border-cyan-400 px-2 py-1 rounded">Copy</button>
+          <a href="queries/01_cohort.sql" class="mono text-xs text-slate-400 hover:text-cyan-400 border border-slate-700 hover:border-cyan-400 px-2 py-1 rounded">View full file</a>
+        </div>
+      </div>
+      <pre class="p-5 text-xs mono leading-relaxed overflow-x-auto text-slate-300" id="sqlSnippet"><span class="text-slate-500">-- adult, first-ICU-stay, Sepsis-3-qualifying, vasopressor-exposed stays</span>
+<span class="text-teal-400">WITH</span> ranked_icu <span class="text-teal-400">AS</span> (
+  <span class="text-teal-400">SELECT</span> ie.subject_id, ie.hadm_id, ie.stay_id,
+    <span class="text-cyan-400">ROW_NUMBER</span>() <span class="text-teal-400">OVER</span> (<span class="text-teal-400">PARTITION BY</span> ie.subject_id <span class="text-teal-400">ORDER BY</span> ie.intime) <span class="text-teal-400">AS</span> rn
   <span class="text-teal-400">FROM</span> `physionet-data.mimiciv_3_1_icu.icustays` ie
-  <span class="text-teal-400">JOIN</span> `physionet-data.mimiciv_3_1_hosp.patients` p
-    <span class="text-teal-400">USING</span>(subject_id)
-  <span class="text-teal-400">WHERE</span> p.anchor_age <span class="text-cyan-400">&gt;=</span> <span class="text-slate-200">18</span>
+  <span class="text-teal-400">JOIN</span> `physionet-data.mimiciv_3_1_hosp.patients` p <span class="text-teal-400">USING</span>(subject_id)
+  <span class="text-teal-400">WHERE</span> p.anchor_age <span class="text-cyan-400">&gt;=</span> 18
 )
-<span class="text-teal-400">SELECT</span> f.<span class="text-cyan-400">*</span> <span class="text-teal-400">FROM</span> ranked_icu f
-<span class="text-teal-400">WHERE</span> f.rn <span class="text-cyan-400">=</span> <span class="text-slate-200">1</span><span class="text-slate-600">;</span>
+<span class="text-teal-400">SELECT</span> f.<span class="text-cyan-400">*</span> <span class="text-teal-400">FROM</span> ranked_icu f <span class="text-teal-400">WHERE</span> f.rn <span class="text-cyan-400">=</span> 1;
+<span class="text-slate-500">-- verified: 11,354 stays, exact match across five independent runs</span></pre>
+    </div>
+    <p class="text-xs text-slate-500 mt-3">This site is an interface to a reproducible research
+    project — not a replacement for the repository. <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="text-cyan-600 hover:underline">Full source →</a></p>
+  </div>
+</section>
 
-<span class="text-slate-600">-- verified result: 11,354 stays, exact match</span>
-<span class="text-slate-600">-- across five independent runs</span></code></pre>
+<!-- ============ 8. PAPERS ============ -->
+<section id="papers" class="border-b border-slate-200 bg-slate-50">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">Related literature</h2>
+    <p class="mt-4 text-base text-slate-600 leading-relaxed prose-w">A full literature review
+    (additional sepsis-RL studies, window-bias references) is planned but not yet complete — see
+    ROADMAP.md Phase 6. Shown here are the three sources this project's own claims directly rest
+    on.</p>
+
+    <div class="mt-10 grid md:grid-cols-3 gap-5">
+      <div class="bg-white border border-slate-200 rounded p-5">
+        <span class="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded">Documented leakage source</span>
+        <h3 class="font-semibold mt-3">The SOFA score to describe organ dysfunction/failure</h3>
+        <p class="text-xs text-slate-500 mt-1">Vincent, J.-L. et al. · Intensive Care Medicine, 1996</p>
+        <p class="text-sm text-slate-600 mt-3">Defines the exact scoring rule proven non-identifiable from MAP alone (Theorem 1).</p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded p-5">
+        <span class="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Motivating application</span>
+        <h3 class="font-semibold mt-3">The AI Clinician learns optimal treatment strategies for sepsis</h3>
+        <p class="text-xs text-slate-500 mt-1">Komorowski, M. et al. · Nature Medicine, 2018</p>
+        <p class="text-sm text-slate-600 mt-3">The offline-RL framework this audit examines the state-representation assumptions of.</p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded p-5">
+        <span class="text-xs font-medium bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded">Related methodological issue</span>
+        <h3 class="font-semibold mt-3">Causal Inference: What If</h3>
+        <p class="text-xs text-slate-500 mt-1">Hernán, M. A. &amp; Robins, J. M. · Chapman &amp; Hall/CRC, 2020</p>
+        <p class="text-sm text-slate-600 mt-3">General principle underlying why conditioning on a treatment-affected variable biases prediction (Proposition 2).</p>
       </div>
     </div>
   </div>
 </section>
 
-<footer class="border-t border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500 mono">
-    <span>MIT LABORATORY FOR COMPUTATIONAL PHYSIOLOGY × BOSTON UNIVERSITY SCHOOL OF PUBLIC HEALTH</span>
+<!-- ============ 9. ABOUT ============ -->
+<section id="about" class="border-b border-slate-200">
+  <div class="wide-w mx-auto px-6 py-16 md:py-20">
+    <h2 class="text-2xl md:text-3xl font-bold tracking-tight prose-w">About SAIL</h2>
+    <div class="mt-8 grid md:grid-cols-2 gap-10 prose-w">
+      <div>
+        <h3 class="font-semibold mb-2">Research question</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Does the SOFA-based state representation
+        used in offline sepsis-RL already encode the treatment action it precedes — undermining the
+        Markov assumption the framework depends on?</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Open science</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">Every extraction query, the full
+        notebook, and the complete bug-fix history are public. Patient-level data is not — see
+        <a href="DATA_ACCESS.md" class="text-cyan-600 hover:underline">DATA_ACCESS.md</a>.</p>
+      </div>
+    </div>
+    <div class="mt-8 text-sm text-slate-500 prose-w">
+      Research conducted at the <b class="text-slate-700">MIT Laboratory for Computational
+      Physiology</b> and the <b class="text-slate-700">Boston University School of Public
+      Health</b>. Full author and citation metadata in
+      <a href="CITATION.cff" class="text-cyan-600 hover:underline">CITATION.cff</a>.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-slate-50">
+  <div class="wide-w mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <span>MIT Laboratory for Computational Physiology × Boston University School of Public Health</span>
     <div class="flex gap-5">
-      <a href="LICENSE" class="hover:text-cyan-400">LICENSE</a>
-      <a href="CITATION.cff" class="hover:text-cyan-400">CITATION</a>
-      <a href="https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning" class="hover:text-cyan-400">GITHUB</a>
+      <a href="LICENSE" class="hover:text-cyan-600">License</a>
+      <a href="CITATION.cff" class="hover:text-cyan-600">Citation</a>
+      <a href="ROADMAP.md" class="hover:text-cyan-600">Roadmap</a>
+      <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="hover:text-cyan-600">GitHub</a>
     </div>
   </div>
 </footer>
 
 <script>
-const winSlider = document.getElementById('winSlider');
-const startSlider = document.getElementById('startSlider');
-const durSlider = document.getElementById('durSlider');
+// ---- Mechanism 1: treatment-information toggle ----
+const mech1Toggle = document.getElementById('mech1Toggle');
+let mech1On = false;
+const M1_FEATURES = [
+  { name: 'Heart rate, labs (19 features)', clean: true },
+  { name: 'sofa_resp / coag / liver / renal / cns', clean: true },
+  { name: 'sofa_cardio', clean: null }, // depends on toggle
+  { name: 'sofa_total', clean: null },
+];
+function renderMech1(){
+  mech1Toggle.classList.toggle('on', mech1On);
+  mech1Toggle.setAttribute('aria-checked', mech1On);
+  document.getElementById('mech1Label').textContent = mech1On ? 'present' : 'absent';
+  const wrap = document.getElementById('mech1Vec');
+  wrap.innerHTML = M1_FEATURES.map(f=>{
+    let cls, note;
+    if(f.clean===true){ cls='border-slate-200 bg-slate-50 text-slate-600'; note='clean'; }
+    else { cls = mech1On ? 'border-red-300 bg-red-50 text-red-700 font-semibold' : 'border-teal-200 bg-teal-50 text-teal-700'; note = mech1On ? 'treatment-contaminated' : 'clean'; }
+    return `<div class="flex items-center justify-between text-sm border rounded px-3 py-2 ${cls}">
+      <span class="mono text-xs">${f.name}</span><span class="text-xs">${note}</span></div>`;
+  }).join('');
+  document.getElementById('mech1Caption').textContent = mech1On
+    ? 'With a vasopressor active above the dose threshold, sofa_cardio (and sofa_total, which sums it) now reflects the drug dose — not blood pressure. This is exactly Theorem 1.'
+    : 'With no vasopressor active, the cardiovascular subscore reflects blood pressure only — a genuine physiology signal.';
+}
+mech1Toggle.addEventListener('click', ()=>{ mech1On = !mech1On; renderMech1(); });
+mech1Toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); mech1On=!mech1On; renderMech1(); } });
+renderMech1();
 
-function px(h){ return 40 + ((h+24)/24)*520; } // map -24..0 -> 40..560
-
-function render(){
-  const w = parseFloat(winSlider.value);
-  const start = parseFloat(startSlider.value);
-  const dur = parseFloat(durSlider.value);
-  const end = Math.min(0, start + dur);
-
-  document.getElementById('winVal').textContent = w;
-  document.getElementById('startVal').textContent = start;
-  document.getElementById('durVal').textContent = dur;
+// ---- Mechanism 2: window-overlap timeline ----
+const m2Win = document.getElementById('m2Win'), m2Start = document.getElementById('m2Start'), m2Dur = document.getElementById('m2Dur');
+function px2(h){ return 40 + ((h+24)/24)*520; }
+function renderMech2(){
+  const w = parseFloat(m2Win.value), start = parseFloat(m2Start.value), dur = parseFloat(m2Dur.value);
+  const end = Math.min(0, start+dur);
+  document.getElementById('m2WinVal').textContent = w;
+  document.getElementById('m2StartVal').textContent = start;
+  document.getElementById('m2DurVal').textContent = dur;
 
   const winStart = -w;
-  const winX = px(winStart), winW = px(0) - px(winStart);
-  document.getElementById('winRect').setAttribute('x', winX);
-  document.getElementById('winRect').setAttribute('width', Math.max(0,winW));
+  document.getElementById('m2WinRect').setAttribute('x', px2(winStart));
+  document.getElementById('m2WinRect').setAttribute('width', Math.max(0, px2(0)-px2(winStart)));
+  document.getElementById('m2TreatRect').setAttribute('x', px2(start));
+  document.getElementById('m2TreatRect').setAttribute('width', Math.max(0, px2(end)-px2(start)));
 
-  const treatX = px(start), treatW = Math.max(0, px(end) - px(start));
-  document.getElementById('treatRect').setAttribute('x', treatX);
-  document.getElementById('treatRect').setAttribute('width', treatW);
+  const ovStart = Math.max(winStart, start), ovEnd = Math.min(0, end);
+  const ovHours = Math.max(0, ovEnd-ovStart);
+  document.getElementById('m2OverlapRect').setAttribute('x', px2(ovStart));
+  document.getElementById('m2OverlapRect').setAttribute('width', Math.max(0, px2(ovEnd)-px2(ovStart)));
 
-  const ovStart = Math.max(winStart, start);
-  const ovEnd = Math.min(0, end);
-  const ovHours = Math.max(0, ovEnd - ovStart);
-  const ovX = px(ovStart), ovW = Math.max(0, px(ovEnd) - px(ovStart));
-  document.getElementById('overlapRect').setAttribute('x', ovX);
-  document.getElementById('overlapRect').setAttribute('width', ovW);
-
-  const pct = Math.min(1, ovHours / w);
-  document.getElementById('pctOut').textContent = pct.toFixed(2);
+  const pct = Math.min(1, ovHours/w);
+  document.getElementById('m2Pct').textContent = pct.toFixed(2);
+  document.getElementById('m2Caption').textContent = pct > 0
+    ? `The state window now contains information occurring during the previous treatment decision — ${(pct*100).toFixed(0)}% of this window is contaminated.`
+    : 'No overlap at these settings — this window is clean.';
 }
-[winSlider, startSlider, durSlider].forEach(el => el.addEventListener('input', render));
-render();
+[m2Win, m2Start, m2Dur].forEach(el => el.addEventListener('input', renderMech2));
+renderMech2();
+
+// ---- Math toggle ----
+const mathToggle = document.getElementById('mathToggle');
+let techOn = false;
+mathToggle.addEventListener('click', ()=>{
+  techOn = !techOn;
+  mathToggle.classList.toggle('on', techOn);
+  mathToggle.setAttribute('aria-checked', techOn);
+  document.getElementById('simpleExplain').classList.toggle('hidden', techOn);
+  document.getElementById('techExplain').classList.toggle('hidden', !techOn);
+  document.getElementById('simpleLabel').classList.toggle('text-cyan-600', !techOn);
+  document.getElementById('simpleLabel').classList.toggle('text-slate-500', techOn);
+  document.getElementById('techLabel').classList.toggle('text-cyan-600', techOn);
+  document.getElementById('techLabel').classList.toggle('text-slate-500', !techOn);
+});
 </script>
 
 </body>
