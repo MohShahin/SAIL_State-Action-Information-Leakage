@@ -40,13 +40,13 @@ extraHead: |
 <h3 class="section" style="margin-top:0;">The pipeline</h3>
 <div class="pipeline">
   <a class="pipe-step" href="https://physionet.org/content/mimiciv/" target="_blank" rel="noopener"><div class="n">00</div><div class="t">MIMIC-IV</div></a>
-  <a class="pipe-step" href="/queries/01_cohort.sql"><div class="n">01</div><div class="t">Cohort</div></a>
-  <a class="pipe-step" href="/queries/02_vitals_labs_fio2.sql"><div class="n">02</div><div class="t">Variables</div></a>
-  <a class="pipe-step" href="/queries/03_vasopressor_doses.sql"><div class="n">03</div><div class="t">Dose extraction</div></a>
-  <a class="pipe-step" href="/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">04</div><div class="t">Aggregation</div></a>
-  <a class="pipe-step" href="/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">05</div><div class="t">State variants</div></a>
-  <a class="pipe-step" href="/mechanisms/"><div class="n">06</div><div class="t">Leakage analysis</div></a>
-  <a class="pipe-step" href="/evidence/"><div class="n">07</div><div class="t">Evidence</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/queries/01_cohort.sql"><div class="n">01</div><div class="t">Cohort</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/queries/02_vitals_labs_fio2.sql"><div class="n">02</div><div class="t">Variables</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/queries/03_vasopressor_doses.sql"><div class="n">03</div><div class="t">Dose extraction</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">04</div><div class="t">Aggregation</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb"><div class="n">05</div><div class="t">State variants</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/mechanisms/"><div class="n">06</div><div class="t">Leakage analysis</div></a>
+  <a class="pipe-step" href="__PATHPREFIX__/evidence/"><div class="n">07</div><div class="t">Evidence</div></a>
 </div>
 
 <h3 class="section">Extraction queries</h3>
@@ -54,7 +54,7 @@ extraHead: |
   <p class="plain">Five standalone files, safe to publish — code isn't data. Each tab below fetches
   the actual file live from this same site, not a copy-pasted excerpt — it can never silently go
   stale the way a hardcoded snippet can. See
-  <a href="/queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
+  <a href="__PATHPREFIX__/queries/README.md" style="color:var(--accent);">queries/README.md</a> for the full run
   order and a substitution script that avoids the placeholder bugs this project hit early on.</p>
 
   <div class="fv-tabs" id="fvTabs"></div>
@@ -73,8 +73,8 @@ extraHead: |
   </div>
   <p class="plain" style="margin:14px 0 0; font-size:12.5px;">This site is an interface to a
   reproducible research project — not a replacement for the repository.
-  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" style="color:var(--accent);">Full source →</a></p>
-  <a href="/queries/" class="navbtn" style="margin-top:12px;">Browse all queries →</a>
+  <a href="https://github.com/MohShahin__PATHPREFIX__" style="color:var(--accent);">Full source →</a></p>
+  <a href="__PATHPREFIX__/queries/" class="navbtn" style="margin-top:12px;">Browse all queries →</a>
 </div>
 
 <h3 class="section">Data governance</h3>
@@ -87,7 +87,7 @@ extraHead: |
     <div class="fact"><div class="n" style="font-size:14px;">Safe to publish</div><div class="l">SQL queries, analysis code, aggregate statistics reported in the manuscript</div></div>
     <div class="fact"><div class="n" style="font-size:14px;">Never published</div><div class="l">Any file with one row per patient or per decision-point — enforced by an explicit gitignore block, verified against full git history before every push</div></div>
   </div>
-  <a href="/DATA_ACCESS.md" class="navbtn" style="margin-top:8px;">Full governance policy →</a>
+  <a href="__PATHPREFIX__/DATA_ACCESS.md" class="navbtn" style="margin-top:8px;">Full governance policy →</a>
 </div>
 
 <h3 class="section">Getting your own access</h3>
@@ -103,19 +103,19 @@ extraHead: |
 </main>
 
 <div class="pagenav">
-  <a href="/evidence/">← Evidence</a>
-  <a href="/papers/" class="primary">Papers →</a>
+  <a href="__PATHPREFIX__/evidence/">← Evidence</a>
+  <a href="__PATHPREFIX__/papers/" class="primary">Papers →</a>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <script>
 const FV_FILES = [
-  { path: "/queries/01_cohort.sql", label: "01_cohort.sql", lang: "sql" },
-  { path: "/queries/01b_cohort_fallback.sql", label: "01b_cohort_fallback.sql", lang: "sql" },
-  { path: "/queries/02_vitals_labs_fio2.sql", label: "02_vitals_labs_fio2.sql", lang: "sql" },
-  { path: "/queries/03_vasopressor_doses.sql", label: "03_vasopressor_doses.sql", lang: "sql" },
-  { path: "/queries/render_query.py", label: "render_query.py", lang: "python" },
+  { path: "__PATHPREFIX__/queries/01_cohort.sql", label: "01_cohort.sql", lang: "sql" },
+  { path: "__PATHPREFIX__/queries/01b_cohort_fallback.sql", label: "01b_cohort_fallback.sql", lang: "sql" },
+  { path: "__PATHPREFIX__/queries/02_vitals_labs_fio2.sql", label: "02_vitals_labs_fio2.sql", lang: "sql" },
+  { path: "__PATHPREFIX__/queries/03_vasopressor_doses.sql", label: "03_vasopressor_doses.sql", lang: "sql" },
+  { path: "__PATHPREFIX__/queries/render_query.py", label: "render_query.py", lang: "python" },
 ];
 const fvCache = new Map();
 let fvActiveIdx = 0;
