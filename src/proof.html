@@ -7,202 +7,353 @@ needsMathJax: true
 ---
 
 <style>
-  .proof-block{ background:var(--bg); border-left:3px solid var(--accent); padding:14px 18px; margin:14px 0; }
-  .proof-block .label{ font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; margin-bottom:6px; }
-  .statement-block{ background:var(--physio-soft); border-left:3px solid var(--physio); padding:14px 18px; margin:14px 0; }
-  .statement-block .label{ font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--physio); font-weight:700; margin-bottom:6px; }
-  .toc{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12.5px; }
-  .toc a{ color:var(--ink-soft); }
-  .qed{ text-align:right; font-family:var(--serif); }
-  mjx-container{ font-size:105% !important; }
+  /* Layer system */
+  .thm-card{ border:1px solid var(--line); border-radius:6px; margin:20px 0; overflow:hidden; }
+  .thm-head{ padding:16px 20px; background:var(--bg); border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  .thm-name{ font-family:var(--serif); font-size:16px; font-weight:400; color:var(--ink); margin:0; }
+  .thm-tag{ font-family:var(--sans); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:3px; white-space:nowrap; }
+  .tag-proven{ background:var(--physio-soft); color:var(--physio); }
+  .tag-empirical{ background:#f7f0df; color:var(--gold); }
+  .tag-open{ background:var(--treat-soft); color:var(--treat); }
+  .thm-body{ padding:18px 20px; }
+  .intuition{ font-size:14px; color:var(--ink-soft); font-style:italic; margin:0 0 12px; padding-left:12px; border-left:2px solid var(--line); }
+  .derive-btn{ font-family:var(--sans); font-size:12.5px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:1px solid transparent; padding:7px 14px; border-radius:4px; cursor:pointer; margin-top:10px; }
+  .derive-btn:hover{ background:var(--accent); color:#fff; }
+
+  /* Side panel */
+  #derivPanel{
+    position:fixed; top:0; right:-480px; width:440px; max-width:92vw; height:100vh;
+    background:var(--paper); border-left:1px solid var(--line); box-shadow:-8px 0 24px rgba(0,0,0,.08);
+    transition:right .28s ease; z-index:200; overflow-y:auto; padding:0;
+  }
+  #derivPanel.open{ right:0; }
+  #derivOverlay{ position:fixed; inset:0; background:rgba(15,23,42,.25); opacity:0; pointer-events:none; transition:opacity .28s; z-index:199; }
+  #derivOverlay.open{ opacity:1; pointer-events:auto; }
+  .deriv-head{ position:sticky; top:0; background:var(--paper); border-bottom:1px solid var(--line); padding:16px 22px; display:flex; justify-content:space-between; align-items:center; }
+  .deriv-head h4{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0; }
+  .deriv-close{ background:none; border:none; font-size:20px; color:var(--ink-faint); cursor:pointer; padding:4px 8px; }
+  .deriv-body{ padding:20px 22px 60px; font-size:13.5px; line-height:1.7; color:var(--ink-soft); }
+  .deriv-step{ margin:16px 0; }
+  .deriv-step .step-label{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); margin-bottom:4px; }
+  .deriv-why{ background:var(--physio-soft); border-radius:4px; padding:12px 14px; margin-top:16px; font-size:13px; color:var(--ink); }
+  @media (max-width:640px){
+    #derivPanel{ right:auto; left:0; top:auto; bottom:-100vh; width:100%; max-width:100%; height:85vh; border-left:none; border-top:1px solid var(--line); border-radius:12px 12px 0 0; transition:bottom .28s ease; }
+    #derivPanel.open{ bottom:0; right:auto; }
+  }
+
+  .status-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; margin:18px 0; }
+  .status-col{ background:var(--paper); padding:16px 18px; }
+  .status-col h5{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin:0 0 10px; }
+  .status-col ul{ margin:0; padding-left:16px; font-size:12.5px; line-height:1.7; color:var(--ink-soft); }
+  .status-col.proven h5{ color:var(--physio); }
+  .status-col.empirical h5{ color:var(--gold); }
+  .status-col.open h5{ color:var(--treat); }
+  @media (max-width:700px){ .status-grid{ grid-template-columns:1fr; } }
+
+  details.expand{ border:1px solid var(--line); border-radius:6px; margin:14px 0; }
+  details.expand summary{ padding:13px 18px; cursor:pointer; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ink); list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  details.expand summary::-webkit-details-marker{ display:none; }
+  details.expand summary::after{ content:"+"; font-size:18px; color:var(--ink-faint); }
+  details.expand[open] summary::after{ content:"−"; }
+  details.expand .expand-body{ padding:0 18px 16px; font-size:13px; color:var(--ink-soft); line-height:1.65; }
+
+  .glossary-row{ display:grid; grid-template-columns:110px 1fr; gap:12px; padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:13px; }
+  .glossary-row:last-child{ border-bottom:none; }
+  .glossary-sym{ font-family:var(--mono); color:var(--accent); }
+
+  .not-establish{ background:var(--treat-soft); border:1px solid var(--treat); border-radius:6px; padding:16px 20px; margin:20px 0; font-size:13.5px; line-height:1.65; color:var(--ink); }
+  .not-establish b{ color:var(--treat); }
 </style>
 
 <div class="masthead"><div class="masthead-inner">
-  <div class="affil">
-    <span><b>MIT</b> Laboratory for Computational Physiology</span>
-    <span><b>Boston University</b> School of Public Health</span>
-  </div>
   <h1>A Formal and Causal Analysis of State–Action Leakage</h1>
-  <p class="deck">Theoretical foundations and pre-registered predictions for the empirical audit.
-  Two of the project's three claims are proven outright; the third is stated as a falsifiable test.
-  Full source (with references and an appendix) lives in <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md</a>.</p>
+  <p class="deck">Audited for mathematical precision: every claim below is labeled proven, empirical,
+  or open, and every derivation is available on demand without lengthening the page. Full source
+  with references: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md</a>.</p>
 </div></div>
 
 <main>
 
-<div class="card">
-  <h3>Contents</h3>
-  <div class="toc">
-    <a href="#abstract">Abstract</a>
-    <a href="#setup">Setup</a>
-    <a href="#thm1">Theorem 1</a>
-    <a href="#thm2">Theorem 2</a>
-    <a href="#sec5">Window overlap</a>
-    <a href="#dag">Causal graph</a>
-    <a href="#h3">The open conjecture</a>
-    <a href="#summary">Proof status table</a>
-  </div>
-</div>
-
 <h3 class="section" id="abstract" style="margin-top:0;">Abstract</h3>
-<p class="plain">Offline reinforcement learning for sepsis treatment learns a policy from a state
-representation built substantially from the SOFA organ-dysfunction score. We show this
-construction admits two <b>provable</b> failure modes — a scoring-rule non-identifiability and a
-window-overlap mechanism whose behavior, contrary to naive intuition, is not monotonic in window
-length, for reasons we derive from first principles. We place both in a causal graph and show the
-resulting state is formally a <i>descendant</i> of the prior treatment action — explaining why an
-empirical predictability gap is necessary but not sufficient evidence of leakage specifically. We
-close with a falsifiable, pre-registered decision procedure for the one claim that requires an
-experiment rather than a proof.</p>
+<p class="plain">This page proves two mechanisms by which a SOFA-based reinforcement-learning state
+can encode prior treatment, and states precisely what those proofs do and do not imply about
+whether a model actually exploits that encoding — a question this page treats as open and
+empirical, not settled by the mathematics alone.</p>
 
-<h3 class="section" id="setup">Setup and notation</h3>
-<p class="plain">Decision times $t = 1,\dots,T_i$ per ICU stay, in 4-hour bins. $A_t$: vasopressor
-active following decision point $t$. $S_t$: the state vector at $t$, built from lookback window
-$[t-w,t)$. $U_t$: the patient's true, unobserved physiology. A well-posed state should not be a
-near-deterministic function of $A_{t-1}$ in a way that lets a model recover $A_t$ through
-$A_{t-1}$'s influence on $S_t$ alone, independent of what $S_t$ says about $U_t$.</p>
-
-<h3 class="section" id="thm1">Theorem 1 — non-identifiability of the SOFA cardiovascular score</h3>
-<p class="plain">The cardiovascular SOFA subscore (Vincent et al., 1996) is a function of mean
-arterial pressure and active drug/dose $D$:</p>
-<p class="plain">$$\sigma_{cardio}(\text{MAP}, D) = \begin{cases} 0 & \text{MAP} \geq 70,\ D = \emptyset \\ 1 & \text{MAP} < 70,\ D = \emptyset \\ 2 & D \in \{\text{dopamine} \leq 5,\ \text{dobutamine (any)}\} \\ 3 & D \in \{\text{dopamine} > 5,\ \text{epi} \leq 0.1,\ \text{norepi} \leq 0.1\} \\ 4 & D \in \{\text{dopamine} > 5,\ \text{epi} > 0.1,\ \text{norepi} > 0.1\} \end{cases}$$</p>
-
-<div class="statement-block">
-  <div class="label">Statement</div>
-  On the domain where $D$ crosses a dose threshold, $\sigma_{cardio}$ is constant in MAP: $\partial \sigma_{cardio} / \partial \text{MAP} = 0$ there.
-</div>
-<div class="proof-block">
-  <div class="label">Proof</div>
-  Inspect the three non-zero branches directly — none contains MAP as an argument. Fix $D=$ dopamine
-  at 6 mcg/kg/min. For any $\text{MAP} \in \{40, 55, 70, 90,\dots\}$, $\sigma_{cardio}(\text{MAP},D)=4$
-  identically. Two physiologically opposite states (severe hypotension vs. normotension) map to an
-  identical score. Exhaustive over the branch's domain — settled by the definition, not by sampling.
-  <div class="qed">∎</div>
-</div>
-<p class="plain"><b>Corollary 1.1.</b> For any timestep where $D\ne\emptyset$ and dose exceeds
-threshold, $S_t$'s cardiovascular feature is a deterministic function of $A_{t-1}$, independent of
-$U_t$. Empirically, this domain condition holds for 32.3% (4h window) / 28.6% (24h window) of
-eligible timesteps overall, and 100% of already-treated timesteps — see the live calculator on the
-<a href="__PATHPREFIX__/demo/" style="color:var(--accent);">walkthrough page</a> to verify this yourself.</p>
-
-<h3 class="section" id="thm2">Theorem 2 — reconstructibility under naive feature removal</h3>
-<p class="plain">$\text{sofa\_total} = \sum_{i=1}^{6}\text{subscore}_i$, a deterministic linear sum
-including $\sigma_{cardio}$.</p>
-<div class="statement-block">
-  <div class="label">Statement</div>
-  Removing $\sigma_{cardio}$ while retaining $\text{sofa\_total}$ (state variant C) does not remove the information $\sigma_{cardio}$ carries.
-</div>
-<div class="proof-block">
-  <div class="label">Proof</div>
-  $\sigma_{cardio} = \text{sofa\_total} - \sum_{i\ne cardio}\text{subscore}_i$. Every term on the
-  right is observable in variant C. The reconstruction is an algebraic identity, exact rather than
-  approximate.
-  <div class="qed">∎</div>
-</div>
-<p class="plain"><b>Corollary 2.1.</b> A removal scheme defeats Theorem 2 only if it recomputes
-<i>every</i> quantity $\sigma_{cardio}$ is reconstructible from — $\text{sofa\_total}$ itself must be
-recomputed from a treatment-independent proxy. Confirmed empirically: variant C's AUROC (0.885)
-sits close to the full state's (0.900); variant D — which recomputes the total per Corollary 2.1 —
-drops to 0.792, close to the physiology-only floor (0.791).</p>
-
-<h3 class="section" id="sec5">Window-overlap leakage: what is provable, and a correction</h3>
-<p class="plain">For decision point $t$, window $w$, let $O_t(w)$ be total treatment-hours
-overlapping $[t-w,t)$. Contamination fraction: $$c_t(w) = \min\left(1, \frac{O_t(w)}{w}\right)$$</p>
-
-<div class="statement-block">
-  <div class="label">Proposition 1 — monotonicity of absolute overlap</div>
-  For $w_1 < w_2$: $O_t(w_1) \le O_t(w_2)$.
-</div>
-<div class="proof-block">
-  <div class="label">Proof</div>
-  $[t-w_1,t) \subset [t-w_2,t)$ — nested windows. $O_t(w)$ measures treatment time intersecting a
-  set that only grows as $w$ increases.
-  <div class="qed">∎</div>
+<div class="not-establish">
+  <b>What this proof does NOT establish.</b> These results prove that treatment information can
+  enter the state representation through the construction of SOFA. They do not, by themselves,
+  prove that a learned policy exploits this information to predict the next treatment action. That
+  claim requires empirical testing against treatment persistence and other competing explanations —
+  see <a href="#h3" style="color:var(--treat);">§H3</a>.
 </div>
 
-<p class="plain"><b>Why the fraction is not similarly monotonic — the important correction.</b>
-$c_t(w)=O_t(w)/w$ is a ratio of a monotone non-decreasing numerator to a strictly increasing
-denominator. Differentiating: $$\frac{dc_t}{dw} \propto \frac{dO_t}{dw} - c_t(w)$$ so $c_t(w)$
-increases at $w$ precisely when the <i>marginal</i> treatment density in the newly-included slice
-exceeds the <i>average</i> density accumulated so far — the same relationship as a marginal-cost
-curve crossing an average-cost curve. This is provable, not an artifact, and it correctly predicts
-what this project actually measured: the 4-hour window showed a <i>higher</i> &gt;50%-contamination
-rate (34.3%) than the 24-hour window (28.7–30.8% across runs) — consistent with, not contradictory
-to, this framework.</p>
+<h3 class="section">What is actually proven?</h3>
+<div class="status-grid">
+  <div class="status-col proven"><h5>Proven</h5><ul>
+    <li>Treatment-dose non-identifiability of σ_cardio</li>
+    <li>Exact reconstructibility of σ_cardio from the total</li>
+    <li>Monotonicity of absolute window overlap</li>
+    <li>Non-monotonicity of fractional overlap</li>
+    <li>S_t is a descendant of A_(t-1) in the causal graph</li>
+  </ul></div>
+  <div class="status-col empirical"><h5>Empirical</h5><ul>
+    <li>Frequency of nonzero dose in the cohort (32.3% / 28.6%)</li>
+    <li>AUROC values for variants A–E</li>
+    <li>Window-contamination percentages</li>
+    <li>Offset-decay curve shape</li>
+  </ul></div>
+  <div class="status-col open"><h5>Open / testable</h5><ul>
+    <li>Whether the definitional pathway materially explains next-action predictability</li>
+    <li>Whether the AUROC gap survives controlling for treatment persistence</li>
+  </ul></div>
+</div>
 
-<h3 class="section" id="dag">The causal graph, and why H3 needs an experiment</h3>
-<svg width="100%" viewBox="0 0 680 380" role="img" style="margin:10px 0;">
-<title>Causal graph: prior action reaches the next action through a legitimate physiology path and two illegitimate paths</title>
-<defs>
-<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</marker>
-</defs>
-<path d="M140,64 L140,110" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-<path d="M140,144 L140,190" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-<path d="M140,234 L140,280" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-<path d="M140,314 L140,340 L140,340" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah)"/>
-<path d="M470,120 L280,148 L240,138" fill="none" stroke="#7c1d2e" stroke-width="1.6" marker-end="url(#ah)"/>
-<path d="M470,132 L240,208" fill="none" stroke="#7c1d2e" stroke-width="2" marker-end="url(#ah)"/>
-<path d="M500,150 C500,280 320,330 244,338" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah)"/>
-<rect x="40" y="20" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-<text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">True physiology U_t</text>
-<text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">unobserved</text>
-<rect x="40" y="110" width="200" height="34" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-<text x="140" y="131" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">MAP_t (observed)</text>
-<rect x="40" y="190" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-<text x="140" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">sofa_cardio_t</text>
-<text x="140" y="223" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">f(MAP, drug, dose)</text>
-<rect x="40" y="280" width="200" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
-<text x="140" y="301" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">State S_t</text>
-<rect x="40" y="340" width="200" height="34" rx="6" fill="#faf9f6" stroke="#948f80" stroke-width="0.75"/>
-<text x="140" y="361" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#201f1c">Next action A_t</text>
-<rect x="440" y="98" width="220" height="52" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
-<text x="550" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">Prior action A_(t-1)</text>
-<text x="550" y="136" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040">vasopressor given</text>
-<line x1="440" y1="200" x2="465" y2="200" stroke="#948f80" stroke-width="1"/>
-<text x="475" y="204" font-family="sans-serif" font-size="11" fill="#5a564c">legitimate / causal</text>
-<line x1="440" y1="222" x2="465" y2="222" stroke="#7c1d2e" stroke-width="1.6"/>
-<text x="475" y="226" font-family="sans-serif" font-size="11" fill="#5a564c">definitional leak (Thm. 1)</text>
-<line x1="440" y1="244" x2="465" y2="244" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4"/>
-<text x="475" y="248" font-family="sans-serif" font-size="11" fill="#5a564c">treatment persistence</text>
-<line x1="440" y1="266" x2="465" y2="266" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4"/>
-<text x="475" y="270" font-family="sans-serif" font-size="11" fill="#5a564c">what a classifier exploits</text>
-</svg>
-<p class="plain"><b>Proposition 2.</b> There exists a directed path $A_{t-1}\to\sigma_{cardio,t}\to
-S_t$. <b>Proof.</b> Direct from the edges above. ∎ This means $S_t$ is a <i>descendant</i> of
-$A_{t-1}$ — not a novel finding in the abstract (using a variable affected by treatment as a
-nominal covariate is documented in Hernán & Robins, <i>Causal Inference: What If</i>), but here it
-follows from a specific, provable graph edge (Theorem 1).</p>
-<p class="plain">A classifier predicting $A_t$ from $S_t$ (Experiment 2) cannot, from AUROC alone,
-attribute its performance between the coral solid path (definitional leak) and the coral dashed
-path (ordinary persistence, unrelated to SOFA). <b>This is why H3 requires an experiment, not a
-proof.</b></p>
+<details class="expand"><summary>Assumptions used by this analysis</summary><div class="expand-body">
+<ul style="padding-left:18px;">
+  <li>Decision times $t=1,\dots,T_i$ are ordered and known; $A_t$ is defined as the vasopressor
+  status in the interval strictly following $t$.</li>
+  <li>The state $S_t$ is built only from information timestamped in $[t-w,t)$ — the lookback
+  window — for some $w>0$.</li>
+  <li>$D_t$ denotes the active drug/dose at $t$, treated as a direct function of the treatment
+  record (not of physiology).</li>
+  <li>Every state variant (A–E) is assumed to contain exactly the feature set defined for it in
+  §Theorem 2 — no additional undocumented features.</li>
+  <li>The causal graph (§Causal structure) assumes no unmeasured common cause of $A_{t-1}$ and
+  $U_t$ beyond what MAP already captures — a simplification stated explicitly so it can be
+  challenged.</li>
+  <li>The fractional-contamination derivative (§Window overlap) assumes $O(w)$ is differentiable;
+  in the actual discrete-event data $O$ is a step function, so the derivative is a continuous-model
+  idealization, not a claim about the raw data.</li>
+</ul></div></details>
 
-<h3 class="section" id="h3">The open conjecture, stated as a falsifiable test</h3>
-<div class="card">
-  <p class="plain" style="margin-bottom:10px;">Let $\text{AUROC}(k)$ denote Experiment 5(b)'s
-  offset-decay AUROC at offset $k \in \{0,1,2,4,8\}$ bins. Define $\Delta = \text{AUROC}(0) -
-  \text{AUROC}(8)$.</p>
-  <div class="facts">
-    <div class="fact"><div class="n" style="font-size:14px;">Prediction A</div><div class="l">$\Delta \ge 0.10$, CIs don't overlap → supports genuine, temporally-specific leak</div></div>
-    <div class="fact"><div class="n" style="font-size:14px;">Prediction B</div><div class="l">$\Delta < 0.10$, or CIs overlap → treatment persistence explains most of the gap</div></div>
-    <div class="fact"><div class="n" style="font-size:14px;">Falsification</div><div class="l">flat curve + variant E already matching A → mechanisms real but practically negligible here</div></div>
+<details class="expand"><summary>Notation glossary</summary><div class="expand-body">
+  <div class="glossary-row"><span class="glossary-sym">$t$</span><span>Decision time (4-hour bin index)</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$A_t$</span><span>Vasopressor action in the interval following $t$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$A_{t-1}$</span><span>Prior action, immediately preceding $t$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$S_t$</span><span>State vector at $t$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$U_t$</span><span>True, unobserved physiology at $t$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$D_t$</span><span>Active drug/dose at $t$ (function of the treatment record)</span></div>
+  <div class="glossary-row"><span class="glossary-sym">MAP$_t$</span><span>Mean arterial pressure at $t$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$\sigma_{cardio}$</span><span>SOFA cardiovascular subscore</span></div>
+  <div class="glossary-row"><span class="glossary-sym">SOFA$_{total}$</span><span>Sum of all six SOFA organ subscores</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$O_t(w)$</span><span>Treatment-hours overlapping window $[t-w,t)$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$c_t(w)$</span><span>Contamination fraction, $\min(1,O_t(w)/w)$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$w$</span><span>Lookback window length (hours)</span></div>
+  <div class="glossary-row"><span class="glossary-sym">AUROC$(k)$</span><span>Offset-decay AUROC at offset $k$ decision bins</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$\Delta$</span><span>AUROC$(0)$ $-$ AUROC$(8)$</span></div>
+</div></details>
+
+<!-- ============ THEOREM 1 ============ -->
+<div class="thm-card" id="thm1">
+  <div class="thm-head">
+    <h4 class="thm-name">Theorem 1 — Treatment-dose non-identifiability of σ<sub>cardio</sub></h4>
+    <span class="thm-tag tag-proven">Proven</span>
+  </div>
+  <div class="thm-body">
+    <p class="intuition">Once any vasopressor is running, the cardiovascular SOFA score stops
+    reading blood pressure at all — it becomes purely a readout of the drug and dose.</p>
+
+    <p class="plain">The cardiovascular SOFA subscore (Vincent et al., 1996) is scored by checking
+    dose thresholds from highest to lowest, falling through only if the higher tier doesn't apply:</p>
+
+    <p class="plain">$$
+\sigma_{cardio}(\text{MAP}, D) =
+\begin{cases}
+0 & \text{if } D=\emptyset \text{ AND MAP} \geq 70 \\
+1 & \text{if } D=\emptyset \text{ AND MAP} < 70 \\
+4 & \text{if } \text{dopa}>15 \text{ OR epi}>0.1 \text{ OR norepi}>0.1 \\
+3 & \text{else if } \text{dopa}>5 \text{ OR } 0{<}\text{epi}{\leq}0.1 \text{ OR } 0{<}\text{norepi}{\leq}0.1 \\
+2 & \text{else if } 0{<}\text{dopa}{\leq}5 \text{ OR dobutamine}>0
+\end{cases}
+    $$</p>
+    <p class="plain" style="font-size:13px; color:var(--ink-faint);">Branches are checked in the
+    order shown (nested, not independent) — this resolves the OR/AND ambiguity precisely, and
+    matches the audited implementation exactly.</p>
+
+    <div class="statement-block">
+      <div class="label">Statement</div>
+      For any fixed nonzero drug/dose $D=d$ (any vasopressor active, at any dose), $\sigma_{cardio}$
+      is constant in MAP: $\sigma_{cardio}(m_1,d)=\sigma_{cardio}(m_2,d)$ for all $m_1,m_2$. This
+      holds for the <i>entire</i> nonzero-dose domain, not merely where a dose exceeds some
+      threshold.
+    </div>
+
+    <p class="plain"><b>Corrected example.</b> Fix $D=$ dopamine at 6 mcg/kg/min (no epi/norepi
+    active). The first branch (dopa&gt;15) is false; the second (dopa&gt;5) is true — score $=3$.
+    For any $\text{MAP}\in\{40,55,70,90,\dots\}$, $\sigma_{cardio}(\text{MAP},\text{dopa}{=}6)=3$
+    identically.</p>
+
+    <button class="derive-btn" data-target="deriv-thm1">Show derivation →</button>
   </div>
 </div>
 
-<h3 class="section" id="summary">Proof status of every claim</h3>
-<table class="data">
-<tr><th>Claim</th><th>Status</th><th>Nature</th></tr>
-<tr><td class="label">Theorem 1 (definitional leakage)</td><td>Proven</td><td>Function-domain fact</td></tr>
-<tr><td class="label">Theorem 2 (variant C insufficiency)</td><td>Proven</td><td>Algebraic identity</td></tr>
-<tr><td class="label">Prop. 1 (overlap monotonicity)</td><td>Proven</td><td>Measure-theoretic</td></tr>
-<tr><td class="label">Fraction non-monotonicity</td><td>Proven</td><td>Marginal/average calculus</td></tr>
-<tr><td class="label">Prop. 2 ($S_t$ descendant of $A_{t-1}$)</td><td>Proven</td><td>Graph-theoretic</td></tr>
-<tr><td class="label">H3 (AUROC gap = genuine leakage)</td><td>Open — Conjecture</td><td>Requires Experiment 5</td></tr>
-</table>
-<p class="plain">Every proof above can be verified by a reviewer reading the scoring rule and the
-graph — none require trusting code execution. Only H3 depends on running an experiment.</p>
+<!-- ============ COROLLARY 1.1 ============ -->
+<div class="thm-card">
+  <div class="thm-head">
+    <h4 class="thm-name">Corollary 1.1 — "100% of treated timesteps" is proven, not observed</h4>
+    <span class="thm-tag tag-proven">Proven</span>
+  </div>
+  <div class="thm-body">
+    <p class="intuition">It's not a coincidence that every treated timestep in the data turned out
+    dose-determined — the definition guarantees it.</p>
+    <div class="statement-block">
+      <div class="label">Statement</div>
+      Whenever $D\ne\emptyset$: the dose branches yield scores in $\{2,3,4\}$ while the $D=\emptyset$
+      branches yield scores in $\{0,1\}$ — disjoint ranges. So the dose-derived score exceeds the
+      MAP-only score whenever any vasopressor is active, for <i>any</i> dose. Do not equate
+      $A_{t-1}=1$ alone with this — the relevant condition is the actual active drug/dose branch,
+      which Theorem 1 shows is state-determining whenever nonzero.
+    </div>
+    <p class="plain" style="font-size:13px;">The <b>empirical</b> content is separate: how often
+    $D\ne\emptyset$ occurs at all in this cohort — 32.3% (4h window) / 28.6% (24h window) of all
+    eligible timesteps. That frequency is a dataset fact; the 100%-conditional-on-treatment claim
+    is a proof.</p>
+    <button class="derive-btn" data-target="deriv-cor11">Show derivation →</button>
+  </div>
+</div>
+
+<!-- ============ THEOREM 2 ============ -->
+<div class="thm-card" id="thm2">
+  <div class="thm-head">
+    <h4 class="thm-name">Theorem 2 — Exact reconstructibility under naive feature removal</h4>
+    <span class="thm-tag tag-proven">Proven</span>
+  </div>
+  <div class="thm-body">
+    <p class="intuition">Deleting the cardiovascular score from the feature list doesn't delete the
+    information — it's still recoverable by subtracting the other five scores from the total.</p>
+    <p class="plain">$$\text{SOFA}_{total} = \sigma_{cardio} + \sum_{i\ne cardio}\text{subscore}_i$$</p>
+    <div class="statement-block">
+      <div class="label">Statement</div>
+      Define <b>Variant C</b> precisely as the feature set $\{\text{SOFA}_{total},\
+      \text{subscore}_{resp},\ \text{subscore}_{coag},\ \text{subscore}_{liver},\
+      \text{subscore}_{renal},\ \text{subscore}_{cns}\}$ — i.e. $\sigma_{cardio}$ removed,
+      everything else (including the total) kept. Every term on the right-hand side of
+      $\sigma_{cardio}=\text{SOFA}_{total}-\sum_{i\ne cardio}\text{subscore}_i$ is observable in
+      Variant C, so $\sigma_{cardio}$ is exactly, algebraically recoverable — not a statistical
+      inference, an identity.
+    </div>
+    <button class="derive-btn" data-target="deriv-thm2">Show derivation →</button>
+  </div>
+</div>
+
+<!-- ============ PROPOSITION 1 + FRACTIONAL CONTAMINATION ============ -->
+<div class="thm-card" id="prop1">
+  <div class="thm-head">
+    <h4 class="thm-name">Proposition 1 — Window overlap: absolute monotone, fractional not</h4>
+    <span class="thm-tag tag-proven">Proven</span>
+  </div>
+  <div class="thm-body">
+    <p class="intuition">A bigger lookback window can only see more treatment-hours, never fewer —
+    but the <i>fraction</i> of the window that's contaminated can go either way.</p>
+
+    <div class="statement-block">
+      <div class="label">Proposition 1</div>
+      For $w_1<w_2$: $O_t(w_1)\le O_t(w_2)$, since $[t{-}w_1,t)\subset[t{-}w_2,t)$ — nested
+      intervals, and $O_t(w)$ measures treatment time intersecting a strictly growing set.
+    </div>
+
+    <p class="plain"><b>Fractional contamination — exact derivative.</b> With $c(w)=O(w)/w$, the
+    quotient rule gives, wherever $O$ is differentiable:</p>
+    <p class="plain">$$c'(w) = \frac{w\,O'(w) - O(w)}{w^2} = \frac{O'(w) - c(w)}{w}$$</p>
+    <p class="plain">So $c'(w)>0 \iff O'(w)>c(w)$ — fractional contamination rises exactly when the
+    <i>marginal</i> treatment density in the newly-added slice exceeds the <i>average</i> density
+    accumulated so far. This is the same relationship as a marginal-cost curve crossing an
+    average-cost curve, and it correctly predicts the counterintuitive empirical reversal this
+    project measured: the 4-hour window showed <i>higher</i> contamination than the 24-hour window.</p>
+
+    <button class="derive-btn" data-target="deriv-prop1">Show derivation →</button>
+  </div>
+</div>
+
+<!-- ============ CAUSAL STRUCTURE ============ -->
+<h3 class="section" id="causal">Causal structure — why non-identifiability isn't the same as leakage</h3>
+<p class="plain">Theorem 1 is a fact about a scoring <i>function</i>. Whether that fact lets a model
+predict the next action is a separate, empirical question — this section makes precisely why.</p>
+
+<svg width="100%" viewBox="0 0 680 300" role="img" style="margin:14px 0;">
+<title>Two distinct causal paths from prior action to next action</title>
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<path d="M140,64 L140,100" fill="none" stroke="#7c1d2e" stroke-width="1.6" marker-end="url(#ah2)"/>
+<path d="M140,144 L140,180" fill="none" stroke="#7c1d2e" stroke-width="1.6" marker-end="url(#ah2)"/>
+<path d="M140,224 L140,246" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah2)" opacity="0.7"/>
+<path d="M480,64 C480,150 300,220 244,240" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah2)"/>
+<rect x="40" y="20" width="200" height="44" rx="6" fill="#f4e2e0" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">Prior action A_(t-1)</text>
+<text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040">vasopressor at t-1</text>
+<rect x="40" y="100" width="200" height="44" rx="6" fill="#f4e2e0" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="140" y="122" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">D_t (dose)</text>
+<rect x="40" y="180" width="200" height="44" rx="6" fill="#f4e2e0" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="140" y="197" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">sofa_cardio_t</text>
+<text x="140" y="213" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040">Theorem 1</text>
+<rect x="40" y="246" width="200" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+<text x="140" y="267" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">State S_t</text>
+<rect x="440" y="20" width="200" height="44" rx="6" fill="#faf9f6" stroke="#948f80" stroke-width="0.75"/>
+<text x="540" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#201f1c">Next action A_t</text>
+<line x1="300" y1="120" x2="320" y2="120" stroke="#7c1d2e" stroke-width="1.6"/>
+<text x="328" y="124" font-family="sans-serif" font-size="11" fill="#5a564c">definitional pathway (proven)</text>
+<line x1="300" y1="146" x2="320" y2="146" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="328" y="150" font-family="sans-serif" font-size="11" fill="#5a564c">persistence pathway (ordinary, unproven either way here)</text>
+<line x1="300" y1="172" x2="320" y2="172" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4"/>
+<text x="328" y="176" font-family="sans-serif" font-size="11" fill="#5a564c">what AUROC(S_t → A_t) actually measures</text>
+</svg>
+
+<div class="statement-block">
+  <div class="label">Proposition 2 — descendant relationship</div>
+  There exists a directed path $A_{t-1}\to D_t\to\sigma_{cardio,t}\to S_t$ (the definitional
+  pathway, proven via Theorem 1's mechanism). Separately, $A_{t-1}\to A_t$ (ordinary treatment
+  persistence) exists as a ordinary clinical fact — this project neither proves nor needs to prove
+  it exists; it's a competing explanation to be ruled in or out.
+</div>
+
+<p class="plain">An AUROC computed for a classifier predicting $A_t$ from $S_t$ cannot, from the
+number alone, attribute its performance between these two paths. This is a structural fact about
+what AUROC measures — a marginal association — not a limitation specific to this dataset. <b>State
+containing treatment information does not, by itself, prove predictive leakage of the next
+action.</b></p>
+
+<!-- ============ H3 ============ -->
+<h3 class="section" id="h3">H3 — an open, empirical question, with a proper statistical test</h3>
+<div class="thm-card">
+  <div class="thm-head">
+    <h4 class="thm-name">H3 — does the definitional pathway materially explain next-action predictability?</h4>
+    <span class="thm-tag tag-open">Open</span>
+  </div>
+  <div class="thm-body">
+    <p class="plain">Let $\text{AUROC}(k)$ be the offset-decay AUROC at offset $k\in\{0,1,2,4,8\}$
+    decision bins, and $\Delta=\text{AUROC}(0)-\text{AUROC}(8)$.</p>
+
+    <div class="warn-block">
+      <div class="label">Corrected methodology</div>
+      Checking whether two <i>marginal</i> confidence intervals overlap is <b>not</b> the correct
+      test here, and is a known-weak heuristic in general: $\text{AUROC}(0)$ and $\text{AUROC}(8)$
+      are computed on the <i>same</i> patients (paired data), so their sampling errors are
+      correlated. The right target is the sampling distribution of $\Delta$ itself.
+    </div>
+
+    <p class="plain"><b>Recommended procedure:</b> a paired cluster bootstrap — resample patients
+    (not timesteps) with replacement, and on <i>each</i> resample compute both
+    $\text{AUROC}(0)$ and $\text{AUROC}(8)$ using the same resampled patient set, then record
+    $\Delta$ for that resample. Repeat many times; report the resulting bootstrap CI for $\Delta$
+    directly. A DeLong-type paired test for correlated ROC curves, or a permutation test that
+    permutes offset-labels within patient, are valid alternatives.</p>
+
+    <p class="plain"><b>Prediction A</b> (definitional pathway dominates): $\Delta$'s bootstrap CI
+    excludes a value near 0 and $\Delta\ge0.10$. <b>Prediction B</b> (persistence dominates):
+    $\Delta$'s CI includes 0, or $\Delta<0.10$. Neither outcome would falsify Theorems 1–2 — only
+    their <i>practical</i> contribution to the measured gap would be smaller under Prediction B.</p>
+
+    <button class="derive-btn" data-target="deriv-h3">Show derivation →</button>
+  </div>
+</div>
+
+<h3 class="section">References</h3>
+<p class="plain" style="font-size:13px;">
+Vincent, J.-L. et al. (1996). The SOFA score. <i>Intensive Care Medicine</i>, 22(7), 707–710.<br>
+Hernán, M. A. & Robins, J. M. <i>Causal Inference: What If</i>. Chapman & Hall/CRC, 2020.<br>
+DeLong, E. R. et al. (1988). Comparing the areas under two or more correlated ROC curves. <i>Biometrics</i>, 44(3), 837–845.<br>
+Komorowski, M. et al. (2018). The Artificial Intelligence Clinician. <i>Nature Medicine</i>, 24(11), 1716–1720.
+</p>
 
 </main>
 
@@ -210,3 +361,91 @@ graph — none require trusting code execution. Only H3 depends on running an ex
   <a href="__PATHPREFIX__/visualizer/">← Live mechanism visualizer</a>
   <a href="__PATHPREFIX__/status/" class="primary">Status & roadmap →</a>
 </div>
+
+<footer class="page-footer">
+  Full source with complete proofs and appendix: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md">FORMAL_ANALYSIS.md</a>
+</footer>
+
+<!-- ============ DERIVATION PANEL ============ -->
+<div id="derivOverlay"></div>
+<div id="derivPanel">
+  <div class="deriv-head"><h4 id="derivTitle">Derivation</h4><button class="deriv-close" id="derivClose">&times;</button></div>
+  <div class="deriv-body" id="derivBody"></div>
+</div>
+
+<template id="deriv-thm1">
+  <div class="deriv-step"><div class="step-label">Step 1 — define the score</div>$$\sigma_{cardio}=f(\text{MAP},D)$$</div>
+  <div class="deriv-step"><div class="step-label">Step 2 — fix a nonzero dose</div>Let $D=d\ne\emptyset$, any drug, any dose.</div>
+  <div class="deriv-step"><div class="step-label">Step 3 — inspect every nonzero-dose branch</div>All three branches (scores 2, 3, 4) are defined purely in terms of drug/dose thresholds. None references MAP.</div>
+  <div class="deriv-step"><div class="step-label">Step 4 — therefore</div>$f(m,d)=c(d)$ for a constant $c(d)$ depending only on $d$, for every $m$ in the domain.</div>
+  <div class="deriv-step"><div class="step-label">Conclusion</div>$\sigma_{cardio}(m_1,d)=\sigma_{cardio}(m_2,d)$ for all $m_1,m_2$ — MAP is not identifiable from the score whenever any vasopressor is active.</div>
+  <div class="deriv-why">Treatment has entered a state variable that is subsequently used for policy learning — this is the mechanism, not yet the leakage claim itself (see §Causal structure).</div>
+</template>
+
+<template id="deriv-cor11">
+  <div class="deriv-step"><div class="step-label">Step 1</div>Dose branches (D≠∅) yield scores in {2,3,4}. MAP-only branches (D=∅) yield scores in {0,1}.</div>
+  <div class="deriv-step"><div class="step-label">Step 2</div>These ranges are disjoint: {2,3,4} ∩ {0,1} = ∅.</div>
+  <div class="deriv-step"><div class="step-label">Step 3</div>The reported "dose-determined" label is score_dose &gt; score_map. Given disjoint ranges, this holds whenever D≠∅, unconditionally on the specific dose.</div>
+  <div class="deriv-step"><div class="step-label">Conclusion</div>100% of treated timesteps being dose-determined is a guaranteed consequence of the category structure, not a coincidence needing empirical confirmation.</div>
+  <div class="deriv-why">The empirical question that remains is how <i>often</i> D≠∅ occurs at all — that's a genuine dataset fact (32.3%/28.6%), separate from this proof.</div>
+</template>
+
+<template id="deriv-thm2">
+  <div class="deriv-step"><div class="step-label">Step 1 — the identity</div>$$\text{SOFA}_{total}=\sigma_{cardio}+\sum_{i\ne cardio}\text{subscore}_i$$ by definition of the total as a sum.</div>
+  <div class="deriv-step"><div class="step-label">Step 2 — rearrange</div>$$\sigma_{cardio}=\text{SOFA}_{total}-\sum_{i\ne cardio}\text{subscore}_i$$</div>
+  <div class="deriv-step"><div class="step-label">Step 3 — check observability</div>Variant C = {SOFA_total, resp, coag, liver, renal, cns}. Every term on the right-hand side above is literally a column present in Variant C.</div>
+  <div class="deriv-step"><div class="step-label">Conclusion</div>Reconstruction is exact substitution and subtraction — an algebraic identity, not a statistical estimate with any error term.</div>
+  <div class="deriv-why">This is why removing σ_cardio alone (Variant C) barely drops AUROC (0.885 vs 0.900) — the model can reconstruct it. Only Variant D, which recomputes the total from a treatment-independent proxy, actually closes the channel.</div>
+</template>
+
+<template id="deriv-prop1">
+  <div class="deriv-step"><div class="step-label">Step 1 — nested windows</div>For $w_1<w_2$: $[t-w_1,t)\subset[t-w_2,t)$.</div>
+  <div class="deriv-step"><div class="step-label">Step 2 — monotone measure</div>$O_t(w)$ measures treatment-time intersecting a set that only grows as $w$ increases, so $O_t(w_1)\le O_t(w_2)$.</div>
+  <div class="deriv-step"><div class="step-label">Step 3 — the fraction, via quotient rule</div>$$c(w)=\frac{O(w)}{w} \implies c'(w)=\frac{w\,O'(w)-O(w)\cdot1}{w^2}=\frac{O'(w)-c(w)}{w}$$</div>
+  <div class="deriv-step"><div class="step-label">Step 4 — sign condition</div>Since $w>0$: $c'(w)>0 \iff O'(w)>c(w)$.</div>
+  <div class="deriv-step"><div class="step-label">Conclusion</div>Fractional contamination rises exactly when marginal treatment density exceeds average accumulated density — no general monotonicity in $w$ should be expected.</div>
+  <div class="deriv-why">This exact relationship — not an empirical shrug — is why the 4-hour window measured higher contamination than the 24-hour window in this project's own data.</div>
+</template>
+
+<template id="deriv-h3">
+  <div class="deriv-step"><div class="step-label">Why CI-overlap is the wrong test</div>AUROC(0) and AUROC(8) share the same underlying patients — their errors are correlated, not independent. Two overlapping marginal CIs can still correspond to a Δ credibly different from zero, and vice versa.</div>
+  <div class="deriv-step"><div class="step-label">The paired bootstrap</div>Resample patients with replacement. For each resample, compute AUROC(0) and AUROC(8) on that same resampled set, then Δ for that resample. Collect Δ across many resamples.</div>
+  <div class="deriv-step"><div class="step-label">Reading the result</div>The resulting distribution of Δ directly answers "is the offset-decay slope credibly nonzero?" — the actual question H3 depends on.</div>
+  <div class="deriv-why">This procedure has not yet been run — it is specified here as the correct test to apply once Experiment 5's decay curve is computed, not as a result.</div>
+</template>
+
+<script>
+(function(){
+  const panel = document.getElementById('derivPanel');
+  const overlay = document.getElementById('derivOverlay');
+  const body = document.getElementById('derivBody');
+  const title = document.getElementById('derivTitle');
+
+  function openPanel(targetId, heading){
+    const tpl = document.getElementById(targetId);
+    if(!tpl) return;
+    body.innerHTML = '';
+    body.appendChild(tpl.content.cloneNode(true));
+    title.textContent = heading || 'Derivation';
+    panel.classList.add('open');
+    overlay.classList.add('open');
+    if(window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([body]);
+    panel.setAttribute('tabindex','-1');
+    panel.focus();
+  }
+  function closePanel(){
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  document.querySelectorAll('.derive-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.thm-card');
+      const heading = card ? card.querySelector('.thm-name').textContent : 'Derivation';
+      openPanel(btn.dataset.target, heading);
+    });
+  });
+  document.getElementById('derivClose').addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+})();
+</script>
