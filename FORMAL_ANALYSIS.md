@@ -170,6 +170,18 @@ from a MAP-only cardiovascular proxy, per Corollary 2.1 — drops to 0.792, clos
 variant E, which has no explicit treatment features (0.791). The theorem predicts this pattern; the
 notebook confirms it.
 
+**Limitation: this correction has a clinical-validity cost, not just a predictive one.** Variant D's
+proxy, $\text{score\_map} = \mathbb{1}[\text{MAP} < 70]$, is a two-level signal that cannot
+distinguish a healthy, untreated patient from one who is successfully treated and still critically
+ill — vasopressors restoring MAP above 70 make the two indistinguishable under this proxy alone.
+Concretely: a patient on norepinephrine 0.15 mcg/kg/min with MAP 74 scores $\sigma_{cardio}=4$
+(active shock, correctly severe) under the full scoring rule, but $\text{score\_map}=0$
+(incorrectly reads as healthy) under variant D's proxy — verified directly against
+`sofa_cardio_decomposed`. This is a genuine tradeoff between predictive purity and clinical
+validity, not evidence that decomposition is the wrong fix; it is the motivation for disentangling
+severity and treatment history into two separate, explicit terms (a proposed "variant F") rather
+than collapsing them into one composite score in either direction.
+
 ---
 
 ## 5. Treatment overlap: what is provable, and a corrected account of what is not
