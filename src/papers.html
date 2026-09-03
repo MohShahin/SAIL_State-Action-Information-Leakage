@@ -10,7 +10,7 @@ templateEngineOverride: false
   .tag-btn.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600; }
   .paper-card{ border:1px solid var(--line); border-radius:4px; padding:20px; background:var(--paper); }
   .paper-card .cat{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
-  .cat-leak{ background:var(--treat-soft); color:var(--treat); }
+  .cat-confound{ background:var(--treat-soft); color:var(--treat); }
   .cat-context{ background:var(--line-soft); color:var(--ink-soft); }
   .cat-related{ background:var(--accent-soft); color:var(--accent); }
   .paper-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
@@ -46,8 +46,8 @@ const PAPERS = [
     title: "The SOFA (Sepsis-related Organ Failure Assessment) score to describe organ dysfunction/failure",
     authors: "Vincent, J.-L. et al.",
     venue: "Intensive Care Medicine, 1996",
-    category: "Documented leakage source",
-    catClass: "cat-leak",
+    category: "Documented treatment-confounding source",
+    catClass: "cat-confound",
     tags: ["SOFA score", "Clinical scoring", "Sepsis"],
     relevance: "Defines the exact cardiovascular scoring rule proven non-identifiable from MAP alone (Theorem 1) — the source of Mechanism 1.",
     link: "https://doi.org/10.1007/BF01709751"

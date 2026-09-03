@@ -264,7 +264,7 @@ const VARIANTS = [
     auroc:0.885, groups:["vitals","labs"] },
   { id:"D", short:"Replace it with a treatment-free version", detail:"Swap the treatment-linked subscore for a version based on blood pressure alone, and recompute the total from scratch so nothing is smuggled back in.",
     auroc:0.792, groups:["vitals","labs","map-only"] },
-  { id:"E", short:"Physiology only — nothing about treatment", detail:"Vital signs and labs only. No severity-score field derived from treatment in any form. This is the honest floor for a pre-decision snapshot.",
+  { id:"E", short:"No treatment features — nothing about treatment", detail:"Vital signs and labs only. No severity-score field derived from treatment in any form. This is the honest floor for a pre-decision snapshot.",
     auroc:0.791, groups:["vitals","labs"] },
 ];
 const GROUP_LABEL = {
@@ -350,7 +350,7 @@ function renderIntro(){
 
     <div class="facts">
       <div class="fact"><div class="n">11,354</div><div class="l">ICU stays studied (MIMIC-IV, a public research database)</div></div>
-      <div class="fact"><div class="n">2</div><div class="l">separate ways this leak could be happening</div></div>
+      <div class="fact"><div class="n">2</div><div class="l">separate mechanisms that could cause this</div></div>
       <div class="fact"><div class="n">6</div><div class="l">steps in this walkthrough</div></div>
     </div>
   </div>`;
@@ -360,7 +360,7 @@ function renderIntro(){
 function renderScore(){
   document.getElementById('main').innerHTML = `
   <div class="stage">
-    <p class="step-eyebrow">First leak &nbsp;·&nbsp; the score's own rulebook</p>
+    <p class="step-eyebrow">First mechanism &nbsp;·&nbsp; the score's own rulebook</p>
     <h2>Meet the SOFA score — a report card for organ function.</h2>
     <p class="plain">Clinicians use the <span class="term">SOFA score</span> to summarize how unwell a patient is.
     One part of it — the <b>cardiovascular piece</b> — is meant to reflect blood pressure. But the official rule
@@ -444,8 +444,8 @@ function renderScore(){
 function renderClock(){
   document.getElementById('main').innerHTML = `
   <div class="stage">
-    <p class="step-eyebrow">Second leak &nbsp;·&nbsp; the timing window</p>
-    <h2>Even without that rule, timing alone can leak information.</h2>
+    <p class="step-eyebrow">Second mechanism &nbsp;·&nbsp; the timing window</p>
+    <h2>Even without that rule, timing alone can pull treatment information into the snapshot.</h2>
     <p class="plain">To build a snapshot of "the patient's condition right now," researchers usually average
     readings over a lookback window — commonly the <b>past 24 hours</b>. If medication was already running
     earlier in that window, the snapshot can reflect the medication's effects even when no scoring rule directly
@@ -467,14 +467,14 @@ function renderClock(){
       <h3>Across the full set of patients (24-hour window)</h3>
       <div class="facts">
         <div class="fact"><div class="n">31%</div><div class="l">average share of the lookback window that overlapped earlier medication</div></div>
-        <div class="fact"><div class="n">12%</div><div class="l">typical (median) overlap — most windows are only partly contaminated, not entirely</div></div>
+        <div class="fact"><div class="n">12%</div><div class="l">typical (median) overlap — most windows are only partly affected, not entirely</div></div>
         <div class="fact"><div class="n">29%</div><div class="l">of moments had more than half their window overlapping earlier medication</div></div>
       </div>
       <p class="plain" style="margin:16px 0 0;">These numbers were revised down from an earlier draft (which
       reported 56% / 100% / 56%) after an internal reproducibility audit caught two real bugs in the extraction
       pipeline — a data-loading step that could silently duplicate patient records, and a counting step that
       double-counted overlapping medications given together. Fixing both brought the figures down to what's
-      shown here. The underlying finding — a meaningful share of decision windows are contaminated by earlier
+      shown here. The underlying finding — a meaningful share of decision windows overlap with earlier
       treatment — held up; the exact size of the problem was smaller than first measured.</p>
     </div>
   </div>`;
@@ -556,7 +556,7 @@ function renderGuess(){
     <div class="card">
       <h3>The headline comparison</h3>
       <p class="plain" style="margin-bottom:0;">Full snapshot: correctly predicts the next dose with a score of
-      <b>0.900</b> (out of 1.00). Physiology-only, properly cleaned up: <b>0.791</b>. That gap — <b>about 0.11</b>
+      <b>0.900</b> (out of 1.00). With no treatment information at all, properly cleaned up: <b>0.791</b>. That gap — <b>about 0.11</b>
       — is the study's current best estimate of how much predictive power comes specifically from treatment
       information embedded in the snapshot, not from the patient's actual condition. It is treated as an
       <b>upper limit</b> until the double-checks in Step 5 are finished.</p>
@@ -603,7 +603,7 @@ function renderCheck(){
   document.getElementById('main').innerHTML = `
   <div class="stage">
     <p class="step-eyebrow">Being careful</p>
-    <h2>Is that gap really "leakage" — or just ordinary medical routine?</h2>
+    <h2>Is that gap really about these mechanisms — or just ordinary medical routine?</h2>
     <p class="plain">A cautious reader should ask: maybe the computer isn't detecting a flaw in the score at all —
     maybe it's just noticing that <b>medication courses run for hours</b>, so "still on medication soon" is easy
     to predict for any reasonable set of patient information. To tell these apart, the study plans a set of
@@ -615,7 +615,7 @@ function renderCheck(){
       <div class="facts">
         <div class="fact"><div class="n" style="font-size:15px;">Shuffle the outcomes</div><div class="l">scramble which treatment happened when, and see if the "prediction" disappears &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
         <div class="fact"><div class="n" style="font-size:15px;">Predict further ahead</div><div class="l">check whether predictive power fades the further out you try to predict &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
-        <div class="fact"><div class="n" style="font-size:15px;">Physiology-only baseline</div><div class="l">already measured in Step 4 &nbsp;·&nbsp; <span class="flag physio" style="margin-top:6px;"><span class="dot"></span>done — 0.791</span></div></div>
+        <div class="fact"><div class="n" style="font-size:15px;">No-treatment-features baseline</div><div class="l">already measured in Step 4 &nbsp;·&nbsp; <span class="flag physio" style="margin-top:6px;"><span class="dot"></span>done — 0.791</span></div></div>
         <div class="fact"><div class="n" style="font-size:15px;">Decoy features</div><div class="l">test made-up fields with a similar frequency to medication use &nbsp;·&nbsp; <span class="flag" style="margin-top:6px;"><span class="dot" style="background:var(--gold);"></span>planned, not yet run</span></div></div>
       </div>
     </div>
@@ -624,8 +624,8 @@ function renderCheck(){
       <h3>A false start, corrected</h3>
       <p class="plain" style="margin-bottom:10px;">The first version of the "predict further ahead" check used a
       single fixed gap of 8 hours, and still scored <b>0.862</b> — not much lower than the full snapshot's 0.900.
-      That result was ambiguous: it fits <i>both</i> "the snapshot specifically leaks this treatment" and "medication
-      courses are simply long, so almost anything nearby in time is predictable."</p>
+      That result was ambiguous: it fits <i>both</i> "the snapshot's construction specifically carries this treatment
+      forward" and "medication courses are simply long, so almost anything nearby in time is predictable."</p>
       <p class="plain" style="margin-bottom:0;">The check was redesigned to test <b>several</b> time gaps (0, 4, 8,
       16, and 32 hours) rather than one. A score that <b>drops quickly</b> across those gaps points to a genuine
       scoring artifact; a score that <b>stays high and fades slowly</b> points to ordinary medication persistence —
@@ -650,10 +650,10 @@ function renderTakeaway(){
 
     <div class="card">
       <h3>What was found</h3>
-      <p class="plain" style="margin-bottom:10px;"><b>Scoring-rule leak:</b> for patients already on medication, the
+      <p class="plain" style="margin-bottom:10px;"><b>Treatment-confounded scoring:</b> for patients already on medication, the
       relevant piece of the severity score was determined by the medication, not blood pressure, 100% of the
       time — and this affected roughly 3 in 10 patient-moments overall.</p>
-      <p class="plain" style="margin-bottom:10px;"><b>Timing-window leak:</b> under the common 24-hour window,
+      <p class="plain" style="margin-bottom:10px;"><b>Treatment overlap:</b> under the common 24-hour window,
       more than half of decision moments had over half their window already overlapping earlier medication.</p>
       <p class="plain" style="margin-bottom:0;"><b>Predictability:</b> a computer's ability to guess the next
       dose drops from 0.900 to 0.791 once the snapshot is properly cleaned of treatment information — a gap of
@@ -665,8 +665,8 @@ function renderTakeaway(){
       <div class="facts">
         <div class="fact"><div class="n" style="font-size:14px;">Decompose the score</div><div class="l">separate the blood-pressure-based part from the medication-based part; recompute any combined total from scratch</div></div>
         <div class="fact"><div class="n" style="font-size:14px;">Shorten the window</div><div class="l">prefer tightly time-aligned snapshots over wide 24-hour averages, and report the overlap fraction</div></div>
-        <div class="fact"><div class="n" style="font-size:14px;">Run the double-checks</div><div class="l">a shuffle test and a multi-gap prediction curve are cheap ways to separate leakage from routine persistence</div></div>
-        <div class="fact"><div class="n" style="font-size:14px;">Report the gap</div><div class="l">a simple "full snapshot vs. physiology-only" comparison, alongside the usual performance numbers</div></div>
+        <div class="fact"><div class="n" style="font-size:14px;">Run the double-checks</div><div class="l">a shuffle test and a multi-gap prediction curve are cheap ways to separate a genuine mechanism-driven effect from routine persistence</div></div>
+        <div class="fact"><div class="n" style="font-size:14px;">Report the gap</div><div class="l">a simple "full snapshot vs. no treatment features" comparison, alongside the usual performance numbers</div></div>
       </div>
     </div>
 

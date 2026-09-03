@@ -88,6 +88,19 @@ empirical, not settled by the mathematics alone.</p>
   see <a href="#h3" style="color:var(--treat);">§H3</a>.
 </div>
 
+<h3 class="section" id="term">Terminology — confounding, not ML-sense leakage</h3>
+<p class="plain">$A_{t-1} \to S_t \to A_t$ — prior treatment shaping the current state, which then
+informs the <i>next</i> decision — is ordinary sequential decision-making, not leakage. True leakage
+would be $A_t \to S_t \to \hat{A}_t$: the state containing information about the <i>same</i> action
+epoch it's used to predict, or information not yet available at decision time. Both theorems below
+are the first pattern — real, provable, and still a genuine problem for offline-RL state design
+(Proposition 2 shows $S_t$ is formally a descendant of $A_{t-1}$), but a
+<b>post-treatment-bias / bad-control</b> pathology from causal inference, not a
+<b>target/temporal leakage</b> pathology from machine learning. This project's own action label was
+verified to have zero overlap with the state window it follows (analysis notebook, §"Build State
+Variants A–E and Action Labels") — the second pattern does not occur anywhere in this pipeline.
+Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md#11-a-terminology-note-h1h2-were-previously-labeled-leakage-corrected" style="color:var(--accent);">FORMAL_ANALYSIS.md §1.1</a>.</p>
+
 <h3 class="section">What is actually proven?</h3>
 <div class="status-grid">
   <div class="status-col proven"><h5>Proven</h5><ul>
@@ -100,7 +113,7 @@ empirical, not settled by the mathematics alone.</p>
   <div class="status-col empirical"><h5>Empirical</h5><ul>
     <li>Frequency of nonzero dose in the cohort (32.3% / 28.6%)</li>
     <li>AUROC values for variants A–E</li>
-    <li>Window-contamination percentages</li>
+    <li>Window-overlap percentages</li>
     <li>Offset-decay curve shape</li>
   </ul></div>
   <div class="status-col open"><h5>Open / testable</h5><ul>
@@ -122,7 +135,7 @@ empirical, not settled by the mathematics alone.</p>
   <li>The causal graph (§Causal structure) assumes no unmeasured common cause of $A_{t-1}$ and
   $U_t$ beyond what MAP already captures — a simplification stated explicitly so it can be
   challenged.</li>
-  <li>The fractional-contamination derivative (§Window overlap) assumes $O(w)$ is differentiable;
+  <li>The fractional-overlap derivative (§Window overlap) assumes $O(w)$ is differentiable;
   in the actual discrete-event data $O$ is a step function, so the derivative is a continuous-model
   idealization, not a claim about the raw data.</li>
 </ul></div></details>
@@ -138,7 +151,7 @@ empirical, not settled by the mathematics alone.</p>
   <div class="glossary-row"><span class="glossary-sym">$\sigma_{cardio}$</span><span>SOFA cardiovascular subscore</span></div>
   <div class="glossary-row"><span class="glossary-sym">SOFA$_{total}$</span><span>Sum of all six SOFA organ subscores</span></div>
   <div class="glossary-row"><span class="glossary-sym">$O_t(w)$</span><span>Treatment-hours overlapping window $[t-w,t)$</span></div>
-  <div class="glossary-row"><span class="glossary-sym">$c_t(w)$</span><span>Contamination fraction, $\min(1,O_t(w)/w)$</span></div>
+  <div class="glossary-row"><span class="glossary-sym">$c_t(w)$</span><span>Overlap fraction, $\min(1,O_t(w)/w)$</span></div>
   <div class="glossary-row"><span class="glossary-sym">$w$</span><span>Lookback window length (hours)</span></div>
   <div class="glossary-row"><span class="glossary-sym">AUROC$(k)$</span><span>Offset-decay AUROC at offset $k$ decision bins</span></div>
   <div class="glossary-row"><span class="glossary-sym">$\Delta$</span><span>AUROC$(0)$ $-$ AUROC$(8)$</span></div>
@@ -237,7 +250,7 @@ empirical, not settled by the mathematics alone.</p>
   </div>
 </div>
 
-<!-- ============ PROPOSITION 1 + FRACTIONAL CONTAMINATION ============ -->
+<!-- ============ PROPOSITION 1 + FRACTIONAL OVERLAP ============ -->
 <div class="thm-card" id="prop1">
   <div class="thm-head">
     <h4 class="thm-name">Proposition 1 — Window overlap: absolute monotone, fractional not</h4>
@@ -245,7 +258,7 @@ empirical, not settled by the mathematics alone.</p>
   </div>
   <div class="thm-body">
     <p class="intuition">A bigger lookback window can only see more treatment-hours, never fewer —
-    but the <i>fraction</i> of the window that's contaminated can go either way.</p>
+    but the <i>fraction</i> of the window that overlaps treatment can go either way.</p>
 
     <div class="statement-block">
       <div class="label">Proposition 1</div>
@@ -253,14 +266,14 @@ empirical, not settled by the mathematics alone.</p>
       intervals, and $O_t(w)$ measures treatment time intersecting a strictly growing set.
     </div>
 
-    <p class="plain"><b>Fractional contamination — exact derivative.</b> With $c(w)=O(w)/w$, the
+    <p class="plain"><b>Fractional overlap — exact derivative.</b> With $c(w)=O(w)/w$, the
     quotient rule gives, wherever $O$ is differentiable:</p>
     <p class="plain">$$c'(w) = \frac{w\,O'(w) - O(w)}{w^2} = \frac{O'(w) - c(w)}{w}$$</p>
-    <p class="plain">So $c'(w)>0 \iff O'(w)>c(w)$ — fractional contamination rises exactly when the
+    <p class="plain">So $c'(w)>0 \iff O'(w)>c(w)$ — the fractional overlap rises exactly when the
     <i>marginal</i> treatment density in the newly-added slice exceeds the <i>average</i> density
     accumulated so far. This is the same relationship as a marginal-cost curve crossing an
     average-cost curve, and it correctly predicts the counterintuitive empirical reversal this
-    project measured: the 4-hour window showed <i>higher</i> contamination than the 24-hour window.</p>
+    project measured: the 4-hour window showed a <i>higher</i> overlap rate than the 24-hour window.</p>
 
     <button class="derive-btn" data-target="deriv-prop1">Show derivation →</button>
   </div>
@@ -403,8 +416,8 @@ Komorowski, M. et al. (2018). The Artificial Intelligence Clinician. <i>Nature M
   <div class="deriv-step"><div class="step-label">Step 2 — monotone measure</div>$O_t(w)$ measures treatment-time intersecting a set that only grows as $w$ increases, so $O_t(w_1)\le O_t(w_2)$.</div>
   <div class="deriv-step"><div class="step-label">Step 3 — the fraction, via quotient rule</div>$$c(w)=\frac{O(w)}{w} \implies c'(w)=\frac{w\,O'(w)-O(w)\cdot1}{w^2}=\frac{O'(w)-c(w)}{w}$$</div>
   <div class="deriv-step"><div class="step-label">Step 4 — sign condition</div>Since $w>0$: $c'(w)>0 \iff O'(w)>c(w)$.</div>
-  <div class="deriv-step"><div class="step-label">Conclusion</div>Fractional contamination rises exactly when marginal treatment density exceeds average accumulated density — no general monotonicity in $w$ should be expected.</div>
-  <div class="deriv-why">This exact relationship — not an empirical shrug — is why the 4-hour window measured higher contamination than the 24-hour window in this project's own data.</div>
+  <div class="deriv-step"><div class="step-label">Conclusion</div>The fractional overlap rises exactly when marginal treatment density exceeds average accumulated density — no general monotonicity in $w$ should be expected.</div>
+  <div class="deriv-why">This exact relationship — not an empirical shrug — is why the 4-hour window measured a higher overlap rate than the 24-hour window in this project's own data.</div>
 </template>
 
 <template id="deriv-h3">

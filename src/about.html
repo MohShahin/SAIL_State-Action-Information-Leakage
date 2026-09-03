@@ -22,8 +22,9 @@ and pre-registers a falsifiable test for the one claim that isn't provable in cl
 <h3 class="section">Why was it created?</h3>
 <p class="plain">Offline sepsis-RL research — the "AI Clinician" and its descendants — evaluates
 policies against retrospective data using state representations built substantially from the SOFA
-score. If that state already leaks the treatment it's supposed to precede, off-policy value
-estimates in this literature should be read with that in mind. This project does not evaluate or
+score. If that state is already a near-deterministic function of the treatment it's supposed to
+precede — treatment-confounded by construction, not through physiology — off-policy value estimates
+in this literature should be read with that in mind. This project does not evaluate or
 discredit any specific published policy — it quantifies a property of a commonly used state
 construction.</p>
 
@@ -35,8 +36,8 @@ construction.</p>
 
 <h3 class="section">Scientific contribution</h3>
 <ul class="plain" style="padding-left:20px;">
-  <li>Two mathematically proven leakage mechanisms (non-identifiability, algebraic reconstructibility)</li>
-  <li>A causal-graph formalization explaining why predictability alone can't settle whether leakage is genuine</li>
+  <li>Two mathematically proven treatment-confounding mechanisms (non-identifiability, algebraic reconstructibility) — see <a href="__PATHPREFIX__/mechanisms/#term" style="color:var(--accent);">Terminology</a> for why this is confounding, not ML-sense leakage</li>
+  <li>A causal-graph formalization explaining why predictability alone can't settle whether the AUROC gap reflects these mechanisms specifically, or ordinary treatment persistence</li>
   <li>An independently re-extracted, five-times-reproduced empirical audit — including three real
   pipeline bugs found, diagnosed, and fixed in the open</li>
   <li>A pre-registered, falsifiable decision procedure for the one open claim</li>

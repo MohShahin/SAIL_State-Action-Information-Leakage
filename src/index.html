@@ -45,7 +45,7 @@ templateEngineOverride: false
       <span class="font-bold tracking-tight text-base">SAIL</span>
     </a>
     <div class="hidden lg:flex items-center gap-1 text-sm">
-      <a href="#core-question" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Why leakage?</a>
+      <a href="#core-question" class="px-3 py-2 text-slate-600 hover:text-cyan-600">The problem</a>
       <a href="__PATHPREFIX__/mechanisms/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Mechanisms</a>
       <a href="__PATHPREFIX__/visualizer/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Demo</a>
       <a href="__PATHPREFIX__/evidence/" class="px-3 py-2 text-slate-600 hover:text-cyan-600">Evidence</a>
@@ -157,7 +157,7 @@ templateEngineOverride: false
 <!-- ============ 4. TWO MECHANISMS ============ -->
 <section id="mechanisms" class="border-b border-slate-200 bg-slate-50">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
-    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">The two mechanisms of state–action leakage</h2><a href="__PATHPREFIX__/mechanisms/" class="text-sm font-medium text-cyan-600 hover:underline">Full deep-dive →</a></div>
+    <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">The two treatment-confounding mechanisms</h2><a href="__PATHPREFIX__/mechanisms/" class="text-sm font-medium text-cyan-600 hover:underline">Full deep-dive →</a></div>
 
     <!-- Mechanism 1 -->
     <div class="mt-12 bg-white border border-slate-200 rounded overflow-hidden">
@@ -194,10 +194,10 @@ templateEngineOverride: false
     <div class="mt-8 bg-white border border-slate-200 rounded overflow-hidden">
       <div class="p-6 md:p-8 border-b border-slate-200">
         <div class="mono text-xs text-teal-700 mb-2">MECHANISM 2</div>
-        <h3 class="text-xl font-bold">Overlapping temporal windows</h3>
+        <h3 class="text-xl font-bold">Treatment overlap</h3>
         <p class="text-sm text-slate-600 mt-2 max-w-2xl">A "current state" snapshot is built by
         aggregating over a lookback window. When that window overlaps a period when treatment was
-        already running, the snapshot is contaminated with treatment history it was supposed to
+        already running, the snapshot carries treatment history into it that it was supposed to
         precede.</p>
       </div>
       <div class="p-6 md:p-8">
@@ -216,7 +216,7 @@ templateEngineOverride: false
               <input type="range" id="m2Dur" min="1" max="24" value="10" class="w-full accent-cyan-600">
             </div>
             <div class="pt-3 border-t border-slate-200">
-              <div class="text-xs mono text-slate-500">contamination_fraction</div>
+              <div class="text-xs mono text-slate-500">overlap_fraction</div>
               <div class="text-3xl font-extrabold mono" id="m2Pct">0.00</div>
             </div>
           </div>
@@ -234,7 +234,7 @@ templateEngineOverride: false
             <div class="flex flex-wrap gap-5 mt-3 text-xs mono">
               <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-cyan-600 opacity-40 inline-block rounded-sm"></span>state window</span>
               <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-teal-700 opacity-50 inline-block rounded-sm"></span>treatment window</span>
-              <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-red-600 opacity-75 inline-block rounded-sm"></span>overlap (leaked)</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-red-600 opacity-75 inline-block rounded-sm"></span>overlap (treatment carried in)</span>
             </div>
             <p class="text-sm text-slate-600 mt-4 bg-slate-50 border border-slate-200 rounded p-3" id="m2Caption"></p>
           </div>
@@ -301,7 +301,7 @@ templateEngineOverride: false
           <tr><td class="px-4 py-3">Cohort size</td><td class="px-4 py-3 mono">11,354</td><td class="px-4 py-3 mono">11,354</td><td class="px-4 py-3 text-teal-700 text-xs">exact match</td></tr>
           <tr><td class="px-4 py-3">Exp. 1 — dose-determined (4h)</td><td class="px-4 py-3 mono text-slate-400">30.5%</td><td class="px-4 py-3 mono">32.3%</td><td class="px-4 py-3 text-xs text-slate-500">revised</td></tr>
           <tr><td class="px-4 py-3">Exp. 1 — dose-determined (24h)</td><td class="px-4 py-3 mono text-slate-400">26.3%</td><td class="px-4 py-3 mono">28.6%</td><td class="px-4 py-3 text-xs text-slate-500">revised</td></tr>
-          <tr><td class="px-4 py-3">Exp. 2 — AUROC, full → physiology-only</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 text-teal-700 text-xs">exact match</td></tr>
+          <tr><td class="px-4 py-3">Exp. 2 — AUROC, full → no treatment features</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 mono">0.900 → 0.791</td><td class="px-4 py-3 text-teal-700 text-xs">exact match</td></tr>
           <tr><td class="px-4 py-3">Exp. 3 — mean window overlap (24h)</td><td class="px-4 py-3 mono text-slate-400">56.1%</td><td class="px-4 py-3 mono">31.1%</td><td class="px-4 py-3 text-xs text-slate-500">revised down</td></tr>
         </tbody>
       </table>
@@ -337,7 +337,7 @@ templateEngineOverride: false
       <a href="__PATHPREFIX__/notebook/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
         <div class="text-xs mono text-slate-500">06</div><div class="text-sm font-medium mt-1">Action labels</div></a>
       <a href="__PATHPREFIX__/proof/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 border-r border-slate-200 p-4 text-center">
-        <div class="text-xs mono text-slate-500">07</div><div class="text-sm font-medium mt-1">Leakage analysis</div></a>
+        <div class="text-xs mono text-slate-500">07</div><div class="text-sm font-medium mt-1">Mechanism analysis</div></a>
       <a href="__PATHPREFIX__/status/" class="flex-1 min-w-[140px] bg-slate-50 hover:bg-cyan-50 p-4 text-center">
         <div class="text-xs mono text-slate-500">08</div><div class="text-sm font-medium mt-1">Evaluation</div></a>
     </div>
@@ -378,7 +378,7 @@ templateEngineOverride: false
 
     <div class="mt-10 grid md:grid-cols-3 gap-5">
       <div class="bg-white border border-slate-200 rounded p-5">
-        <span class="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded">Documented leakage source</span>
+        <span class="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded">Documented treatment-confounding source</span>
         <h3 class="font-semibold mt-3">The SOFA score to describe organ dysfunction/failure</h3>
         <p class="text-xs text-slate-500 mt-1">Vincent, J.-L. et al. · Intensive Care Medicine, 1996</p>
         <p class="text-sm text-slate-600 mt-3">Defines the exact scoring rule proven non-identifiable from MAP alone (Theorem 1).</p>
@@ -458,7 +458,7 @@ function renderMech1(){
   wrap.innerHTML = M1_FEATURES.map(f=>{
     let cls, note;
     if(f.clean===true){ cls='border-slate-200 bg-slate-50 text-slate-600'; note='clean'; }
-    else { cls = mech1On ? 'border-red-300 bg-red-50 text-red-700 font-semibold' : 'border-teal-200 bg-teal-50 text-teal-700'; note = mech1On ? 'treatment-contaminated' : 'clean'; }
+    else { cls = mech1On ? 'border-red-300 bg-red-50 text-red-700 font-semibold' : 'border-teal-200 bg-teal-50 text-teal-700'; note = mech1On ? 'treatment-confounded' : 'clean'; }
     return `<div class="flex items-center justify-between text-sm border rounded px-3 py-2 ${cls}">
       <span class="mono text-xs">${f.name}</span><span class="text-xs">${note}</span></div>`;
   }).join('');
@@ -494,7 +494,7 @@ function renderMech2(){
   const pct = Math.min(1, ovHours/w);
   document.getElementById('m2Pct').textContent = pct.toFixed(2);
   document.getElementById('m2Caption').textContent = pct > 0
-    ? `The state window now contains information occurring during the previous treatment decision — ${(pct*100).toFixed(0)}% of this window is contaminated.`
+    ? `The state window now contains information occurring during the previous treatment decision — ${(pct*100).toFixed(0)}% of this window overlaps prior treatment.`
     : 'No overlap at these settings — this window is clean.';
 }
 [m2Win, m2Start, m2Dur].forEach(el => el.addEventListener('input', renderMech2));

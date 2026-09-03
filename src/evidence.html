@@ -57,10 +57,25 @@ templateEngineOverride: false
   in <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
 </div>
 
+<h3 class="section">A scope note: this evidence is task-specific</h3>
+<div class="card">
+  <p class="plain">Everything on this page evaluates a feature's relationship to <i>next-action
+  prediction</i> specifically. That's a deliberate scope, not an oversight — the same feature's
+  status can differ entirely for a different task. A cardiovascular-subscore value that's
+  treatment-confounded for predicting the next vasopressor action may be exactly the right feature
+  for predicting <i>mortality</i>: mortality prediction doesn't carry the "was this information
+  available before the decision" constraint that action-prediction does. None of the figures above
+  should be read as "this feature is bad" in general — only "this feature's value for predicting
+  the next action is inflated by treatment history, by this much." See
+  <a href="__PATHPREFIX__/mechanisms/#term" style="color:var(--accent);">Terminology</a> for the
+  full distinction this depends on.</p>
+</div>
+
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
-  decay curve, physiology-only cross-reference, prevalence-matched placebo features) has not yet
+  decay curve, a cross-reference against the variant with no explicit treatment features,
+  prevalence-matched placebo features) has not yet
   run — this is what resolves H3. See the <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">pre-registered
   decision procedure</a> and <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>.</p>
 </div>
