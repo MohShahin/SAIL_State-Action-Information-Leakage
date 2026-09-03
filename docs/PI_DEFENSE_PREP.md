@@ -161,6 +161,14 @@ to prepare for, not a long-shot.
 
 ### 2.3 Novelty Defense
 
+**The novelty statement, in the clinical reviewer's exact framing (adopt this verbatim, replacing
+any framing that leans on "leakage" to carry the claim):** the treatment-dependence of the SOFA
+cardiovascular subscore is documented in the clinical literature; the contribution is that offline
+sepsis-RL pipelines treat this therapy-dependent score as a valid pre-decision state feature
+without accounting for that dependence — and Theorem 2's exact reconstruction result is the least
+clinician-known and most novel single finding (the failure mode a clinically-informed "just drop
+the risky field" intuition would miss).
+
 1. **Existing knowledge:** treatment leakage into a representation is a named causal phenomenon
    (Daoud et al.). Temporal misalignment in sepsis RL specifically is a documented, recent,
    high-visibility problem (Tang et al.). Time-varying confounding has a 40-year classical solution

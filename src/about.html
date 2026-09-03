@@ -19,6 +19,17 @@ learning for sepsis treatment already encode the treatment action they're meant 
 proves two mechanisms by which this happens, quantifies both on an independent MIMIC-IV extraction,
 and pre-registers a falsifiable test for the one claim that isn't provable in closed form.</p>
 
+<h3 class="section">What's actually new here?</h3>
+<p class="plain">The treatment-dependence of the SOFA cardiovascular subscore is not a secret — it's
+documented in the clinical literature (Vincent et al., 1996) and known to clinicians who use the
+score daily. <b>The contribution isn't discovering that dependence.</b> It's showing that offline
+sepsis-RL pipelines treat this therapy-dependent score as a valid <i>pre-decision state feature</i>
+without accounting for that dependence — and proving it formally rather than flagging it
+informally. Of the two theorems, <b>Theorem 2's exact reconstruction result</b> — that removing the
+subscore alone doesn't remove the information, because the total is a deterministic sum that lets
+it be reconstructed by subtraction — is the least clinician-known and most novel single finding:
+the failure mode a clinically-informed intuition ("just drop the risky field") would miss entirely.</p>
+
 <h3 class="section">Why was it created?</h3>
 <p class="plain">Offline sepsis-RL research — the "AI Clinician" and its descendants — evaluates
 policies against retrospective data using state representations built substantially from the SOFA
