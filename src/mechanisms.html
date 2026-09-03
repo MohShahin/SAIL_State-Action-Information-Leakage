@@ -15,7 +15,59 @@ needsMathJax: true
 
 <main class="wide">
 
-<h3 class="section" style="margin-top:0;">Mechanism 1 — State → action confounding</h3>
+<h3 class="section" id="term" style="margin-top:0;">Terminology: this is confounding, not ML-sense leakage</h3>
+<div class="card">
+  <p class="plain">Both mechanisms below were originally described as "leakage." A reviewer
+  correctly pushed back: <code class="mono" style="background:var(--bg); padding:2px 5px; border-radius:3px;">A_(t-1) → S_t → A_t</code>
+  — prior treatment shaping the current state, which then informs the <i>next</i> decision — is
+  ordinary sequential decision-making, not leakage. True leakage would be a state containing
+  information about the <i>same</i> action epoch it's used to predict, or information not yet
+  available at decision time. The two diagrams below are that distinction, made visual.</p>
+
+  <svg width="100%" viewBox="0 0 680 210" role="img" style="margin:16px 0;">
+    <text x="10" y="20" font-size="12" font-weight="600" fill="var(--ink)">What this project actually found (ordinary treatment history)</text>
+    <g><rect x="10" y="40" width="150" height="40" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="85" y="65" font-size="11.5" text-anchor="middle" fill="var(--ink)">Prior action A(t-1)</text></g>
+    <line x1="160" y1="60" x2="230" y2="60" stroke="#2f5d50" stroke-width="1.5" marker-end="url(#arrowG)"/>
+    <g><rect x="235" y="40" width="150" height="40" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="310" y="65" font-size="11.5" text-anchor="middle" fill="var(--ink)">State S(t)</text></g>
+    <line x1="385" y1="60" x2="455" y2="60" stroke="#2f5d50" stroke-width="1.5" marker-end="url(#arrowG)"/>
+    <g><rect x="460" y="40" width="150" height="40" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
+      <text x="535" y="65" font-size="11.5" text-anchor="middle" fill="var(--ink)">Next action A(t)</text></g>
+    <text x="10" y="100" font-size="11.5" fill="var(--ink-soft)">Legitimate — H1 and H2 (below) are both this pattern. Verified: this</text>
+    <text x="10" y="116" font-size="11.5" fill="var(--ink-soft)">project's own action label has zero overlap with the state window it follows.</text>
+
+    <text x="10" y="150" font-size="12" font-weight="600" fill="var(--accent)">True (ML-sense) leakage — not found anywhere in this pipeline</text>
+    <g><rect x="10" y="170" width="150" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+      <text x="85" y="192" font-size="11.5" text-anchor="middle" fill="var(--ink)">Action A(t)</text></g>
+    <line x1="160" y1="187" x2="230" y2="187" stroke="#7c1d2e" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <g><rect x="235" y="170" width="150" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+      <text x="310" y="192" font-size="11.5" text-anchor="middle" fill="var(--ink)">State S(t)</text></g>
+    <line x1="385" y1="187" x2="455" y2="187" stroke="#7c1d2e" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <g><rect x="460" y="170" width="180" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
+      <text x="550" y="192" font-size="11.5" text-anchor="middle" fill="var(--ink)">Prediction of A(t) itself</text></g>
+    <defs>
+      <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f5d50"/></marker>
+      <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7c1d2e"/></marker>
+    </defs>
+  </svg>
+
+  <p class="plain">This isn't a retreat from the project's findings — it's a stronger, more precise
+  claim. H1 and H2 are real, provable, and still a genuine problem for offline-RL state design (a
+  state that's a near-deterministic function of the <i>prior</i> action still threatens the causal
+  assumptions policy learning relies on) — they're just a different, causal-inference-flavored
+  pathology (conditioning on a variable affected by treatment) than the ML-flavored "leakage" charge,
+  and the fix is different too: disentangling the treatment-history term, not correcting an
+  indexing bug. Full derivation: <a href="__PATHPREFIX__/proof/#term" style="color:var(--accent);">FORMAL_ANALYSIS.md §1.1</a>.</p>
+
+  <p class="plain" style="margin-top:10px; font-size:12.5px; color:var(--ink-faint);">One more
+  distinction worth stating plainly: whether a given feature counts as "confounded for this task"
+  is itself task-specific. A feature that's confounded for predicting the <i>next action</i> may be
+  exactly the right feature for predicting <i>mortality</i> — mortality prediction doesn't carry the
+  same "was this available before the decision" constraint action-prediction does.</p>
+</div>
+
+<h3 class="section">Mechanism 1 — Treatment-confounded severity construction</h3>
 <div class="card">
   <p class="plain">The cardiovascular SOFA subscore is defined as a function of two things: mean
   arterial pressure, and whichever vasopressor drug and dose is currently running. Above a dose
@@ -30,30 +82,30 @@ needsMathJax: true
   overall SOFA total is a deterministic sum of all six organ subscores, so the cardiovascular
   contribution is exactly reconstructible from the total minus the other five — this is why
   variant C (subscore removed, total kept) barely drops in predictability (0.885 vs. 0.900), while
-  variant D (total recomputed from a treatment-independent proxy) drops close to the physiology
-  floor (0.792 vs. 0.791).</p>
+  variant D (total recomputed from a treatment-independent proxy) drops close to the floor set by
+  the variant with no explicit treatment features (0.792 vs. 0.791).</p>
   <p class="plain">$$\sigma_{cardio} = \text{sofa\_total} - \sum_{i \ne cardio}\text{subscore}_i$$</p>
   <p class="plain">Full statement and proof: <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1</a> and <a href="__PATHPREFIX__/proof/#thm2" style="color:var(--accent);">Theorem 2</a>.</p>
 </div>
 
-<h3 class="section">Mechanism 2 — Overlapping temporal windows</h3>
+<h3 class="section">Mechanism 2 — Treatment overlap</h3>
 <div class="card">
   <p class="plain">A "current state" snapshot is built by aggregating physiology over a lookback
-  window. If that window overlaps a period when treatment was already running, the snapshot is
-  contaminated with treatment history — even with no drug-dose term in any scoring formula at all.</p>
+  window. If that window overlaps a period when treatment was already running, the snapshot carries
+  treatment history into it — even with no drug-dose term in any scoring formula at all.</p>
   <div class="facts">
-    <div class="fact"><div class="n">31.1%</div><div class="l">mean window contamination, 24h window (verified, union-corrected)</div></div>
-    <div class="fact"><div class="n">28.7%</div><div class="l">of decision points &gt;50% contaminated</div></div>
-    <div class="fact"><div class="n">12.4%</div><div class="l">median contamination — most windows are partly, not entirely, affected</div></div>
+    <div class="fact"><div class="n">31.1%</div><div class="l">mean window overlap, 24h window (verified, union-corrected)</div></div>
+    <div class="fact"><div class="n">28.7%</div><div class="l">of decision points &gt;50% overlapping</div></div>
+    <div class="fact"><div class="n">12.4%</div><div class="l">median overlap — most windows are partly, not entirely, affected</div></div>
   </div>
   <p class="plain" style="margin-top:16px;"><b>The counterintuitive part:</b> a naive "wider window,
-  more contamination" intuition is false in general. Absolute overlap hours are provably
+  more overlap" intuition is false in general. Absolute overlap hours are provably
   non-decreasing in window length (windows nest), but the <i>fraction</i> is a ratio of a growing
   numerator to a growing denominator — it rises exactly when marginal treatment density exceeds
   average density accumulated so far, the same relationship as a marginal-cost curve crossing an
-  average-cost curve. This is why a 4-hour window measured higher &gt;50%-contamination than the
+  average-cost curve. This is why a 4-hour window measured a higher &gt;50%-overlap rate than the
   24-hour window in this project's own data.</p>
-  <p class="plain">Full statement and proof: <a href="__PATHPREFIX__/proof/#sec5" style="color:var(--accent);">Section 5, window-overlap leakage</a>.</p>
+  <p class="plain">Full statement and proof: <a href="__PATHPREFIX__/proof/#sec5" style="color:var(--accent);">Section 5, treatment overlap</a>.</p>
 </div>
 
 <h3 class="section">Try both yourself</h3>

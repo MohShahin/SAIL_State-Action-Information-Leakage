@@ -17,8 +17,9 @@ window-overlap mechanism whose behavior, contrary to naive intuition, is *not* m
 window length, for reasons we derive from first principles. We then place both mechanisms in a
 causal graph and show that the resulting state variable is formally a *descendant* of the prior
 treatment action — a structural fact, independent of any classifier's performance, that explains
-why an empirical predictability gap (Experiment 2) is necessary but not sufficient evidence of a
-leakage-specific effect. We close by stating the disambiguating test as a falsifiable,
+why an empirical predictability gap (Experiment 2) is necessary but not sufficient evidence that
+these specific mechanisms, rather than ordinary treatment persistence, drive the gap. We close by
+stating the disambiguating test as a falsifiable,
 pre-registered decision procedure (Experiment 5), so the planned experiments confirm or refute a
 concrete prior prediction rather than being interpreted after the fact.
 
@@ -28,18 +29,57 @@ concrete prior prediction rather than being interpreted after the fact.
 
 Three claims are under audit in this project:
 
-- **H1 (definitional leakage):** the SOFA cardiovascular subscore's own construction encodes the
-  prior treatment action directly, not only through its physiological effect.
-- **H2 (window-overlap leakage):** temporal aggregation windows overlap prior treatment periods,
-  contaminating the state with treatment-derived information via timing alone.
-- **H3 (recoverability reflects genuine leakage):** the AUROC gap between a full state and a
-  physiology-only state (Experiment 2) reflects H1/H2's mechanisms specifically, rather than
-  ordinary treatment persistence unrelated to SOFA.
+- **H1 (treatment-confounded severity construction):** the SOFA cardiovascular subscore's own
+  construction encodes the prior treatment action directly, not only through its physiological
+  effect.
+- **H2 (treatment overlap):** temporal aggregation windows overlap prior treatment periods, carrying
+  treatment-derived information into the state via timing alone.
+- **H3 (recoverability reflects these mechanisms specifically):** the AUROC gap between a full state
+  and a state with no explicit treatment features (Experiment 2) reflects H1/H2's mechanisms
+  specifically, rather than ordinary treatment persistence unrelated to SOFA.
 
 Sections 3–4 prove H1 outright. Section 5 proves the provable part of H2 and gives a rigorous
 account of where it stops being provable. Section 6 formalizes the causal structure that makes H3
 an open question, and states the exact test (already implemented in this repo's Experiment 5) that
 will resolve it — framed as a pre-registered prediction, not a post-hoc interpretation.
+
+### 1.1 A terminology note (H1/H2 were previously labeled "leakage" — corrected)
+
+H1 and H2 were originally framed as forms of "leakage." That framing conflated two structurally
+different causal patterns, and this section states the corrected distinction precisely, since every
+later section depends on it.
+
+```
+Ordinary sequential decision-making (what H1/H2 actually are):
+    A_(t-1) --> S_t --> A_t
+    prior action shapes the state, which then informs the NEXT decision.
+
+True (ML-sense) leakage (what H1/H2 are NOT):
+    A_t --> S_t --> Â_t
+    the state contains information about the SAME action epoch it is used to predict,
+    or information not yet available at decision time.
+```
+
+H1 and H2 are both instances of the first pattern: $\sigma_{cardio,t}$ and window-overlap content
+are functions of $A_{t-1}$ (or earlier), used to predict $A_t$ — a *later* action. That is ordinary
+treatment history informing state, the structure every sequential decision process has. It is a
+genuine problem for offline-RL state design regardless — a state that is a near-deterministic
+function of the *prior* action, independent of physiology, still threatens the causal assumptions
+policy learning relies on (Proposition 2, §6.2) — but it is a **post-treatment-bias / bad-control**
+pathology from causal inference (conditioning on a variable affected by treatment; Hernán & Robins,
+§6.2's Remark), not a **target/temporal leakage** pathology from machine learning. The two have
+different fixes: leakage is fixed by correcting an indexing/alignment bug (as in Tang et al. 2026,
+"Off by a Beat" — a different mechanism from either H1 or H2, see `papers.html`); treatment
+confounding is fixed by disentangling or explicitly modeling the treatment-history term, not by
+re-indexing anything.
+
+The analysis notebook's Section 7 ("Build State Variants A–E and Action Labels") verifies directly
+that this project's own action label (`action_next`) is built exclusively from treatment events
+strictly *after* the state's own observation window closes, with zero overlap — i.e., the second
+(true-leakage) pattern does not occur anywhere in this pipeline. H1 and H2 are retained under their new names because the underlying
+mathematics (Theorems 1–2, Proposition 1) is unaffected by what the mechanisms are called; only the
+word "leakage" — reserved from here on exclusively for the second pattern above, which this project
+does not currently claim to have found — has been retracted from H1/H2's names.
 
 ---
 
@@ -126,19 +166,20 @@ cardiovascular proxy, not merely left in place after $\sigma_{cardio}$ is droppe
 
 *Empirical confirmation:* variant C's AUROC (0.885) sits close to the full state's (0.900),
 consistent with near-total reconstructibility. Variant D — which recomputes $\text{sofa\_total}$
-from a MAP-only cardiovascular proxy, per Corollary 2.1 — drops to 0.792, close to the
-physiology-only floor (variant E, 0.791). The theorem predicts this pattern; the notebook confirms
-it.
+from a MAP-only cardiovascular proxy, per Corollary 2.1 — drops to 0.792, close to the floor set by
+variant E, which has no explicit treatment features (0.791). The theorem predicts this pattern; the
+notebook confirms it.
 
 ---
 
-## 5. Window-overlap leakage: what is provable, and a corrected account of what is not
+## 5. Treatment overlap: what is provable, and a corrected account of what is not
 
 ### 5.1 Definitions
 
 For decision point $t$ with lookback window $w$, let $O_t(w)$ denote total treatment-hours
-overlapping $[t-w, t)$ (summed over every treatment interval intersecting the window). Define
-contamination fraction:
+overlapping $[t-w, t)$ (summed over every treatment interval intersecting the window). Define the
+overlap fraction — the share of the window itself that prior treatment occupies (not a claim about
+ML-sense leakage; see §1.1):
 
 $$c_t(w) = \min\left(1,\ \frac{O_t(w)}{w}\right)$$
 
@@ -169,7 +210,7 @@ provable local condition, not an artifact.
 Aggregating the population-level statistic $P(c_t(w) > 0.5)$ over heterogeneous patients — each
 with a different treatment-density profile — compounds this further, since the aggregate is a
 nonlinear functional of a quantity that is already non-monotonic per patient. The empirical
-reversal observed in this project (34.3% of decision points $>50\%$ contaminated at $w=4$h, versus
+reversal observed in this project (34.3% of decision points $>50\%$ overlapping at $w=4$h, versus
 28.7–30.8% at $w=24$h across runs) is **consistent with, not contradictory to**, this framework —
 it is exactly the kind of pattern Proposition 1 plus the marginal/average relationship predicts can
 occur, not a bug in the pipeline.
@@ -224,15 +265,16 @@ predictive model's power flows through that edge.
 A classifier trained to predict $A_t$ from $S_t$ (Experiment 2) cannot, from its AUROC alone,
 attribute its performance between two structurally distinct paths:
 
-- **Path 1:** $A_{t-1} \to \sigma_{cardio,t} \to S_t$ — the definitional leak (Theorem 1),
-  bypassing $U_t$ entirely.
+- **Path 1:** $A_{t-1} \to \sigma_{cardio,t} \to S_t$ — the treatment-confounded pathway
+  (Theorem 1), bypassing $U_t$ entirely.
 - **Path 2:** $A_{t-1} \to A_t$ — ordinary clinical treatment persistence, unrelated to SOFA or any
   feature in $S_t$.
 
 An elevated AUROC is *consistent with* Path 1 but does not rule out the classifier picking up Path
 2's signal indirectly, since patients further along a treatment course have both an elevated
 $\sigma_{cardio,t}$ *and* a higher chance of continued treatment — correlated through $A_{t-1}$
-without $S_t$ doing any leakage-specific work. **This is why H3 is a conjecture, not a theorem, and
+without $S_t$'s treatment-confounded construction doing any of that work. **This is why H3 is a
+conjecture, not a theorem, and
 why it requires an experiment rather than a proof.**
 
 ### 6.4 Mermaid source (renders on GitHub)
@@ -278,7 +320,7 @@ Repeating this many times yields a bootstrap distribution for $\Delta$ directly.
 paired test for correlated ROC curves, or a permutation test that permutes offset-labels within
 patient, are valid alternatives.
 
-**Prediction A (Path 1 dominates — genuine, temporally-specific leak).** If the paired-bootstrap CI
+**Prediction A (Path 1 dominates — the treatment-confounded pathway drives the gap).** If the paired-bootstrap CI
 for $\Delta$ excludes a value near zero and $\Delta \geq 0.10$, this supports H3: the
 predictability measured in Experiment 2 substantially reflects the definitional/window mechanisms
 proven in Sections 3–5, not merely persistence.
@@ -292,7 +334,7 @@ their *practical contribution to Experiment 2's specific AUROC gap* would be sma
 estimated.
 
 **What would falsify H3 outright:** a flat decay curve ($\Delta \approx 0$ across all offsets)
-combined with variant E (physiology-only) already matching variant A's AUROC — which would imply
+combined with variant E (no explicit treatment features) already matching variant A's AUROC — which would imply
 the SOFA-specific mechanisms in Sections 3–5, while mathematically real, contribute negligible
 *practical* predictive power in this cohort. This has not occurred in results so far (E vs. A gap
 = 0.109, confirmed), so this falsification condition is not currently met, but it is stated here as
@@ -304,15 +346,15 @@ the explicit failure mode this framework commits to.
 
 | Claim | Status | Nature |
 |---|---|---|
-| Theorem 1 (definitional leakage exists) | **Proven** (§3.2) | Mathematical fact about the scoring function's domain |
+| Theorem 1 (treatment-confounded severity construction exists) | **Proven** (§3.2) | Mathematical fact about the scoring function's domain |
 | Corollary 1.1 ("100% of treated timesteps") | **Proven** | Direct consequence of disjoint score ranges, not merely observed |
 | Theorem 2 (variant C insufficiency) | **Proven** (§4) | Algebraic identity |
 | Corollary 2.1 (variant D necessity) | **Proven**, confirmed empirically | Follows from Theorem 2 |
 | Proposition 1 (absolute overlap monotonicity) | **Proven** (§5.2) | Measure-theoretic |
 | §5.3 (fraction is not monotonic) | **Proven** | Marginal/average calculus relationship |
-| §5.4 (limiting-case contamination) | **Proven** | Direct from definitions |
+| §5.4 (limiting-case overlap) | **Proven** | Direct from definitions |
 | Proposition 2 ($S_t$ descendant of $A_{t-1}$) | **Proven** (§6.2) | Graph-theoretic |
-| H3 (AUROC gap reflects genuine leakage) | **Open — Conjecture, §7** | Requires Experiment 5's decay-curve test |
+| H3 (AUROC gap reflects these mechanisms specifically) | **Open — Conjecture, §7** | Requires Experiment 5's decay-curve test |
 
 Only H3 is genuinely undetermined. A reviewer can verify every proof in Sections 3–6 by reading the
 scoring rule and the graph — none require trusting code execution. This is worth stating plainly in
@@ -347,6 +389,6 @@ post-hoc interpretation.
 | $\sigma_{cardio}$ | SOFA cardiovascular subscore |
 | $w$ | Lookback window length (hours) |
 | $O_t(w)$ | Treatment-hours overlapping window $[t-w, t)$ |
-| $c_t(w)$ | Contamination fraction, $\min(1, O_t(w)/w)$ |
+| $c_t(w)$ | Overlap fraction, $\min(1, O_t(w)/w)$ |
 | $k$ | Offset (decision bins) in Experiment 5's decay curve |
 | $\Delta$ | Decay slope, $\text{AUROC}(0) - \text{AUROC}(8)$ |

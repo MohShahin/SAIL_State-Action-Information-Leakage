@@ -40,9 +40,15 @@ for the illustrated version.
 
 | | Claim | Status |
 |---|---|---|
-| **H1** | The SOFA cardiovascular subscore's own definition encodes treatment, not just physiology | **Proven** |
-| **H2** | Temporal aggregation windows overlap prior treatment periods | **Proven** |
-| **H3** | The resulting predictability gap reflects genuine leakage, not just treatment persistence | **Open — under test** |
+| **H1** | The SOFA cardiovascular subscore's own definition encodes treatment, not just physiology (treatment-confounded severity construction) | **Proven** |
+| **H2** | Temporal aggregation windows overlap prior treatment periods (treatment overlap) | **Proven** |
+| **H3** | The resulting predictability gap reflects these mechanisms specifically, not just treatment persistence | **Open — under test** |
+
+*Terminology note:* H1/H2 were previously described as "leakage." They're actually ordinary
+`A_(t-1) → S_t → A_t` treatment-history structure, not `A_t → S_t → Â_t` (a state containing
+information about the *same* action epoch it predicts) — a real distinction a reviewer raised. See
+[`FORMAL_ANALYSIS.md`](FORMAL_ANALYSIS.md) §1.1 for the precise correction; this project's own
+action labels were verified to have zero such overlap.
 
 ## Explore the project
 
@@ -52,7 +58,7 @@ This repository is also a live, five-page site — not just code and a PDF.
 |---|---|
 | **[Project hub](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/)** | Overview and entry point to everything below |
 | **[Interactive walkthrough](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/demo.html)** | Six-step, plain-language guide — try the live SOFA calculator yourself |
-| **[Live mechanism visualizer](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/visualizer.html)** | Adjust one synthetic patient and watch the leak happen: the causal graph, the state vector, and the predictability gauge move together in real time |
+| **[Live mechanism visualizer](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/visualizer.html)** | Adjust one synthetic patient and watch the mechanism happen: the causal graph, the state vector, and the predictability gauge move together in real time |
 | **[Formal proof](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/proof.html)** | The theorems, illustrated, with a pre-registered test for the one claim that isn't provable in closed form |
 | **[Status & roadmap](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/status.html)** | What's confirmed, what's open, and the honest history of two bugs found and fixed |
 
@@ -66,7 +72,7 @@ more separate pipeline runs — not just computed once.
 | Cohort size | 11,354 | 11,354 | exact match |
 | Exp. 1 — dose-determined (4h window) | 30.5% | 32.3% | revised |
 | Exp. 1 — dose-determined (24h window) | 26.3% | 28.6% | revised |
-| Exp. 2 — AUROC, full state → physiology-only | 0.900 → 0.791 | 0.900 → 0.791 | exact match |
+| Exp. 2 — AUROC, full state → no explicit treatment features | 0.900 → 0.791 | 0.900 → 0.791 | exact match |
 | Exp. 2 — recoverability gap | ≈0.108 | 0.109 | essentially exact |
 | Exp. 3 — mean window overlap (24h) | 56.1% | 31.1% | revised down |
 | Exp. 3 — % of decision points >50% overlapping | 55.7% | 28.7% | revised down |

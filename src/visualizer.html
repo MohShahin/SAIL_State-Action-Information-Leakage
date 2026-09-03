@@ -43,11 +43,14 @@ templateEngineOverride: false
     <span><b>MIT</b> Laboratory for Computational Physiology</span>
     <span><b>Boston University</b> School of Public Health</span>
   </div>
-  <h1>Watch the leak happen</h1>
+  <h1>Watch the mechanism happen</h1>
   <p class="deck">One synthetic patient, three synchronized views. Adjust the controls on the left
   and watch the causal graph light up, the state vector's cells flip between clean and
-  contaminated, and the predictability gauge move — all three respond to the same underlying
-  mechanism proven on the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>.</p>
+  treatment-confounded, and the predictability gauge move — all three respond to the same underlying
+  mechanism proven on the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>.
+  (This is ordinary <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">A(t-1) → S(t)</code>
+  treatment history shaping state, not the state containing information about the action it's used
+  to predict — see <a href="__PATHPREFIX__/mechanisms/" style="color:var(--accent);">Terminology</a>.)</p>
 </div></div>
 
 <main class="wide">
@@ -122,7 +125,7 @@ templateEngineOverride: false
     <div class="statevec" id="statevec"></div>
     <p class="plain" style="margin:12px 0 0; font-size:12.5px;">
       <span class="flag physio" style="margin-right:8px;"><span class="dot"></span>clean physiology</span>
-      <span class="flag treat"><span class="dot"></span>treatment-contaminated right now</span>
+      <span class="flag treat"><span class="dot"></span>treatment-confounded right now</span>
     </p>
   </div>
 
@@ -155,7 +158,7 @@ const VARIANT_CAPTION = {
   B: "Overall total removed — the treatment-linked piece is still hiding inside the other fields.",
   C: "Treatment-linked piece removed directly — but the total (kept here) can reconstruct it by subtraction (Theorem 2).",
   D: "Treatment-linked piece replaced with a blood-pressure-only version, and the total recomputed from scratch.",
-  E: "Physiology only — nothing derived from treatment in any form.",
+  E: "No explicit treatment features — nothing derived from treatment in any form.",
 };
 
 let variantIdx = 0;
