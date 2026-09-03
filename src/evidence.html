@@ -98,6 +98,34 @@ templateEngineOverride: false
   terms, rather than collapsing them into one composite score either way.</p>
 </div>
 
+<h3 class="section">Testing that concern quantitatively: it doesn't hold at the cohort level</h3>
+<div class="card">
+  <p class="plain">The concrete example above is real, but does it add up to variant D/E being
+  meaningfully <i>worse at predicting mortality</i> across the whole cohort? Trained the same way as
+  Experiment 2 (logistic regression / random forest / gradient boosting, clustered bootstrap CIs) but
+  predicting <b>in-hospital mortality from the state at a single fixed 24h decision point</b> — matching
+  SOFA's own original validation convention — rather than the next action at every timestep:</p>
+  <table class="data" style="margin-top:10px;">
+    <tr><th>Variant</th><th>Action-recoverability AUROC (Exp. 2)</th><th>Mortality AUROC (Exp. 6, 24h, n=11,336)</th></tr>
+    <tr><td class="label">A_full</td><td>0.900</td><td>0.793</td></tr>
+    <tr><td class="label">B_no_total_sofa</td><td>0.900</td><td>0.790</td></tr>
+    <tr><td class="label">C_no_cardio_sofa</td><td>0.885</td><td>0.788</td></tr>
+    <tr><td class="label">D_treatment_decomposed</td><td>0.792</td><td>0.784</td></tr>
+    <tr><td class="label">E_physiology_only</td><td>0.791</td><td>0.782</td></tr>
+  </table>
+  <div class="facts" style="margin-top:14px;">
+    <div class="fact"><div class="n">0.109</div><div class="l">action-recoverability gap, A minus E — large</div></div>
+    <div class="fact"><div class="n">0.011</div><div class="l">mortality-AUROC gap, A minus E — roughly a tenth the size</div></div>
+  </div>
+  <p class="plain" style="margin-top:14px;">Reported as the actual result, not adjusted toward the
+  anticipated one: sanitizing the state costs almost nothing in mortality-prediction accuracy,
+  despite costing a lot in next-action predictability. This does <b>not</b> confirm the qualitative
+  concern above — at least not as measured by whole-cohort mortality prediction at a fixed
+  timepoint. The individual-patient failure mode is still mathematically real; it just doesn't
+  appear to aggregate into a large mortality-AUROC loss. Full figures:
+  <a href="__PATHPREFIX__/results/experiment6_mortality_vs_action_recoverability.json" style="color:var(--accent);">results/experiment6_mortality_vs_action_recoverability.json</a>.</p>
+</div>
+
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal

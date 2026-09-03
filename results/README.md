@@ -15,6 +15,8 @@ confirmed aggregate-only:
 | `experiment1_sofa_decomposition_summary.json` | Cohort-wide dose-determined percentages (Experiment 1) |
 | `experiment2_action_recoverability_best_probe.csv` | 5 rows — one per state variant (A–E), best-probe AUROC/F1/ECE/MI |
 | `experiment3_summary.json` | Cohort-wide window-overlap statistics (Experiment 3) |
+| `experiment6_mortality_best_probe.csv` | 5 rows — one per state variant (A–E), best-probe mortality-prediction AUROC + CI at a fixed 24h decision point (Experiment 6) |
+| `experiment6_mortality_vs_action_recoverability.json` | Side-by-side comparison: action-recoverability AUROC gap (0.109) vs. mortality-predictive-validity AUROC gap (0.011) across the same five variants |
 
 Both the current (verified 2026-08-16) figures and the manuscript draft's original figures are
 included side by side where they differ, with a note on why — see `ROADMAP.md` for the full

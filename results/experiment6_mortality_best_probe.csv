@@ -1,0 +1,6 @@
+variant,probe,auroc,auroc_ci_lo,auroc_ci_hi
+A_full,gb,0.793,0.782,0.803
+B_no_total_sofa,gb,0.790,0.779,0.801
+C_no_cardio_sofa,gb,0.788,0.776,0.797
+D_treatment_decomposed,gb,0.784,0.773,0.796
+E_physiology_only,gb,0.782,0.770,0.793

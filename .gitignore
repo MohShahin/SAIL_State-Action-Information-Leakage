@@ -42,3 +42,5 @@ bigquery-credentials*
 !results/experiment1_sofa_decomposition_summary.json
 !results/experiment2_action_recoverability_best_probe.csv
 !results/experiment3_summary.json
+!results/experiment6_mortality_best_probe.csv
+!results/experiment6_mortality_vs_action_recoverability.json

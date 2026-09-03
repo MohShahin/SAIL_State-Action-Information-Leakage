@@ -25,6 +25,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("results/experiment1_sofa_decomposition_summary.json");
   eleventyConfig.addPassthroughCopy("results/experiment2_action_recoverability_best_probe.csv");
   eleventyConfig.addPassthroughCopy("results/experiment3_summary.json");
+  eleventyConfig.addPassthroughCopy("results/experiment6_mortality_best_probe.csv");
+  eleventyConfig.addPassthroughCopy("results/experiment6_mortality_vs_action_recoverability.json");
   eleventyConfig.addPassthroughCopy("ROADMAP.md");
   eleventyConfig.addPassthroughCopy("DATA_ACCESS.md");
   eleventyConfig.addPassthroughCopy("FORMAL_ANALYSIS.md");
