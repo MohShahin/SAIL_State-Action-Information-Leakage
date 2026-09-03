@@ -1,0 +1,28 @@
+{
+  "_note": "Aggregate cohort-level statistics only. No patient-level rows. See ../DATA_ACCESS.md for what can/can't be published from this project.",
+  "cohort_size_mortality_subset": 11336,
+  "cohort_size_full": 11354,
+  "excluded_no_24h_snapshot": 18,
+  "mortality_rate_in_subset": 0.200,
+  "fixed_decision_point": "bin 5 (hour 24), one row per patient, matching SOFA's own original mortality-validation convention -- not per-timestep like Experiment 2",
+  "verified_2026_09_03": {
+    "note": "Phase 3 of docs/PHASE_PLAN_TERMINOLOGY_REVISION.md -- tests whether variant D/E's lower action-recoverability also means lower mortality-predictive validity, operationalizing the Phase 2 clinical-validity concern quantitatively.",
+    "action_recoverability_auroc": {
+      "A_full": 0.900,
+      "B_no_total_sofa": 0.900,
+      "C_no_cardio_sofa": 0.885,
+      "D_treatment_decomposed": 0.792,
+      "E_physiology_only": 0.791
+    },
+    "mortality_auroc_best_probe": {
+      "A_full": 0.793,
+      "B_no_total_sofa": 0.790,
+      "C_no_cardio_sofa": 0.788,
+      "D_treatment_decomposed": 0.784,
+      "E_physiology_only": 0.782
+    },
+    "gap_A_minus_E_action_recoverability": 0.109,
+    "gap_A_minus_E_mortality": 0.011
+  },
+  "finding": "The action-recoverability gap (A minus E) is 0.109 -- large. The mortality-predictive-validity gap (A minus E) is 0.011 -- roughly a tenth the size. Sanitizing the state costs almost nothing in mortality-prediction accuracy despite costing a lot in next-action predictability. This does NOT confirm the Phase 2 qualitative concern that variant D/E are meaningfully worse clinical severity measures, at least not as measured by whole-cohort mortality prediction at a fixed 24h point -- reported as the actual result, not adjusted toward the anticipated one."
+}

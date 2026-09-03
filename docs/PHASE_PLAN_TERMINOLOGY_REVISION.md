@@ -148,7 +148,7 @@ property of the existing code, not a hypothetical.
 
 ---
 
-## 4. Phase 3 — Add a mortality-prediction task per state variant (HIGH VALUE, feasibility HIGH)
+## 4. Phase 3 — Add a mortality-prediction task per state variant (DONE 2026-09-03)
 
 **Why this matters:** this is the single highest-leverage new experiment in this entire feedback
 set. It directly operationalizes Dimitris's task-specificity point and the clinical reviewer's
@@ -177,6 +177,29 @@ per variant.*
    genuinely strong, clinically legible result either way (confirms or refutes the concern with
    real numbers, publishable regardless of which way it comes out).
 
+**`[VERIFIED]` Result (2026-09-03), reported as it came out, not adjusted toward the hypothesis:**
+task 1 confirmed `hospital_expire_flag` was already present (zero new extraction needed). Mortality
+predicted at a single fixed 24h decision point (bin 5), n=11,336 of 11,354 (18 excluded for no
+24h-snapshot row), mortality rate 20.0%. Best-probe (gb) AUROC per variant:
+
+| Variant | Action-recoverability AUROC (Exp. 2) | Mortality AUROC (Exp. 6) |
+|---|---|---|
+| A_full | 0.900 | 0.793 |
+| B_no_total_sofa | 0.900 | 0.790 |
+| C_no_cardio_sofa | 0.885 | 0.788 |
+| D_treatment_decomposed | 0.792 | 0.784 |
+| E_physiology_only | 0.791 | 0.782 |
+
+Action-recoverability gap (A−E) = 0.109. Mortality-AUROC gap (A−E) = **0.011** — roughly a tenth
+the size. **This is the "refutes" branch, not the "confirms" branch:** sanitizing the state costs
+almost nothing in mortality-prediction accuracy despite costing a lot in next-action
+predictability. Phase 2's concrete individual-patient failure mode (norepi 0.15, MAP 74: A=4, D=0)
+remains mathematically real; it does not appear to aggregate into a large mortality-AUROC loss
+across the cohort. Published: `results/experiment6_mortality_best_probe.csv`,
+`results/experiment6_mortality_vs_action_recoverability.json`, and a new site section on
+`evidence.html`. Notebook: new "Section 8.5 Experiment 6" cell, self-contained (does not depend on
+Experiment 2's classifier-training cell having run).
+
 ---
 
 ## 5. Phase 4 — Disentangled state design ("Variant F"): explicit severity + explicit treatment vector
@@ -190,6 +213,15 @@ second, genuinely novel technical contribution beyond the two existing theorems.
 
 **Dependencies:** Phase 3 must exist first — evaluating whether Variant F actually solves Phase 2's
 problem requires the mortality-prediction infrastructure to check against.
+
+**Note added after Phase 3's actual result (2026-09-03):** the motivating framing above ("does F
+recover the mortality-predictive validity variant D loses") assumed a larger loss than what was
+found — variant D's mortality-AUROC gap vs. variant A turned out to be 0.011, not a large drop.
+This doesn't remove Phase 4's motivation (the individual-patient failure mode is still real and
+exactly the g-methods-style resolution the reviewer proposed), but the honest framing going in is
+now "does explicit disentanglement recover a small-but-real mortality-validity gap while still
+reducing action-recoverability," not "does it fix a large clinical-validity problem." Scope Phase 4
+with that more modest, accurate claim.
 
 **Tasks:**
 1. Design Variant F: physiology-based severity term (MAP, or a validated MAP-based shock index,
