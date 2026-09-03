@@ -19,7 +19,7 @@ templateEngineOverride: false
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Related literature</h1>
-  <p class="deck">Five sources, each doing real work for this project's own claims — not a padded
+  <p class="deck">Seven sources, each doing real work for this project's own claims — not a padded
   reading list. A fuller literature review (additional sepsis-RL studies, temporal-bias
   references) is planned; see <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>
   Phase 6. Nothing below is labeled beyond what's actually verified.</p>
@@ -49,7 +49,7 @@ const PAPERS = [
     category: "Documented treatment-confounding source",
     catClass: "cat-confound",
     tags: ["SOFA score", "Clinical scoring", "Sepsis"],
-    relevance: "Defines the exact cardiovascular scoring rule proven non-identifiable from MAP alone (Theorem 1) — the source of Mechanism 1.",
+    relevance: "Defines the exact cardiovascular scoring rule proven non-identifiable from MAP alone (Theorem 1) — the source of Mechanism 1. The rule's treatment-dependence is documented here and known to clinicians; SAIL's contribution isn't discovering that dependence, but proving that offline sepsis-RL pipelines treat this therapy-dependent score as a valid pre-decision state feature without accounting for it — and that Theorem 2's reconstruction result means removing the subscore alone doesn't fix it.",
     link: "https://doi.org/10.1007/BF01709751"
   },
   {
@@ -91,6 +91,26 @@ const PAPERS = [
     tags: ["Reinforcement learning", "Off-policy evaluation", "Sepsis", "Temporal binning", "Critique"],
     relevance: "An independent critique of the AI Clinician's methodology. Section 6.1 documents a related but mechanistically distinct temporal-binning confound: a 4-hour bin can average over a MAP crash and its vasopressor-driven recovery, so the bin's summary looks normal despite the treatment that occurred within it — within-bin masking, not the cross-bin window overlap this project's Mechanism 2 proves.",
     link: "https://arxiv.org/abs/1902.03271"
+  },
+  {
+    title: "Conceptualizing Treatment Leakage in Text-based Causal Inference",
+    authors: "Daoud, A., Jerzak, C. T. & Johansson, R.",
+    venue: "NAACL 2022, pp. 5638–5645",
+    category: "Related methodological issue",
+    catClass: "cat-related",
+    tags: ["Causal inference", "Treatment leakage", "Text-based causal inference", "Collider bias"],
+    relevance: "Names and formalizes \"treatment leakage\" as a general causal phenomenon: a representation (there, text used as a confounder proxy) that is itself affected by treatment, inducing post-treatment/collider bias when conditioned on — the same causal pathology SAIL's Theorem 1 instantiates, in a different (text, not longitudinal clinical state) representation-learning setting. SAIL's contribution is not this general concept, but a mechanism-specific, provable proof for a concrete, widely-used clinical score, situated in a sequential-decision (RL) setting rather than a single-timepoint effect-estimation one.",
+    link: "https://aclanthology.org/2022.naacl-main.413/"
+  },
+  {
+    title: "Off by a Beat: The Effects of Temporal Misalignment in Reinforcement Learning for Sepsis Treatment",
+    authors: "Tang, S., Yao, J., Wiens, J. & Parbhoo, S.",
+    venue: "npj Digital Medicine, May 2026",
+    category: "Related methodological issue",
+    catClass: "cat-related",
+    tags: ["Reinforcement learning", "Temporal misalignment", "Sepsis", "MIMIC-III", "Index alignment"],
+    relevance: "A third, distinct leakage mechanism from either of SAIL's own: the *index* assigned to states vs. actions is misaligned in common preprocessing practice, so a_t is contemporaneously aligned with s_t instead of following it — 335 of 750 states (44.7%) showed disagreeing optimal actions between aligned and misaligned policies on real, already-trained MIMIC-III policies. Complementary, not competing, evidence: a different, index-based leakage mechanism from SAIL's content-based mechanisms (Theorem 1's definitional pathway, Proposition 1's window overlap) — the same underlying problem class (temporal structure in EHR data breaking causal assumptions required for valid RL), diagnosed a different way. This project's own action-label construction was directly verified to avoid this specific mechanism (see Terminology).",
+    link: "https://www.nature.com/articles/s41746-026-02625-2"
   }
 ];
 
