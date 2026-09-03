@@ -71,6 +71,33 @@ templateEngineOverride: false
   full distinction this depends on.</p>
 </div>
 
+<h3 class="section">Limitation: sanitization has a clinical-validity cost</h3>
+<div class="card">
+  <p class="plain">Variant D's fix (recompute the total from a MAP-only cardiovascular proxy) removes
+  the treatment-confounding this project measures — but it isn't free. The MAP-only branch of the
+  scoring rule (<code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">score_map = 1 if MAP &lt; 70 else 0</code>)
+  is a two-level signal that cannot distinguish a patient who is healthy and untreated from one who
+  is successfully treated and still critically ill — the second patient's MAP looks the same as the
+  first's once vasopressors have done their job.</p>
+
+  <div class="card" style="background:var(--bg); margin-top:14px;">
+    <p class="plain" style="margin:0;"><b>Concrete example, computed from the actual scoring function:</b>
+    a patient on norepinephrine 0.15 mcg/kg/min with MAP 74 (successfully restored to normal by the
+    drug they're actively receiving).</p>
+    <div class="facts" style="margin-top:10px;">
+      <div class="fact"><div class="n">4</div><div class="l">Variant A cardiovascular SOFA — correctly reflects this patient is in active shock requiring treatment</div></div>
+      <div class="fact"><div class="n">0</div><div class="l">Variant D cardiovascular SOFA — incorrectly reads as healthy, since MAP alone is now normal</div></div>
+    </div>
+  </div>
+
+  <p class="plain" style="margin-top:14px;">This is a genuine tradeoff, not an argument that
+  sanitization is the wrong approach: predictive purity (Variant D/E's lower action-recoverability)
+  is bought at a real cost in clinical validity (losing the "needed treatment to reach this value"
+  signal). Whether that cost is acceptable is task-dependent (see the scope note above) — and is
+  exactly what motivates disentangling severity from treatment history as two separate, explicit
+  terms, rather than collapsing them into one composite score either way.</p>
+</div>
+
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
