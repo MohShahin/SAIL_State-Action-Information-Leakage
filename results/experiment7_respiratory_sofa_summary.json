@@ -1,0 +1,18 @@
+{
+  "_note": "Aggregate cohort-level statistics only. No patient-level rows. See ../DATA_ACCESS.md for what can/can't be published from this project.",
+  "cohort_size": 11354,
+  "verified_2026_09_04": {
+    "note": "Phase 5 of docs/PHASE_PLAN_TERMINOLOGY_REVISION.md -- tests whether SAIL's diagnostic generalizes to a second SOFA subscore (respiratory). Deliberately isolated: does not modify the shared sofa_resp function or any downstream Experiment 1/2/3/6 figures.",
+    "cohort_ever_ventilated_pct": 0.826,
+    "eligible_timesteps_nonnull_pf_ratio": 52896,
+    "pct_timesteps_current_sofa_resp_differs_from_official_rule": 0.047,
+    "pct_eligible_timesteps_in_ambiguous_pf_zone_100_300": 0.621,
+    "pct_ambiguous_zone_ventilated": 0.934,
+    "collision_zone_pf_100_200": {
+      "not_ventilated_scored_2": 1382,
+      "ventilated_scored_3": 16978,
+      "note": "Identical PF ratio range, different official score, purely as a function of treatment status -- not full non-identifiability (score still varies with PF within each ventilation status), but a many-to-one collision in this band."
+    }
+  },
+  "finding": "A second, structurally different mechanism instance from Theorem 1's cardiovascular non-identifiability. Fixing ventilation status does not collapse the respiratory score to a constant -- it still varies with PF ratio across all five tiers. The real effect: for PF in [100,300), the official score depends on ventilation status directly, and two patients with identical PF in [100,200) receive different official scores (3 vs 2) purely because one is ventilated. The current PF-only implementation's aggregate error rate (4.7%) is modest largely because ventilation and low PF are highly correlated in this cohort (93.4% of the ambiguous zone is ventilated) -- the simplification works by coincidence in most cases, not by being equivalent to the official rule."
+}

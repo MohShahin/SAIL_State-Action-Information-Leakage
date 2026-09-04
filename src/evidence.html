@@ -126,6 +126,48 @@ templateEngineOverride: false
   <a href="__PATHPREFIX__/results/experiment6_mortality_vs_action_recoverability.json" style="color:var(--accent);">results/experiment6_mortality_vs_action_recoverability.json</a>.</p>
 </div>
 
+<h3 class="section">A second mechanism instance: respiratory SOFA</h3>
+<div class="card">
+  <p class="plain">Theorems 1–2 are proofs about the cardiovascular subscore specifically. Does the
+  diagnostic generalize to a different SOFA subscore, or was it a one-off property? Checked against
+  respiratory SOFA — <b>deliberately isolated</b>: this does not modify the shared `sofa_resp`
+  function or any of Experiments 1, 2, 3, or 6's already-published figures, all of which continue to
+  use the existing implementation unchanged.</p>
+
+  <p class="plain" style="margin-top:12px;">The official rule (Vincent et al., 1996) scores
+  respiratory SOFA from the PaO<sub>2</sub>/FiO<sub>2</sub> ratio, but its two highest tiers (3, 4)
+  additionally require the patient to be on mechanical ventilation — a conditional this project's
+  own <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">sofa_resp</code>
+  does not implement. Checking whether the same non-identifiability pattern as Theorem 1 holds here
+  turned up something more precise: it <b>doesn't</b>, not in the same form. Fixing ventilation
+  status doesn't collapse the score to a constant the way fixing any nonzero dose does for
+  cardiovascular SOFA — a ventilated patient's score still varies across all five PF tiers. What
+  actually happens is narrower: a <b>score-shift collision</b> — for PF in [100, 200), two patients
+  with the <i>identical</i> PF ratio get different official scores (3 vs. 2) purely as a function of
+  treatment status.</p>
+
+  <div class="facts" style="margin-top:14px;">
+    <div class="fact"><div class="n">82.6%</div><div class="l">of the cohort was ever mechanically ventilated</div></div>
+    <div class="fact"><div class="n">62.1%</div><div class="l">of eligible timesteps fall in the ambiguous PF zone [100,300) where ventilation status can change the official score</div></div>
+    <div class="fact"><div class="n">4.7%</div><div class="l">aggregate disagreement between the current (PF-only) and official scoring — modest largely because ventilation and low PF are strongly correlated (93.4% of the ambiguous zone is ventilated), not because the simplification is equivalent</div></div>
+  </div>
+
+  <div class="card" style="background:var(--bg); margin-top:14px;">
+    <p class="plain" style="margin:0;"><b>The collision zone directly, PF ∈ [100,200), n=18,360:</b></p>
+    <div class="facts" style="margin-top:10px;">
+      <div class="fact"><div class="n">16,978</div><div class="l">ventilated timesteps — official score 3</div></div>
+      <div class="fact"><div class="n">1,382</div><div class="l">non-ventilated timesteps, identical PF range — official score 2</div></div>
+    </div>
+  </div>
+
+  <p class="plain" style="margin-top:14px;">What this means for the general framework: the
+  diagnostic generalizes, but not uniformly — a second confirmed instance with a genuinely different
+  mathematical shape (a bounded-range collision, not an unbounded-range constancy) is what starts to
+  separate "an audit of one score" from "a methodology." Full figures:
+  <a href="__PATHPREFIX__/results/experiment7_respiratory_sofa_summary.json" style="color:var(--accent);">results/experiment7_respiratory_sofa_summary.json</a>,
+  proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §4.5</a>.</p>
+</div>
+
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
