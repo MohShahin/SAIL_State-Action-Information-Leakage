@@ -234,6 +234,16 @@ with that more modest, accurate claim.
 3. If successful, this becomes the paper's proposed *solution*, not just its diagnosis — a
    substantially stronger contribution than critique alone.
 
+**Spec written (2026-09-04), not implemented:** `docs/PHASE4_VARIANT_F_SPEC.md` — full feature
+definitions (two features, not three; the plan's three-item phrasing collapses to two once
+precisely defined, with the third — raw current dose — explicitly excluded from the primary spec
+and its rationale stated), computation algorithms reusing already-verified code (Experiment 3's
+interval-merge logic, `sofa_cardio_decomposed`'s tier thresholds), a data-availability check (no
+new BigQuery extraction needed), an evaluation plan reusing Experiments 2 and 6's infrastructure
+exactly, and a pre-stated success criterion. Ready to execute directly next session; deliberately
+not run this session (a half-finished extraction-and-training run is a worse stopping point than a
+clean spec).
+
 ---
 
 ## 6. Phase 5 — Respiratory SOFA subscore: a second mechanism instance (DONE 2026-09-04)
