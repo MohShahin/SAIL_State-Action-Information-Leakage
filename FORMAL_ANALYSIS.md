@@ -184,6 +184,73 @@ than collapsing them into one composite score in either direction.
 
 ---
 
+## 4.5 A second mechanism instance: respiratory SOFA's ventilatory-support conditional
+
+Theorems 1–2 are proofs about one subscore (cardiovascular). This section is the first test of
+whether the diagnostic generalizes past it, or was a one-off property of that specific scoring
+rule — deliberately isolated from the rest of this analysis: it does not modify `sofa_resp` itself,
+`sofa_total`, or any of Experiments 1, 2, 3, or 6, all of which continue to use the existing
+(uncorrected) implementation unchanged, so their already-published figures are unaffected.
+
+**The official rule** (Vincent et al., 1996) scores the respiratory subscore from the PaO$_2$/FiO$_2$
+ratio, but its two highest tiers additionally require ventilatory support:
+
+$$
+\sigma_{resp}(\text{PF}, V) =
+\begin{cases}
+0 & \text{PF} \geq 400 \\
+1 & 300 \leq \text{PF} < 400 \\
+2 & 200 \leq \text{PF} < 300 \\
+3 & 100 \leq \text{PF} < 200 \text{ AND } V \\
+2 & 100 \leq \text{PF} < 200 \text{ AND NOT } V \\
+4 & \text{PF} < 100 \text{ AND } V \\
+2 & \text{PF} < 100 \text{ AND NOT } V
+\end{cases}
+$$
+
+where $V$ is ventilatory-support status. This project's own `sofa_resp` (Section 5's sibling
+function) takes PF alone and does not implement the $V$ conditional.
+
+**What does *not* hold, checked rather than assumed by analogy to Theorem 1.** Fixing $V$ does not
+collapse $\sigma_{resp}$ to a constant: for $V$ true, the score still strictly decreases in PF across
+all five tiers (0 through 4). This is structurally different from Theorem 1, where fixing any
+nonzero dose makes $\sigma_{cardio}$ constant in MAP across the *entire* nonzero-dose domain — no
+such domain exists here.
+
+**What does hold — a score-shift / many-to-one collision, stated precisely as what it is:**
+
+**Proposition 3.** For $\text{PF} \in [100, 200)$, $\sigma_{resp}(\text{PF}, \text{true}) = 3 \ne
+\sigma_{resp}(\text{PF}, \text{false}) = 2$ for every PF value in that interval — two patients with
+*identical* PF ratio receive different official scores, purely as a function of treatment status,
+not physiology. (The same holds for PF $<100$, where the two branches are 4 vs. 2.) Unlike Theorem
+1, this affects a bounded PF range, not the entire nonzero-treatment domain, and does not make the
+score independent of the physiological measurement — it makes the mapping from that measurement
+*ambiguous* without also knowing treatment status.
+
+**Proof.** Direct substitution into the two branches above; both are defined for the same PF range
+and differ only in the $V$ literal. $\blacksquare$
+
+**Empirical measurement, cohort-wide, PF-only implementation vs. the official rule (2026-09-04):**
+82.6% of the cohort was ever ventilated. Of 52,896 eligible (non-null PF) timesteps, 62.1% fall in
+the ambiguous zone $\text{PF} \in [100,300)$ where $V$ can matter — and of those, 93.4% were
+actually ventilated. The current PF-only implementation's aggregate disagreement with the official
+rule is therefore modest (4.7% of timesteps) largely *because* ventilation and low PF are strongly
+correlated in this cohort, not because the simplification is equivalent to the official rule: in
+the exact collision zone (PF $\in[100,200)$, $n=18{,}360$), 16,978 ventilated timesteps score 3 and
+1,382 non-ventilated timesteps at the identical PF range score 2 under the official rule — the
+current implementation scores all 18,360 of them as 3, matching the official rule only for the
+ventilated majority.
+
+**Conclusion for the general framework (`PI_DEFENSE_PREP.md` §4):** the diagnostic generalizes, but
+not uniformly — the second instance is a real, provable treatment-dependence with a different
+mathematical shape (collision within a bounded range) than the first (constancy over an unbounded
+range). A single "leakage functional" template should not be expected to produce the same *kind* of
+result for every scoring rule it's applied to; what generalizes is the method (identify which
+branches reference treatment-derived quantities, check what happens when a physiological input is
+held fixed and treatment status varies), not a single closed-form finding.
+
+---
+
 ## 5. Treatment overlap: what is provable, and a corrected account of what is not
 
 ### 5.1 Definitions
@@ -362,6 +429,7 @@ the explicit failure mode this framework commits to.
 | Corollary 1.1 ("100% of treated timesteps") | **Proven** | Direct consequence of disjoint score ranges, not merely observed |
 | Theorem 2 (variant C insufficiency) | **Proven** (§4) | Algebraic identity |
 | Corollary 2.1 (variant D necessity) | **Proven**, confirmed empirically | Follows from Theorem 2 |
+| Proposition 3 (respiratory score-shift collision) | **Proven** (§4.5), confirmed empirically | Direct substitution; a second, structurally different mechanism instance |
 | Proposition 1 (absolute overlap monotonicity) | **Proven** (§5.2) | Measure-theoretic |
 | §5.3 (fraction is not monotonic) | **Proven** | Marginal/average calculus relationship |
 | §5.4 (limiting-case overlap) | **Proven** | Direct from definitions |

@@ -1,6 +1,6 @@
 # BigQuery extraction queries (MIMIC-IV v3.1)
 
-These are the four SQL queries behind every result in this project — they're extracted verbatim
+These are the five SQL queries behind every result in this project — they're extracted verbatim
 (logic unchanged) from `notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb`, as standalone `.sql`
 files so the extraction logic is reviewable without running the notebook.
 
@@ -16,11 +16,13 @@ files so the extraction logic is reviewable without running the notebook.
    resolution. Re-aggregated into 4h/24h decision windows downstream in pandas, not in SQL.
 3. **`03_vasopressor_doses.sql`** — per-drug infusion events, used both for the Experiment 1
    SOFA-cardiovascular dose decomposition and the Experiment 2/3 action/overlap labels.
+4. **`04_ventilation_status.sql`** — mechanical-ventilation episodes, used only by Experiment 7
+   (respiratory SOFA's ventilatory-support conditional). Not needed for Experiments 1–3, 5, or 6.
 
 Everything after this point — SOFA subscore computation, the five state variants (A–E), the
-classifiers in Experiment 2, the window-overlap audit in Experiment 3, and the negative controls
-in Experiment 5 — is pandas/NumPy/scikit-learn on the dataframes these queries return, not
-additional SQL. See the notebook directly for that logic.
+classifiers in Experiment 2, the window-overlap audit in Experiment 3, the mortality task in
+Experiment 6, and the negative controls in Experiment 5 — is pandas/NumPy/scikit-learn on the
+dataframes these queries return, not additional SQL. See the notebook directly for that logic.
 
 ## Adapting these to your own GCP project
 

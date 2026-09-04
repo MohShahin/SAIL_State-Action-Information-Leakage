@@ -17,6 +17,7 @@ confirmed aggregate-only:
 | `experiment3_summary.json` | Cohort-wide window-overlap statistics (Experiment 3) |
 | `experiment6_mortality_best_probe.csv` | 5 rows — one per state variant (A–E), best-probe mortality-prediction AUROC + CI at a fixed 24h decision point (Experiment 6) |
 | `experiment6_mortality_vs_action_recoverability.json` | Side-by-side comparison: action-recoverability AUROC gap (0.109) vs. mortality-predictive-validity AUROC gap (0.011) across the same five variants |
+| `experiment7_respiratory_sofa_summary.json` | Cohort-wide statistics on the respiratory-SOFA ventilatory-support conditional (Experiment 7) — the current-vs-official disagreement rate, ambiguous-PF-zone prevalence, and the collision-zone counts |
 
 Both the current (verified 2026-08-16) figures and the manuscript draft's original figures are
 included side by side where they differ, with a note on why — see `ROADMAP.md` for the full

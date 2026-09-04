@@ -236,7 +236,7 @@ with that more modest, accurate claim.
 
 ---
 
-## 6. Phase 5 — Respiratory SOFA subscore: a second mechanism instance
+## 6. Phase 5 — Respiratory SOFA subscore: a second mechanism instance (DONE 2026-09-04)
 
 **Why this matters beyond one more experiment:** this is the first real test of whether SAIL's
 general leakage/treatment-dependence framework (the mechanism-agnostic definition already drafted
@@ -267,6 +267,43 @@ Phase 0's terminology lands so the new mechanism is named correctly from the sta
    nested-threshold pattern, but state as a proposition to prove, not assumed true by analogy.)
 4. Measure prevalence empirically on the existing cohort — reuses the existing extraction, no new
    MIMIC query needed if step 1 confirms ventilation status is already present.
+
+**`[VERIFIED]` Result (2026-09-04), reported as it came out:** task 1's answer contradicted the
+plan's own guess — ventilation status was **not** already present (`queries/02_vitals_labs_fio2.sql`
+only pulls vitals/labs/FiO2). `mimiciv_derived.ventilation` (the validated derived table) is not
+accessible under this project's BigQuery grant, same access pattern as `mimiciv_derived.sepsis3`
+before its fallback query was needed. Built the equivalent signal directly from
+`physionet-data.mimiciv_3_1_icu.procedureevents` (itemid 225792 Invasive, 225794 Non-invasive
+Ventilation, confirmed via direct `d_items` dictionary query, not assumed) — the same
+start/end-timestamped-event pattern already used for vasopressor doses. New query:
+`queries/04_ventilation_status.sql`.
+
+**A decision point surfaced before task 2:** correcting `sofa_resp` in place would change
+`sofa_total`, which feeds `FEATURE_COLS`, which would change the already-published, already-
+reproduced Experiment 1/2/3/6 AUROC figures. **Scoped as isolated** (per direct instruction): the
+new analysis (`FORMAL_ANALYSIS.md` §4.5, notebook "Experiment 7") computes the official rule
+side-by-side with the existing `sofa_resp` for comparison and measurement only — it does not modify
+`sofa_resp`, `sofa_total`, or re-run any of Experiments 1/2/3/6. Correcting `sofa_resp` in place is
+a separately-scoped follow-up, not done here.
+
+**Task 3's math, worked out rather than assumed true by analogy:** the same non-identifiability
+*form* as Theorem 1 does **not** hold — fixing ventilation status doesn't collapse the respiratory
+score to a constant (it still varies with PF across all five tiers, unlike cardiovascular SOFA's
+nonzero-dose branches, none of which reference MAP at all). What holds instead is a **score-shift
+collision**: for PF in [100,200), identical PF values receive different official scores (3 vs. 2)
+purely as a function of treatment status. Proven as Proposition 3.
+
+**Task 4's measurement:** 82.6% of the cohort was ever ventilated. 62.1% of 52,896 eligible
+timesteps fall in the ambiguous PF zone [100,300) where ventilation status can change the official
+score; 93.4% of that zone is ventilated. The current PF-only implementation's aggregate
+disagreement with the official rule (4.7%) is modest largely because ventilation and low PF are
+strongly correlated in this cohort, not because the simplification is equivalent — confirmed
+directly in the collision zone (PF [100,200), n=18,360): 16,978 ventilated timesteps officially
+score 3, 1,382 non-ventilated timesteps at the identical PF range officially score 2.
+
+Published: `results/experiment7_respiratory_sofa_summary.json`, a new `evidence.html` section, and
+`FORMAL_ANALYSIS.md` §4.5 (placed between Theorem 2 and the window-overlap section to avoid
+renumbering everything downstream).
 
 ---
 
