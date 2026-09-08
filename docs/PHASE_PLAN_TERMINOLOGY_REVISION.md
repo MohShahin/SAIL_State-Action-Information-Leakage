@@ -65,6 +65,19 @@ predicting the *next action* may be exactly the right feature for predicting *mo
 mortality prediction doesn't have the same "was this information available before the decision"
 constraint that action-prediction does.
 
+**Addendum (2026-09-08) — Phase 4's Experiment 8 is independent, sharper evidence for this same
+point.** Ryohei's claim above is that `A_{t-1} → S_t → A_t` is ordinary treatment history, not
+leakage — SAIL's predictive power comes from legitimate persistence of treatment decisions over
+time, not a hidden temporal violation. Phase 4 (§5 below) tested a *disentangled* state (Variant F:
+an untouched severity term plus two explicit, purely temporal treatment-history features — duration
+on vasopressor, hours since the last dose-tier change) and found it predicts `A_t` even *better*
+than the original, entangled state did (`results/experiment8_variant_f_summary.json`:
+action-recoverability AUROC 0.914 vs. the original state's 0.900). That is not a new finding sitting
+next to this one — it is the same mechanism, isolated and measured directly: strip away everything
+except `A_{t-1}`-derived history and the predictive power gets *stronger*, not weaker, which is
+exactly what "this is ordinary treatment persistence, not a construction quirk of SOFA specifically"
+predicts. See `FORMAL_ANALYSIS.md` §7 for how this bears on H3 without claiming to resolve it.
+
 ---
 
 ## 1. Phase 0 — Terminology resolution (CRUCIAL, BLOCKING, do first)
