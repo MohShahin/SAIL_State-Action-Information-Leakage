@@ -168,6 +168,51 @@ templateEngineOverride: false
   proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §4.5</a>.</p>
 </div>
 
+<h3 class="section">A pre-registered disentanglement test — falsified</h3>
+<div class="card">
+  <p class="plain">A reviewer suggestion proposed a specific alternative to Variant D: instead of
+  stripping treatment signal out of the severity term, keep severity untouched and add
+  <b>explicit treatment-history features</b> alongside it — testing whether that recovers Variant
+  D's small mortality-predictive-validity loss (0.011 AUROC, above) without reintroducing
+  Experiment 2's action-recoverability gap. Full design:
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/main/docs/PHASE4_VARIANT_F_SPEC.md" style="color:var(--accent);">docs/PHASE4_VARIANT_F_SPEC.md</a>.</p>
+
+  <p class="plain" style="margin-top:12px;"><b>Variant F</b> = Variant D's severity term
+  (unchanged) plus two explicit treatment-history features, deliberately chosen to avoid
+  re-exposing the raw dose value Variant D removes: <b>hours on vasopressor</b> (continuous
+  duration, ending at the decision boundary) and <b>hours since dose-tier change</b> (regimen
+  recency, tied to the same tier thresholds the SOFA score itself uses — not raw rate, which
+  titrates too often to carry signal). The success criterion was stated <i>before</i> the
+  experiment ran: F would be useful if its mortality AUROC moved toward A's while its
+  action-recoverability stayed close to D's — action-recoverability rising toward A instead was
+  named in advance as evidence against the hypothesis.</p>
+
+  <table class="data" style="margin-top:10px;">
+    <tr><th>Variant</th><th>Action-recoverability AUROC</th><th>Mortality AUROC</th></tr>
+    <tr><td class="label">A_full</td><td>0.900</td><td>0.793</td></tr>
+    <tr><td class="label">D_treatment_decomposed</td><td>0.792</td><td>0.784</td></tr>
+    <tr><td class="label">F_disentangled (D + history features)</td><td><b>0.914</b></td><td>0.790</td></tr>
+  </table>
+
+  <div class="facts" style="margin-top:14px;">
+    <div class="fact"><div class="n">0.914</div><div class="l">F's action-recoverability AUROC — not close to D's (0.792), and higher than A's (0.900)</div></div>
+    <div class="fact"><div class="n">62%</div><div class="l">of D's small mortality-AUROC gap to A recovered by F (0.006 of 0.009) — a partial, not full, recovery</div></div>
+  </div>
+
+  <p class="plain" style="margin-top:14px;">The pre-registered falsification condition was met,
+  unambiguously: F's action-recoverability didn't drift toward A's, it <b>exceeded</b> it. Two
+  purely temporal features — how long a patient has been on a vasopressor, and how long since
+  their dose tier last changed — are on their own more predictive of the <i>next</i> vasopressor
+  decision than the entire physiology-plus-severity state. This sharpens the treatment-persistence
+  mechanism already visible in the offset-decay curve below: vasopressor courses are highly
+  autocorrelated, and duration/recency features encode that autocorrelation almost losslessly,
+  independent of physiology. This is not evidence that Variant D's own design is wrong — it shows
+  that any specific choice of history feature carries a real risk of reconstructing the action
+  independent of physiology, and that risk has to be tested per feature set, not assumed away.
+  Full figures: <a href="__PATHPREFIX__/results/experiment8_variant_f_summary.json" style="color:var(--accent);">results/experiment8_variant_f_summary.json</a>,
+  discussion: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §7.5</a>.</p>
+</div>
+
 <h3 class="section">What's still open</h3>
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
