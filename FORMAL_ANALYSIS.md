@@ -419,6 +419,18 @@ the SOFA-specific mechanisms in Sections 3–5, while mathematically real, contr
 = 0.109, confirmed), so this falsification condition is not currently met, but it is stated here as
 the explicit failure mode this framework commits to.
 
+**A note on Experiment 8 (§7.5) as corroborating, not substituting, evidence.** Phase 4's
+disentanglement test bears on this same Path 1 vs. Path 2 question from a different angle: Variant
+F isolates purely temporal treatment-history features (duration on vasopressor, time since the last
+dose-tier change) from physiology entirely, and found they predict $A_t$ *more* accurately than the
+original, entangled state (0.914 vs. 0.900 AUROC) — pointing toward persistence (Path 2) being a
+large effect in this cohort, independent of H3's own instrument. **This does not resolve H3.**
+Experiment 8 was not designed as a paired-bootstrap test on $\Delta$, carries no claim about the
+offset-decay curve specifically, and a different, non-temporal confound could in principle produce
+the same qualitative result. H3's pre-registered decision procedure above remains the test that
+settles this question; Experiment 8 is convergent empirical evidence pointing the same direction,
+not a second instrument for the same measurement.
+
 ---
 
 ## 7.5 A pre-registered test of explicit disentanglement (Phase 4) — falsified
