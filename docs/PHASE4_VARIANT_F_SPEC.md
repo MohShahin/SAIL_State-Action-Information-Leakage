@@ -108,6 +108,16 @@ recover both, uninformatively). If time allows, run it as a **secondary variant 
 F1 + F2 + current dose tier) specifically to test this hypothesis empirically rather than assert it
 — but report F (primary) first and separately from F′.
 
+**Deprioritization note, added after F's actual result (2026-09-08):** F already exceeded
+`A_full`'s action-recoverability AUROC (0.914 vs. 0.900) *without* the raw current-dose feature —
+see `results/experiment8_variant_f_summary.json` and `FORMAL_ANALYSIS.md` §7.5. Running F′ would
+add a feature whose entire purpose in this spec was to test whether raw dose recovers even *more*
+action-recoverability than F1/F2 alone; since F1/F2 alone already exceed the ceiling F′ was
+designed to probe, F′ is not expected to be informative — it would almost certainly push
+action-recoverability even higher without new evidence about anything not already established. F′
+is deprioritized on this reasoning, not run, and not silently dropped from the spec: this note is
+the record of that decision.
+
 ---
 
 ## 4. Variant F, assembled
@@ -166,6 +176,8 @@ without the raw dose), and should be reported as such, not reframed.
 6. Report the primary comparison table (§5) as the actual result, including if it doesn't confirm
    the disentanglement hypothesis.
 7. Only after F is reported: decide whether F′ (secondary, §3.3) is worth running.
+   **`[DECIDED 2026-09-08]`** — not run. See §3.3's deprioritization note: F alone already exceeded
+   `A_full`'s action-recoverability AUROC, so F′ would not test anything not already established.
 
 **Do not start this mid-session without a clear block of time ahead** — same reasoning as every
 other experiment this session: a half-finished run is a worse stopping point than not having
