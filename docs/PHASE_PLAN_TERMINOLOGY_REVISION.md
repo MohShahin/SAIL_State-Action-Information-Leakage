@@ -286,6 +286,78 @@ discipline).
 
 ---
 
+## 5.5 Scoping note — is the duration/recency finding its own contribution? (2026-09-08, assessment only, nothing implemented)
+
+Phase 4's result (§5 above) is more than a null result for the disentanglement hypothesis — it's a
+striking finding on its own: two purely temporal features, decoupled entirely from physiology,
+out-predict the full clinical state on this task. Before treating that as a candidate section (or
+paper) of its own, an honest assessment of whether it's provable in the sense of Theorems 1–2 /
+Proposition 3, or purely empirical.
+
+**Assessment: this is empirical, not provable in that sense — and should not be dressed up as more
+than it is.** Theorems 1–2 and Proposition 3 are proofs about a fixed, public, deterministic
+function (Vincent et al. 1996's SOFA scoring rule) — reading the formula is sufficient to verify
+them, independent of any dataset. The duration/recency finding has no such fixed function to reason
+about: it is a claim about how *clinicians actually behave* (vasopressor courses persist and change
+gradually, so recent history strongly predicts near-term continuation) — an empirical regularity of
+clinical practice at this cohort's site(s) and era, not a mathematical property that follows from a
+formula. A generative model of treatment persistence (e.g., a semi-Markov process for treatment
+episodes) could in principle yield a provable statement about *that model* — but its relevance
+would still hinge entirely on how well the model matches real clinician behavior, which is exactly
+the empirical question this reduces to. Manufacturing a proof here would misrepresent the kind of
+claim this is; it belongs in the same category as the Path 2 (persistence) reading of H3 (§7,
+`FORMAL_ANALYSIS.md`) — a real, reportable, but empirical finding.
+
+**What the claim would actually be, stated precisely:** in offline RL state representations for
+time-varying treatments, features derived purely from the *timing* of past treatment decisions
+(duration on treatment, time since the last regimen change) can reconstruct the next treatment
+decision at least as accurately as — and in this cohort, more accurately than — a state
+representation that also includes full physiological context, because real clinical treatment
+decisions exhibit strong temporal autocorrelation (treatment inertia) that swamps the marginal
+information content of the physiology used to *justify* those decisions.
+
+**What would need to be true for it to generalize beyond this one cohort/dataset/algorithm choice:**
+- Replication on a different ICU database (e.g. eICU-CRD, AmsterdamUMCdb) — MIMIC-IV's vasopressor
+  titration practice at a single health system is one data point, not a population.
+- Replication on treatment types other than vasopressors (mechanical ventilation weaning, sedation
+  titration, fluid boluses) — vasopressor titration may have unusually strong inertia relative to
+  other ICU therapies; this experiment cannot distinguish "treatment persistence in general" from
+  "vasopressor titration specifically."
+- Robustness to the action-space granularity: the current action label is a coarse binary ("any
+  dose-scored pressor active"). A finer action space (dose-tier transitions, or a continuous
+  dose-rate regression target) might show a smaller — or larger — effect; this has not been tested.
+- Robustness to the specific history-feature choice: this experiment deliberately excluded raw
+  current dose (§3.3) and used dose-*tier* change rather than raw-rate change specifically to avoid
+  micro-titration noise (spec §3.2's stated rationale). A naively-chosen history feature (e.g. time
+  since the literal last rate change) might carry much less signal — the result is a property of
+  this specific, reasoned feature choice, not of "treatment history features" as a category.
+- Consistency across classifier families — already partially addressed (logreg/rf/gb all evaluated
+  in Experiment 8), but a wider set (e.g. deep sequence models that could exploit more of the raw
+  timing information than these three probes) has not been tried.
+
+**What empirical validation would look like if pursued as its own contribution:** the replications
+above, run systematically rather than opportunistically — same protocol (`PROBES`, `cv_predict`,
+clustered bootstrap CIs), same two-feature design (duration + tier-change recency, or its closest
+analogue) applied to at least one other treatment type and, ideally, one other public ICU database,
+reporting the pattern's consistency (or lack of it) as the finding, not any single cohort's number.
+
+**Honest recommendation: this belongs in a follow-up paper, not the current one.** The current
+paper (SAIL) is scoped to a SOFA-specific construction-quirk audit; Phase 4's result as reported
+(§5) is legitimately in scope there as a negative/cautionary result about one specific proposed fix
+(explicit disentanglement) and as corroborating evidence for the Ryohei persistence framing (§0
+addendum) — that much stays. But the *broader* claim sketched above — that duration/recency
+treatment-history features are a general, cross-cohort, cross-treatment-type confound for offline
+RL state design — is an empirical generalization this single experiment on this single cohort and
+treatment type cannot support, and validating it properly (the replications above) is a
+substantially larger effort than fits as a section of the current paper. This is the same
+disposition already given to Phase 7's vasopressor-weaning idea below: a genuinely compelling
+direction, explicitly scoped out of the current paper rather than bolted on underpowered. If pursued,
+it would sit naturally alongside vasopressor weaning as a candidate direction for the next paper,
+not duplicated as a separate item — both are, at bottom, about treatment persistence's role in
+sepsis-RL state design and would likely share cohort/methodology infrastructure if pursued together.
+
+---
+
 ## 6. Phase 5 — Respiratory SOFA subscore: a second mechanism instance (DONE 2026-09-04)
 
 **Why this matters beyond one more experiment:** this is the first real test of whether SAIL's
