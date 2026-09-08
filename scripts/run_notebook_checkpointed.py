@@ -20,6 +20,14 @@ Also skips the notebook's own `google.colab.auth` cell (index 2) by default -- t
 Colab-specific and not needed when running locally with `gcloud auth application-default login`
 already set up (see scripts/check_setup.sh).
 
+Also checks the machine's sleep/hibernate timeouts before starting (Windows only, via `powercfg`)
+and temporarily disables them if nonzero, restoring the exact prior values on exit -- including on
+an exception -- so a crashed run never leaves sleep permanently off. Added after 4 of 6 Phase 4
+execution attempts were silently killed by the machine sleeping for 9-18 hour stretches mid-run.
+Every check and change this makes is printed to this script's own log output (search for
+`[sleep_guard]`); if `powercfg` isn't available (non-Windows, no permission), it warns and the
+notebook still runs without this protection.
+
 Usage:
     python scripts/run_notebook_checkpointed.py                  # cells 0..(default stop) - 1
     python scripts/run_notebook_checkpointed.py --stop-index 25  # run cells 0..24
@@ -30,6 +38,9 @@ the range you're running -- check with a quick `nbformat` cell listing before re
 specific --stop-index after editing the notebook's cell count.
 """
 import argparse
+import contextlib
+import re
+import subprocess
 import time
 from pathlib import Path
 
@@ -45,6 +56,87 @@ DEFAULT_NB_PATH = REPO_ROOT / "notebook" / "Sepsis_RL_SOFA_Leakage_Experiments.i
 DEFAULT_STOP_INDEX = 25
 DEFAULT_SKIP_INDEX = {2}  # Colab-only google.colab.auth cell
 DEFAULT_TIMEOUT = 5400  # seconds per cell
+
+# Windows-only sleep/hibernate-timeout GUID aliases this guard checks and, if needed, temporarily
+# clears. See sleep_guard() below -- added after 4 of 6 Phase 4 execution attempts were silently
+# killed by the machine sleeping for 9-18 hour stretches mid-run (fixed manually via powercfg that
+# time, not fixed structurally). "Sleep after" covers both plain sleep and the S4/hibernate-from-
+# sleep path seen in that incident's Event Log.
+_POWER_SETTINGS = [("STANDBYIDLE", "standby (sleep) timeout"), ("HIBERNATEIDLE", "hibernate timeout")]
+
+
+def _run_powercfg(*args):
+    return subprocess.run(["powercfg", *args], capture_output=True, text=True, check=True, timeout=30)
+
+
+def _query_power_setting(alias):
+    """Return (ac_seconds, dc_seconds) currently set for the given GUID alias, by parsing
+    `powercfg /query SCHEME_CURRENT SUB_SLEEP` -- the query and /change commands use different
+    units (seconds vs. minutes), so this reads and writes the raw index directly via
+    /setacvalueindex /setdcvalueindex to avoid any lossy rounding when restoring."""
+    out = _run_powercfg("/query", "SCHEME_CURRENT", "SUB_SLEEP").stdout
+    blocks = out.split("Power Setting GUID:")
+    for block in blocks:
+        if f"GUID Alias: {alias}" not in block:
+            continue
+        ac = re.search(r"Current AC Power Setting Index:\s*0x([0-9a-fA-F]+)", block)
+        dc = re.search(r"Current DC Power Setting Index:\s*0x([0-9a-fA-F]+)", block)
+        if ac and dc:
+            return int(ac.group(1), 16), int(dc.group(1), 16)
+    raise RuntimeError(f"could not find GUID Alias: {alias} in powercfg /query output")
+
+
+def _set_power_setting(alias, ac_seconds, dc_seconds):
+    _run_powercfg("/setacvalueindex", "SCHEME_CURRENT", "SUB_SLEEP", alias, str(ac_seconds))
+    _run_powercfg("/setdcvalueindex", "SCHEME_CURRENT", "SUB_SLEEP", alias, str(dc_seconds))
+    _run_powercfg("/setactive", "SCHEME_CURRENT")
+
+
+@contextlib.contextmanager
+def sleep_guard():
+    """Check sleep/hibernate timeouts before a long run; if any are nonzero, disable them for the
+    run's duration and restore the *actual prior values* (not a hardcoded default) on the way out
+    -- including on an exception, so a crashed run never leaves the machine with sleep permanently
+    disabled. Every check and change is printed, matching this project's auditability standard for
+    the rest of the pipeline. Never lets a powercfg failure (e.g. non-Windows, no permission) abort
+    the actual notebook run -- this is a safety net, not a hard dependency."""
+    changed = {}
+    try:
+        print("[sleep_guard] Checking current sleep/hibernate timeout settings (powercfg)...", flush=True)
+        original = {alias: _query_power_setting(alias) for alias, _ in _POWER_SETTINGS}
+        for alias, label in _POWER_SETTINGS:
+            ac, dc = original[alias]
+            print(f"[sleep_guard]   {label} ({alias}): AC={ac}s, DC={dc}s", flush=True)
+        needs_disable = {alias: (ac, dc) for alias, (ac, dc) in original.items() if ac != 0 or dc != 0}
+        if needs_disable:
+            print(f"[sleep_guard] WARNING: {sorted(needs_disable)} nonzero -- the machine could sleep "
+                  f"mid-run and silently kill this execution (this is exactly what happened to 4 of 6 "
+                  f"Phase 4 attempts). Disabling for the duration of this run.", flush=True)
+            for alias in needs_disable:
+                _set_power_setting(alias, 0, 0)
+                changed[alias] = needs_disable[alias]
+                print(f"[sleep_guard]   {alias} set to AC=0s, DC=0s (was AC={needs_disable[alias][0]}s, "
+                      f"DC={needs_disable[alias][1]}s)", flush=True)
+        else:
+            print("[sleep_guard] All checked timeouts already 0 (disabled) -- no change needed.", flush=True)
+    except Exception as e:
+        print(f"[sleep_guard] WARNING: could not check/set power settings ({type(e).__name__}: {e}) -- "
+              f"proceeding without this guard. If this machine sleeps mid-run, the run may be killed.",
+              flush=True)
+    try:
+        yield
+    finally:
+        for alias, (ac, dc) in changed.items():
+            try:
+                _set_power_setting(alias, ac, dc)
+                print(f"[sleep_guard] Restored {alias} to AC={ac}s, DC={dc}s (the value found before this "
+                      f"run changed it).", flush=True)
+            except Exception as e:
+                print(f"[sleep_guard] WARNING: failed to restore {alias} to AC={ac}s, DC={dc}s "
+                      f"({type(e).__name__}: {e}) -- restore this manually via Settings > System > "
+                      f"Power & battery, or `powercfg /setacvalueindex SCHEME_CURRENT SUB_SLEEP {alias} "
+                      f"{ac}` / `/setdcvalueindex ... {dc}` followed by `powercfg /setactive "
+                      f"SCHEME_CURRENT`.", flush=True)
 
 
 def main():
@@ -72,7 +164,7 @@ def main():
     print(f"Executing cells 0-{args.stop_index - 1} (skipping {sorted(skip_index)}); "
           f"leaving cells {args.stop_index}+ untouched", flush=True)
 
-    with client.setup_kernel():
+    with sleep_guard(), client.setup_kernel():
         for i, cell in enumerate(nb.cells):
             if i >= args.stop_index:
                 break
