@@ -421,6 +421,60 @@ the explicit failure mode this framework commits to.
 
 ---
 
+## 7.5 A pre-registered test of explicit disentanglement (Phase 4) — falsified
+
+A reviewer suggestion (point 4) proposed a specific alternative to Variant D: rather than stripping
+treatment signal out of the severity term, keep severity untouched and add explicit
+treatment-history features *alongside* it, to test whether this recovers Variant D's small
+mortality-predictive-validity loss (§ evidence on Experiment 6, gap = 0.011 AUROC) without
+reintroducing Experiment 2's action-recoverability gap. The full design is
+`docs/PHASE4_VARIANT_F_SPEC.md`; only the result is summarized here.
+
+**Variant F** = Variant D's severity term (MAP-only cardiovascular proxy, `sofa_total` recomputed,
+all five other subscores unchanged) plus two explicit treatment-history features, deliberately
+chosen to avoid re-exposing the raw dose value Variant D removes (spec §3.3): **F1**
+(`hours_on_vasopressor`) — continuous duration on any dose-scored vasopressor, ending at the
+decision boundary — and **F2** (`hours_since_dose_tier_change`) — hours since the SOFA-relevant
+dose *tier* (not raw rate) last changed, or hours since admission if it never has.
+
+**Pre-registered success criterion (spec §5, stated before the experiment ran):** F is a useful
+disentanglement if its mortality AUROC moves meaningfully toward $A_{\text{full}}$'s while its
+action-recoverability AUROC stays close to $D$'s (0.792), not close to $A$'s (0.900). If F's
+action-recoverability instead rises toward $A$, that is evidence *against* the disentanglement
+hypothesis and was to be reported as such, not reframed.
+
+**Result (2026-09-08, notebook Experiment 8, `results/experiment8_variant_f_summary.json`):**
+
+| Variant | Action-recoverability AUROC | Mortality AUROC |
+|---|---|---|
+| $A_{\text{full}}$ | 0.900 | 0.793 |
+| $D_{\text{treatment\_decomposed}}$ | 0.792 | 0.784 |
+| $F$ (D + F1 + F2) | **0.914** | 0.790 |
+
+The falsification condition was met, unambiguously: F's action-recoverability AUROC (0.914) did not
+merely drift toward $A$'s — it *exceeded* it. Meanwhile F's mortality AUROC recovered only about
+62% of D's already-small 0.009-point gap to A (0.006 of 0.009).
+
+**Interpretation.** Two purely temporal treatment-history features — how long a patient has been
+continuously on a vasopressor, and how long since their dose tier last changed — are, on their own,
+more predictive of the *next* vasopressor decision than the entire physiology-plus-severity state
+($A_{\text{full}}$). This sharpens rather than contradicts the treatment-persistence account already
+identified as the dominant mechanism behind Experiment 2's gap in Experiment 5's offset-decay curve
+(§7): vasopressor courses are highly autocorrelated over time, and duration/recency features encode
+that autocorrelation almost losslessly, independent of physiology. Explicit disentanglement, as
+specified here, does not sidestep this — it reintroduces the action-recoverability problem, because
+the added history features are themselves close to a direct encoding of the persistence signal.
+
+This is not evidence that Variant D's underlying design (an untouched severity term) is a mistake.
+It shows that *any specific choice* of history feature intended to restore mortality-predictive
+validity carries an empirical risk of being informative enough to reconstruct the RL action
+independent of physiology — and that risk cannot be reasoned away by construction; it has to be
+tested per feature set, exactly as done here. A differently-chosen, less-autocorrelation-laden
+history feature might behave differently; this experiment tested one principled choice (duration
+and tier-change recency) and it failed the pre-registered criterion.
+
+---
+
 ## 8. Summary: proof status of every claim
 
 | Claim | Status | Nature |
@@ -435,6 +489,7 @@ the explicit failure mode this framework commits to.
 | §5.4 (limiting-case overlap) | **Proven** | Direct from definitions |
 | Proposition 2 ($S_t$ descendant of $A_{t-1}$) | **Proven** (§6.2) | Graph-theoretic |
 | H3 (AUROC gap reflects these mechanisms specifically) | **Open — Conjecture, §7** | Requires Experiment 5's decay-curve test |
+| Phase 4 disentanglement test (Variant F) | **Falsified** (§7.5), confirmed empirically | Pre-registered prediction; action-recoverability exceeded A rather than staying near D |
 
 Only H3 is genuinely undetermined. A reviewer can verify every proof in Sections 3–6 by reading the
 scoring rule and the graph — none require trusting code execution. This is worth stating plainly in

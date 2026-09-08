@@ -45,3 +45,4 @@ bigquery-credentials*
 !results/experiment6_mortality_best_probe.csv
 !results/experiment6_mortality_vs_action_recoverability.json
 !results/experiment7_respiratory_sofa_summary.json
+!results/experiment8_variant_f_summary.json

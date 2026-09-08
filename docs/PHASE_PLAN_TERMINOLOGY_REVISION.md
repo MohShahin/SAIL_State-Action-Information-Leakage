@@ -202,7 +202,7 @@ Experiment 2's classifier-training cell having run).
 
 ---
 
-## 5. Phase 4 — Disentangled state design ("Variant F"): explicit severity + explicit treatment vector
+## 5. Phase 4 — Disentangled state design ("Variant F"): explicit severity + explicit treatment vector (DONE 2026-09-08)
 
 **Why this is the strongest single new contribution in this feedback set:** the clinical reviewer's
 point 4 — reframe the fix around an explicit prior-treatment vector *alongside* an untouched
@@ -234,15 +234,42 @@ with that more modest, accurate claim.
 3. If successful, this becomes the paper's proposed *solution*, not just its diagnosis — a
    substantially stronger contribution than critique alone.
 
-**Spec written (2026-09-04), not implemented:** `docs/PHASE4_VARIANT_F_SPEC.md` — full feature
-definitions (two features, not three; the plan's three-item phrasing collapses to two once
-precisely defined, with the third — raw current dose — explicitly excluded from the primary spec
-and its rationale stated), computation algorithms reusing already-verified code (Experiment 3's
-interval-merge logic, `sofa_cardio_decomposed`'s tier thresholds), a data-availability check (no
-new BigQuery extraction needed), an evaluation plan reusing Experiments 2 and 6's infrastructure
-exactly, and a pre-stated success criterion. Ready to execute directly next session; deliberately
-not run this session (a half-finished extraction-and-training run is a worse stopping point than a
-clean spec).
+**Spec written (2026-09-04):** `docs/PHASE4_VARIANT_F_SPEC.md` — full feature definitions (two
+features, not three; the plan's three-item phrasing collapses to two once precisely defined, with
+the third — raw current dose — explicitly excluded from the primary spec and its rationale stated),
+computation algorithms reusing already-verified code (Experiment 3's interval-merge logic,
+`sofa_cardio_decomposed`'s tier thresholds), a data-availability check (no new BigQuery extraction
+needed), an evaluation plan reusing Experiments 2 and 6's infrastructure exactly, and a pre-stated
+success criterion.
+
+**`[VERIFIED]` Result (2026-09-08), reported as it came out, not adjusted toward the hypothesis:**
+Variant F = Variant D's severity term (unchanged) + F1 (`hours_on_vasopressor`, continuous duration)
++ F2 (`hours_since_dose_tier_change`, regimen recency tied to the SOFA dose-tier thresholds).
+Best-probe (gb) AUROC:
+
+| Variant | Action-recoverability AUROC (Exp. 2) | Mortality AUROC (Exp. 6) |
+|---|---|---|
+| A_full | 0.900 | 0.793 |
+| D_treatment_decomposed | 0.792 | 0.784 |
+| F_disentangled (D + F1 + F2) | **0.914** | 0.790 |
+
+**The pre-registered falsification condition was met.** F's action-recoverability AUROC (0.914) did
+not stay near D's (0.792) — it exceeded even A's (0.900). F's mortality AUROC recovered only ~62%
+of D's already-small 0.009-point gap to A (0.006 of 0.009). Two purely temporal treatment-history
+features (duration on vasopressor, time since last dose-tier change) are, on their own, more
+predictive of the next vasopressor decision than the full physiology-plus-severity state — this
+sharpens the treatment-persistence mechanism already visible in Experiment 5's offset-decay curve,
+rather than contradicting it. Explicit disentanglement, as specified here, does not avoid the
+action-recoverability problem; it reintroduces it, because the added history features are
+themselves close to a direct encoding of the persistence signal. This is not evidence that Variant
+D's own design is wrong — it demonstrates that any specific choice of history feature carries a
+real risk of reconstructing the action independent of physiology, and that risk must be tested per
+feature set rather than assumed away by construction. Published:
+`results/experiment8_variant_f_summary.json`, a new `FORMAL_ANALYSIS.md` §7.5, and a new
+`evidence.html` section. Notebook: new "Section 8.7 Experiment 8" cells (merge_intervals factored
+out of Experiment 3 as a reusable helper; F1/F2 with an assertion-based hand-check on individual
+stay_ids before cohort-wide computation, matching this project's established verification
+discipline).
 
 ---
 

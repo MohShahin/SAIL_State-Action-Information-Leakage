@@ -1,0 +1,26 @@
+{
+  "_note": "Aggregate cohort-level statistics only. No patient-level rows. See ../DATA_ACCESS.md for what can/can't be published from this project.",
+  "spec": "docs/PHASE4_VARIANT_F_SPEC.md",
+  "variant_f_definition": "Variant D's severity term (MAP-only cardio proxy, sofa_total recomputed, all else unchanged) plus two explicit treatment-history features: F1 = hours_on_vasopressor (continuous duration on any dose-scored vasopressor, ending at the decision boundary), F2 = hours_since_dose_tier_change (hours since the SOFA-relevant dose tier last changed, or hours since admission if never changed).",
+  "pre_registered_success_criterion": "F is a useful disentanglement if its mortality AUROC moves meaningfully toward A_full's while its action-recoverability AUROC stays close to D's (0.792), not close to A's (0.900). If F's action-recoverability also rises toward A, that is evidence against the disentanglement hypothesis and should be reported as such.",
+  "verified_2026_09_08": {
+    "note": "Phase 4 of docs/PHASE_PLAN_TERMINOLOGY_REVISION.md -- tests whether adding explicit treatment-history features alongside an untouched severity term recovers Variant D's small mortality-predictive-validity loss without reintroducing action-recoverability.",
+    "action_recoverability_auroc": {
+      "A_full": 0.900,
+      "D_treatment_decomposed": 0.792,
+      "F_disentangled": 0.914
+    },
+    "mortality_auroc_best_probe": {
+      "A_full": 0.793,
+      "D_treatment_decomposed": 0.784,
+      "F_disentangled": 0.790
+    },
+    "action_auroc_drift_toward_a": 0.122,
+    "mortality_auroc_gap_recovered_by_f": 0.006,
+    "mortality_auroc_gap_d_to_a": 0.009,
+    "n_action_rows": 170299,
+    "n_mortality_rows": 11336,
+    "best_probe": "gb"
+  },
+  "finding": "The pre-registered falsification condition was met: F's action-recoverability AUROC (0.914) did not stay near D's (0.792) -- it exceeded even A_full's (0.900). Meanwhile F's mortality AUROC recovered only about 62% of D's already-small 0.009-point gap to A (0.006 of 0.009). Two purely temporal treatment-history features (duration on vasopressor, time since last dose-tier change) are, on their own, more predictive of the next vasopressor decision than the entire physiology-plus-severity state (variant A), consistent with and sharpening the treatment-persistence mechanism already identified in Experiment 5's offset-decay curve. Explicit disentanglement, as specified here, does not avoid the action-recoverability problem -- it reintroduces it, because the added history features are themselves the persistence signal. Reported as the actual result, not reframed to fit the hypothesis."
+}
