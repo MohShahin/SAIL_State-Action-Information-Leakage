@@ -87,6 +87,16 @@ needsMathJax: true
   the variant with no explicit treatment features (0.792 vs. 0.791).</p>
   <p class="plain">$$\sigma_{cardio} = \text{sofa\_total} - \sum_{i \ne cardio}\text{subscore}_i$$</p>
   <p class="plain">Full statement and proof: <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1</a> and <a href="__PATHPREFIX__/proof/#thm2" style="color:var(--accent);">Theorem 2</a>.</p>
+  <p class="plain" style="margin-top:16px; padding-top:14px; border-top:1px solid var(--line-soft);">
+  <b>What happened after this was proven:</b> does fixing it cost anything clinically
+  (<a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Experiment 6</a> — almost
+  nothing in mortality-prediction accuracy, 0.011 AUROC vs. a 0.109 action-recoverability gap)?
+  Does the same pattern hold for a different SOFA subscore
+  (<a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Experiment 7 / Proposition 3</a>
+  — yes, but in a structurally different form: a score-shift collision, not a constancy)? Does
+  adding explicit treatment-history features back recover what fixing it loses
+  (<a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Experiment 8 / Variant F</a> —
+  no; the pre-registered test for this was falsified)?</p>
 </div>
 
 <h3 class="section">Mechanism 2 — Treatment overlap</h3>
