@@ -70,9 +70,10 @@ needsMathJax: true
 <h3 class="section">Mechanism 1 — Treatment-confounded severity construction</h3>
 <div class="card">
   <p class="plain">The cardiovascular SOFA subscore is defined as a function of two things: mean
-  arterial pressure, and whichever vasopressor drug and dose is currently running. Above a dose
-  threshold, the scoring rule's branches stop referencing blood pressure entirely — two patients
-  with opposite blood pressure, same dose, get the identical score.</p>
+  arterial pressure, and whichever vasopressor drug and dose is currently running. For <b>any
+  nonzero dose</b> — not merely above some threshold — the scoring rule's branches stop referencing
+  blood pressure entirely: the moment a vasopressor is active at all, MAP drops out of the formula
+  completely. Two patients with opposite blood pressure, same dose, get the identical score.</p>
   <div class="facts">
     <div class="fact"><div class="n">100%</div><div class="l">of already-treated timesteps have a dose-determined score, not a MAP-determined one</div></div>
     <div class="fact"><div class="n">32.3%</div><div class="l">of all eligible timesteps affected, 4h window</div></div>
