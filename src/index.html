@@ -74,8 +74,11 @@ templateEngineOverride: false
     </h1>
     <p class="mt-6 text-lg md:text-xl text-slate-600 leading-relaxed prose-w">
       A reinforcement-learning model can appear to learn a sound sepsis treatment policy when the
-      state it's given already contains information about the treatment it's about to recommend.
-      This project measures — and in two cases, proves outright — how often that happens.
+      state it's given already contains information about the treatment it's about to recommend —
+      a dependence that's documented in the clinical literature, not a secret. What hasn't been
+      shown before: offline sepsis-RL pipelines use this therapy-dependent score as pre-decision
+      state without accounting for it, and dropping the risky field alone doesn't fix it. This
+      project measures — and in two cases, proves outright — how often that happens.
     </p>
     <div class="mt-9 flex flex-wrap gap-3">
       <a href="#mechanisms" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-sm px-6 py-3 rounded">Explore the mechanism</a>
@@ -135,6 +138,10 @@ templateEngineOverride: false
         question — SOFA's own construction and window timing both provably do this.</p>
       </div>
     </div>
+    <p class="mt-6 text-sm text-slate-500 prose-w">This is ordinary treatment history shaping
+    state, not the state containing information about the same action it's used to predict — see
+    <a href="__PATHPREFIX__/mechanisms/#term" class="text-cyan-600 hover:underline">Terminology</a>
+    for why that distinction matters and isn't just wording.</p>
   </div>
 </section>
 
@@ -403,6 +410,18 @@ templateEngineOverride: false
 <section id="about" class="border-b border-slate-200">
   <div class="wide-w mx-auto px-6 py-16 md:py-20">
     <div class="flex items-end justify-between flex-wrap gap-3"><h2 class="text-2xl md:text-3xl font-bold tracking-tight">About SAIL</h2><a href="__PATHPREFIX__/about/" class="text-sm font-medium text-cyan-600 hover:underline">Full about page →</a></div>
+    <div class="mt-8 prose-w">
+      <h3 class="font-semibold mb-2">What's actually new here?</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">The treatment-dependence of the SOFA
+      cardiovascular subscore is not a secret — it's documented in the clinical literature (Vincent
+      et al., 1996) and known to clinicians who use the score daily. <b>The contribution isn't
+      discovering that dependence.</b> It's showing that offline sepsis-RL pipelines treat this
+      therapy-dependent score as a valid pre-decision state feature without accounting for it — and
+      proving it formally. Of the two theorems, <b>Theorem 2's exact reconstruction result</b> —
+      that removing the subscore alone doesn't remove the information, since the total is a
+      deterministic sum that lets it be reconstructed by subtraction — is the least
+      clinician-known and most novel single finding.</p>
+    </div>
     <div class="mt-8 grid md:grid-cols-2 gap-10 prose-w">
       <div>
         <h3 class="font-semibold mb-2">Research question</h3>
