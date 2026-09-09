@@ -19,7 +19,7 @@ templateEngineOverride: false
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Related literature</h1>
-  <p class="deck">Seven sources, each doing real work for this project's own claims — not a padded
+  <p class="deck">Eight sources, each doing real work for this project's own claims — not a padded
   reading list. A fuller literature review (additional sepsis-RL studies, temporal-bias
   references) is planned; see <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>
   Phase 6. Nothing below is labeled beyond what's actually verified.</p>
@@ -71,6 +71,16 @@ const PAPERS = [
     tags: ["Causal inference", "Confounding"],
     relevance: "The general principle — conditioning prediction on a variable affected by treatment — underlying why the state is a descendant of prior action (Proposition 2).",
     link: "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/"
+  },
+  {
+    title: "A New Approach to Causal Inference in Mortality Studies with a Sustained Exposure Period — Application to Control of the Healthy Worker Survivor Effect",
+    authors: "Robins, J. M.",
+    venue: "Mathematical Modelling, 1986 (errata & addendum, Computers and Mathematics with Applications, 1987)",
+    category: "Documented treatment-confounding source",
+    catClass: "cat-confound",
+    tags: ["Causal inference", "g-methods", "Time-varying confounding", "Treatment-confounder feedback"],
+    relevance: "The classical biostatistics answer to exactly the causal structure SAIL's mechanisms instantiate: a time-varying confounder (SOFA cardio score) affected by prior treatment, feeding back into the next treatment decision — precisely the treatment-confounder-feedback structure this paper's g-computation algorithm was built to handle, and the same structure underlying Proposition 2's causal graph. But g-methods (later extended to marginal structural models by Robins, Hernán & Brumback, 2000, Epidemiology 11(5):550–560) and SAIL solve different problems, not competing ones. G-computation and marginal structural models are <b>estimation</b> tools: they presuppose the treatment-confounder-feedback structure is already known and ask how to consistently estimate a treatment's causal effect on an outcome despite it. SAIL's contribution is upstream of that — a <b>detection</b> result: proving that a specific pre-decision state construction (the SOFA cardiovascular subscore) is non-identifiable from physiology once treatment is present, and that naive feature removal (Theorem 2) doesn't fix it. SAIL estimates no causal effect and makes no such claim; it establishes that a particular offline-RL state representation has a structural problem before anyone reaches the estimation question g-methods answer. The two literatures are complementary: g-methods would be the natural next step for anyone wanting to estimate treatment effects despite the exact feedback structure SAIL diagnoses, not an alternative to diagnosing it in the first place.",
+    link: "https://www.semanticscholar.org/paper/4d508675ee414f4a8041a7270f63f3307ce50476"
   },
   {
     title: "Guidelines for reinforcement learning in healthcare",
