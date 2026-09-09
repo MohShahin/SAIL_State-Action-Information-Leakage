@@ -172,9 +172,9 @@ templateEngineOverride: false
         <div class="mono text-xs text-cyan-600 mb-2">MECHANISM 1</div>
         <h3 class="text-xl font-bold">State → action confounding</h3>
         <p class="text-sm text-slate-600 mt-2 max-w-2xl">The SOFA cardiovascular subscore is scored
-        directly from vasopressor dose, not from blood pressure alone. Above a dose threshold, the
-        score stops responding to physiology entirely — this is a proven fact about the scoring
-        function's definition, not a measured tendency.</p>
+        directly from vasopressor dose, not from blood pressure alone. For any nonzero dose — not
+        merely above some threshold — the score stops responding to physiology entirely — this is a
+        proven fact about the scoring function's definition, not a measured tendency.</p>
       </div>
       <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
         <div>
@@ -280,9 +280,9 @@ templateEngineOverride: false
 
     <div id="techExplain" class="mt-6 prose-w text-slate-700 leading-relaxed hidden">
       <p class="mb-3">The cardiovascular SOFA subscore $\sigma_{cardio}(\text{MAP}, D)$ is
-      piecewise in mean arterial pressure and active drug/dose $D$. On the domain where $D$ crosses
-      a dose threshold, none of the corresponding branches reference MAP:</p>
-      <p class="mb-3">$$\frac{\partial \sigma_{cardio}}{\partial \text{MAP}} = 0 \quad \text{whenever } D \text{ exceeds threshold}$$</p>
+      piecewise in mean arterial pressure and active drug/dose $D$. On the entire domain where
+      $D > 0$ — not merely above some threshold — none of the corresponding branches reference MAP:</p>
+      <p class="mb-3">$$\frac{\partial \sigma_{cardio}}{\partial \text{MAP}} = 0 \quad \text{whenever } D > 0$$</p>
       <p>This is a <b>proven</b> non-identifiability result (Theorem 1), not a statistical
       tendency — verifiable by inspecting the scoring rule's branches directly. Full statement,
       proof, and the algebraic reconstruction argument for why naive feature removal doesn't fix it
@@ -482,7 +482,7 @@ function renderMech1(){
       <span class="mono text-xs">${f.name}</span><span class="text-xs">${note}</span></div>`;
   }).join('');
   document.getElementById('mech1Caption').textContent = mech1On
-    ? 'With a vasopressor active above the dose threshold, sofa_cardio (and sofa_total, which sums it) now reflects the drug dose — not blood pressure. This is exactly Theorem 1.'
+    ? 'With any vasopressor active — any nonzero dose, not just above some threshold — sofa_cardio (and sofa_total, which sums it) now reflects the drug dose, not blood pressure. This is exactly Theorem 1.'
     : 'With no vasopressor active, the cardiovascular subscore reflects blood pressure only — a genuine physiology signal.';
 }
 mech1Toggle.addEventListener('click', ()=>{ mech1On = !mech1On; renderMech1(); });
