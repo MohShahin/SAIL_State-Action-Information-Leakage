@@ -221,8 +221,13 @@ templateEngineOverride: false
 <div class="card">
   <p class="plain">Experiment 5's negative-control battery (shuffled labels, a 5-offset temporal
   decay curve, a cross-reference against the variant with no explicit treatment features,
-  prevalence-matched placebo features) has not yet
-  run — this is what resolves H3. See the <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">pre-registered
+  prevalence-matched placebo features) has run and produced a decay curve (0.874 at 0h down to
+  0.703 at 32h). <b>H3 remains open</b>: the pre-registered decision procedure is a paired cluster
+  bootstrap on the AUROC(0)−AUROC(8) difference specifically, not the marginal decay curve alone —
+  this project's own analysis is explicit that checking the point estimate or overlapping marginal
+  CIs is not a valid test here, since both AUROCs are computed on the same, correlated patients.
+  That paired-bootstrap test has not yet been implemented. See the
+  <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">pre-registered
   decision procedure</a> and <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>.</p>
 </div>
 

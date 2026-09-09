@@ -77,15 +77,62 @@ templateEngineOverride: false
 </div>
 
 <div class="phase">
-  <div class="phase-badge next">In progress</div>
+  <div class="phase-badge done">Done</div>
+  <div class="phase-body">
+    <h4>Reviewer response — Mortality-predictive validity per variant (Experiment 6, 2026-09-03)</h4>
+    <p>Operationalizes the clinical reviewer's task-specificity point: does a variant's lower
+    action-recoverability also mean lower mortality-predictive validity? Action-recoverability gap
+    (A minus E) = 0.109 — large. Mortality-AUROC gap (A minus E) = 0.011 — roughly a tenth the size.
+    Reported as the actual result: sanitizing the state costs almost nothing in mortality-prediction
+    accuracy despite costing a lot in next-action predictability. Full write-up:
+    <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">evidence page</a>.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge done">Done</div>
+  <div class="phase-body">
+    <h4>Reviewer response — Respiratory SOFA, a second mechanism instance (Experiment 7 / Proposition 3, 2026-09-04)</h4>
+    <p>Tests whether the cardiovascular non-identifiability pattern generalizes to a different SOFA
+    subscore. It doesn't, in the same form — respiratory SOFA shows a narrower <b>score-shift
+    collision</b> instead: for PF in [100,200), two patients with identical PF get different
+    official scores (3 vs. 2) purely as a function of ventilation status. A genuinely different
+    mathematical shape, deliberately isolated from Experiments 1/2/3/6. Full write-up:
+    <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">evidence page</a>,
+    proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §4.5</a>.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge done">Done</div>
+  <div class="phase-body">
+    <h4>Reviewer response — Variant F disentanglement test (Experiment 8, 2026-09-08)</h4>
+    <p>Tests a specific alternative to Variant D: keep severity untouched, add explicit
+    treatment-history features (duration on vasopressor, time since last dose-tier change)
+    alongside it. The pre-registered success criterion was <b>falsified</b> — F's
+    action-recoverability AUROC (0.914) exceeded even the full state's (0.900), rather than staying
+    near D's (0.792). Reported as the actual result: two purely temporal features are more
+    predictive of the next action than the entire physiology-plus-severity state, sharpening the
+    treatment-persistence account below rather than avoiding it. Full write-up:
+    <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">evidence page</a>,
+    proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §7.5</a>.</p>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-badge next">Ran — H3 still open</div>
   <div class="phase-body">
     <h4>Phase 4 — Experiment 5 (negative controls)</h4>
-    <p>Four controls: shuffled labels, a 5-offset temporal decay curve, a cross-reference against
-    the variant with no explicit treatment features, and prevalence-matched placebo features. This
-    is the test that resolves H3 —
-    see the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>'s
-    pre-registered decision rule. Checkpointed for resumable execution; moving to Google Colab for
-    the compute-heavy pieces.</p>
+    <p>All four controls have run: shuffled labels (AUROC ≈0.5, as expected), a 5-offset temporal
+    decay curve (0.874 at 0h down to 0.703 at 32h), a cross-reference against the variant with no
+    explicit treatment features, and prevalence-matched placebo features (matches variant E's own
+    number, confirming the placebo adds nothing). <b>H3 itself is not yet resolved by this alone:</b>
+    the pre-registered decision procedure is a paired cluster bootstrap on the AUROC(0)−AUROC(8)
+    difference specifically — not the marginal decay curve or a simple threshold on the point
+    estimate, which this project's own analysis states is not a valid test since the two AUROCs are
+    computed on the same, correlated patients. That paired-bootstrap test has not yet been
+    implemented. See the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof
+    page</a>'s pre-registered decision rule.</p>
   </div>
 </div>
 
