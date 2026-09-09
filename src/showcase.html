@@ -1,0 +1,186 @@
+---
+layout: base.njk
+title: "Showcase"
+activeNav: showcase
+templateEngineOverride: false
+---
+
+<style>
+  .act-eyebrow{ font-family:var(--sans); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 6px; font-weight:700; }
+  .act-cta{ display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:14px; font-weight:600; color:#fff; background:var(--accent); border:1px solid var(--accent); border-radius:4px; padding:11px 18px; text-decoration:none; margin-top:14px; }
+  .act-cta:hover{ opacity:0.9; }
+  .chart-wrap{ position:relative; }
+  .chart-legend{ display:flex; gap:18px; flex-wrap:wrap; margin-top:14px; font-size:12.5px; color:var(--ink-soft); }
+  .chart-legend .sw{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle; }
+  #chartTip{ position:absolute; display:none; background:var(--ink); color:#fff; font-size:12px; line-height:1.5; padding:8px 11px; border-radius:4px; pointer-events:none; max-width:230px; z-index:5; box-shadow:0 4px 14px rgba(0,0,0,.18); }
+  #chartTip b{ display:block; margin-bottom:2px; }
+  .pt{ cursor:pointer; }
+  .pt circle{ transition:r .12s; }
+  .pt:hover circle, .pt:focus circle{ r:9; }
+  .not-built{ border:1px dashed var(--line); border-radius:4px; padding:16px 18px; background:var(--bg); }
+</style>
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>We gave a model a question and accidentally also gave it the answer.</h1>
+  <p class="deck">This is that story — and it's not about a bad model. It's about a widely-used
+  clinical score that was never designed to be a machine-learning feature in the first place.
+  Three acts, all built from real, already-verified numbers — nothing on this page is fabricated.</p>
+</div></div>
+
+<main class="wide">
+
+<!-- ============ ACT 1 ============ -->
+<div class="act-eyebrow" style="margin-top:0;">Act 1 — Watch it happen</div>
+<div class="card">
+  <p class="plain">One synthetic patient, three synchronized views: a causal graph that lights up
+  when treatment information flows into the state, a state vector that flips cells between clean
+  and treatment-confounded, and a predictability gauge that moves with it — all three driven by the
+  same mechanism proven in Act 2 below, not a staged animation.</p>
+  <a href="__PATHPREFIX__/visualizer/" class="act-cta">Open the live visualizer →</a>
+</div>
+
+<!-- ============ ACT 2 ============ -->
+<div class="act-eyebrow">Act 2 — The whole finding in one plot</div>
+<div class="card">
+  <p class="plain">Six state designs, tested on the same task: predict the next vasopressor
+  decision from the current state. The x-axis groups them by <b>physiological purity</b> — does
+  the state still contain a raw, treatment-derived SOFA feature that fails Theorem 1's
+  non-identifiability check? The y-axis is each variant's actual, already-verified
+  action-recoverability AUROC — no new computation here, same numbers as the
+  <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>.</p>
+
+  <div class="chart-wrap">
+    <div id="chartTip"></div>
+    <svg viewBox="0 0 680 400" width="100%" role="img" aria-label="Scatter plot of six state-design variants, grouped by physiological purity on the x-axis, plotted against action-recoverability AUROC on the y-axis">
+      <!-- gridlines -->
+      <line x1="60" y1="81.7" x2="660" y2="81.7" stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="60" y1="167.8" x2="660" y2="167.8" stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="60" y1="253.9" x2="660" y2="253.9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="52" y="85.7" text-anchor="end" font-size="11" fill="#64748b">0.90</text>
+      <text x="52" y="171.8" text-anchor="end" font-size="11" fill="#64748b">0.85</text>
+      <text x="52" y="257.9" text-anchor="end" font-size="11" fill="#64748b">0.80</text>
+      <!-- axes -->
+      <line x1="60" y1="10" x2="60" y2="340" stroke="#94a3b8" stroke-width="1.2"/>
+      <line x1="60" y1="340" x2="660" y2="340" stroke="#94a3b8" stroke-width="1.2"/>
+      <text x="12" y="180" font-size="12" fill="#475569" font-weight="600" transform="rotate(-90 12 180)">Action-recoverability AUROC</text>
+      <!-- x categories -->
+      <text x="170" y="366" text-anchor="middle" font-size="12.5" font-weight="600" fill="#DC2626">Low purity</text>
+      <text x="170" y="382" text-anchor="middle" font-size="10.5" fill="#64748b">(A, B, C)</text>
+      <text x="400" y="366" text-anchor="middle" font-size="12.5" font-weight="600" fill="#CA8A04">High purity</text>
+      <text x="400" y="382" text-anchor="middle" font-size="10.5" fill="#64748b">(D, F)</text>
+      <text x="590" y="366" text-anchor="middle" font-size="12.5" font-weight="600" fill="#059669">Highest purity</text>
+      <text x="590" y="382" text-anchor="middle" font-size="10.5" fill="#64748b">(E)</text>
+
+      <!-- callout for F -->
+      <line x1="424" y1="50" x2="475" y2="22" stroke="#CA8A04" stroke-width="1.2" stroke-dasharray="2,2"/>
+      <text x="480" y="18" font-size="11.5" fill="#92660a" font-weight="600">highest AUROC of all six</text>
+      <text x="480" y="32" font-size="10.5" fill="#64748b">same purity bucket as D</text>
+
+      <!-- points -->
+      <g class="pt" tabindex="0" data-name="A_full" data-purity="Low" data-auroc="0.900" data-note="The full state, all six SOFA subscores as-is.">
+        <circle cx="155" cy="81.7" r="7" fill="#DC2626"/>
+        <text x="155" y="66" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">A · 0.900</text>
+      </g>
+      <g class="pt" tabindex="0" data-name="B_no_total_sofa" data-purity="Low" data-auroc="0.900" data-note="Total SOFA removed, cardio subscore kept -- the subscore alone still carries the signal.">
+        <circle cx="185" cy="81.7" r="7" fill="#DC2626"/>
+        <text x="197" y="86" text-anchor="start" font-size="11" font-weight="600" fill="#0f172a">B · 0.900</text>
+      </g>
+      <g class="pt" tabindex="0" data-name="C_no_cardio_sofa" data-purity="Low" data-auroc="0.885" data-note="Cardio subscore removed, total kept -- reconstructible from the other five subscores by subtraction (Theorem 2), so predictability barely drops.">
+        <circle cx="170" cy="107.5" r="7" fill="#DC2626"/>
+        <text x="170" y="126" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">C · 0.885</text>
+      </g>
+      <g class="pt" tabindex="0" data-name="D_treatment_decomposed" data-purity="High" data-auroc="0.792" data-note="Cardio subscore replaced with a MAP-only proxy, total recomputed -- no raw dose-derived SOFA feature survives.">
+        <circle cx="385" cy="267.7" r="7" fill="#CA8A04"/>
+        <text x="385" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">D · 0.792</text>
+      </g>
+      <g class="pt" tabindex="0" data-name="F_disentangled" data-purity="High" data-auroc="0.914" data-note="D's severity term, unchanged, plus two explicit treatment-history features (duration on vasopressor, time since last dose-tier change). The pre-registered disentanglement hypothesis was falsified: this exceeds even variant A.">
+        <circle cx="415" cy="57.4" r="8.5" fill="#CA8A04" stroke="#92660a" stroke-width="1.5"/>
+        <text x="415" y="78" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">F · 0.914</text>
+      </g>
+      <g class="pt" tabindex="0" data-name="E_no_explicit_treatment_features" data-purity="Highest" data-auroc="0.791" data-note="No feature derived from treatment in any form -- the purity floor by construction.">
+        <circle cx="590" cy="269.4" r="7" fill="#059669"/>
+        <text x="590" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">E · 0.791</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="chart-legend">
+    <span><span class="sw" style="background:#DC2626;"></span>Low purity — contains a raw treatment-derived SOFA feature</span>
+    <span><span class="sw" style="background:#CA8A04;"></span>High purity — SOFA features fixed, no raw dose term</span>
+    <span><span class="sw" style="background:#059669;"></span>Highest purity — zero treatment-derived features of any kind</span>
+  </div>
+
+  <p class="plain" style="margin-top:16px;"><b>F is the point that matters here.</b> It sits in the
+  same purity bucket as D — same construction logic, no raw dose feature either — yet it has the
+  <i>highest</i> action-recoverability AUROC of all six variants, above even the untouched full
+  state (A). Purity and low recoverability visibly are not the same axis: D and E's designer might
+  reasonably expect "no raw treatment feature" to mean "hard to predict the next action from," and
+  for D and E that expectation holds — but F shows it isn't a guarantee. Two purely temporal
+  history features (duration on vasopressor, time since the last dose-tier change) reconstruct the
+  next action better than physiology does, without reintroducing a single raw SOFA-embedded dose
+  term. Full write-up: <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence,
+  Experiment 8</a>.</p>
+</div>
+
+<!-- ============ ACT 3 ============ -->
+<div class="act-eyebrow">Act 3 — What we don't know yet</div>
+<div class="card">
+  <div class="flag pending" style="margin-bottom:14px;"><span class="dot"></span>H3 — open question</div>
+  <p class="plain">Everything in Act 2 is proven or directly measured. One question isn't settled:
+  <b>does the AUROC gap in Experiment 2 actually reflect the mechanisms proven here (Theorems 1–2),
+  or is it substantially explained by ordinary treatment persistence</b> — vasopressor courses just
+  don't change from one decision point to the next very often, independent of any SOFA-construction
+  quirk? The pre-registered test for this is a paired cluster bootstrap on the offset-decay curve's
+  AUROC(0)−AUROC(8) difference, specifically because the two AUROCs are computed on the same,
+  correlated patients — a marginal comparison or a point-estimate threshold isn't valid here. That
+  paired-bootstrap test has not yet been implemented (the negative-control battery has run and
+  produced a decay curve, but not this specific test — see
+  <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>).</p>
+  <p class="plain">Act 2's Variant F result (Experiment 8) is <b>corroborating evidence for the
+  persistence explanation, not a resolution of H3</b>: it shows that purely temporal treatment-history
+  features are highly predictive on their own, consistent with persistence being a large effect in
+  this cohort — but it wasn't designed as a test of the offset-decay curve specifically, and doesn't
+  substitute for that pre-registered instrument. We proved two mechanisms. We don't yet know how
+  much of the practical predictability gap they explain versus ordinary persistence. That's the
+  actual open question this project is built to answer next.</p>
+
+  <div class="not-built" style="margin-top:16px;">
+    <p class="plain" style="margin:0; font-size:13.5px;"><b>Deliberately not built:</b> dual RL
+    agents, live Q-value comparisons, or any policy-level visualization. No RL policy has been
+    trained anywhere in this project — Experiment 8 used classifiers to test action-recoverability
+    and mortality-predictive validity, not a trained policy. A demo element implying otherwise would
+    misrepresent the project's actual state, regardless of how compelling it would look. Those
+    become buildable once a policy-sensitivity study (the deferred Experiment 4) actually runs.</p>
+  </div>
+</div>
+
+</main>
+
+<div class="pagenav">
+  <a href="__PATHPREFIX__/evidence/">← Evidence</a>
+  <a href="__PATHPREFIX__/status/" class="primary">Current status →</a>
+</div>
+
+<script>
+(function(){
+  const tip = document.getElementById('chartTip');
+  const wrap = document.querySelector('.chart-wrap');
+  document.querySelectorAll('.pt').forEach(function(pt){
+    function show(e){
+      tip.innerHTML = '<b>' + pt.dataset.name + ' — AUROC ' + pt.dataset.auroc + '</b>' +
+        pt.dataset.purity + ' purity. ' + pt.dataset.note;
+      tip.style.display = 'block';
+      const wrapRect = wrap.getBoundingClientRect();
+      const x = (e.clientX !== undefined ? e.clientX : e.target.getBoundingClientRect().x) - wrapRect.left;
+      const y = (e.clientY !== undefined ? e.clientY : e.target.getBoundingClientRect().y) - wrapRect.top;
+      tip.style.left = Math.min(x + 14, wrapRect.width - 240) + 'px';
+      tip.style.top = Math.max(y - 60, 0) + 'px';
+    }
+    function hide(){ tip.style.display = 'none'; }
+    pt.addEventListener('mousemove', show);
+    pt.addEventListener('mouseleave', hide);
+    pt.addEventListener('focus', show);
+    pt.addEventListener('blur', hide);
+  });
+})();
+</script>
