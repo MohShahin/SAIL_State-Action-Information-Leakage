@@ -339,6 +339,21 @@ What this project contributes is the *specific, provable graph edge* (Theorem 1)
 descendant of $A_{t-1}$ in this particular clinical-RL setting, and a way to quantify how much of a
 predictive model's power flows through that edge.
 
+**Relation to the g-methods literature.** The graph above is exactly the treatment-confounder-feedback
+structure Robins' g-methods tradition was built for — a time-varying variable ($\sigma_{cardio,t}$)
+affected by prior treatment ($A_{t-1}$) and feeding back into the next treatment decision ($A_t$)
+(Robins 1986, *Mathematical Modelling* 7:1393–1512; extended to marginal structural models by
+Robins, Hernán & Brumback 2000, *Epidemiology* 11(5):550–560). It would be a mistake to treat
+g-methods as a competing framework this project should have used instead, or as a gap in not using
+them: g-computation and marginal structural models are **estimation** tools, built to consistently
+estimate a time-varying treatment's causal effect on an outcome *given* that this feedback structure
+is already known to hold. This project's contribution is upstream of that — a **detection** result
+(Theorems 1–2, Proposition 2) establishing *that* this feedback structure holds for a specific
+offline-RL state construction, and that naive feature removal does not remove it. No causal effect
+is estimated anywhere in this project, and none is claimed; g-methods would be the natural next step
+for anyone wanting to estimate treatment effects despite the exact structure diagnosed here, not an
+alternative to diagnosing it.
+
 ### 6.3 Why Proposition 2 does not settle H3
 
 A classifier trained to predict $A_t$ from $S_t$ (Experiment 2) cannot, from its AUROC alone,
@@ -521,6 +536,15 @@ post-hoc interpretation.
 - Komorowski, M. et al. (2018). The Artificial Intelligence Clinician learns optimal treatment
   strategies for sepsis in intensive care. *Nature Medicine*, 24(11), 1716–1720. (Motivating
   application, per manuscript Section 2.)
+- Robins, J. M. (1986). A new approach to causal inference in mortality studies with a sustained
+  exposure period — application to control of the healthy worker survivor effect. *Mathematical
+  Modelling*, 7(9–12), 1393–1512. (Errata and addendum, *Computers and Mathematics with
+  Applications*, 1987.) Cited in §6.2's Remark for the treatment-confounder-feedback structure
+  underlying Proposition 2's causal graph — see that Remark for why this project's contribution
+  (detection) is distinct from, not competing with, what g-methods provide (estimation).
+- Robins, J. M., Hernán, M. A. & Brumback, B. (2000). Marginal structural models and causal
+  inference in epidemiology. *Epidemiology*, 11(5), 550–560. (The estimation-side extension of the
+  1986 g-formula, cited alongside it in §6.2's Remark.)
 
 ---
 
