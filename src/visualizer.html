@@ -201,7 +201,7 @@ function render(){
   const included = v.groups.includes('cardio');
   document.getElementById('dagNote').innerHTML = treatmentDetermined && included
     ? `<b style="color:var(--treat);">Active right now:</b> the direct definitional path (bold) is carrying information straight from the prior action into the state — bypassing physiology entirely, exactly as proven in Theorem 1.`
-    : (!included ? `Variant ${v.id} doesn't include the treatment-linked feature at all — this path has nothing to carry.` : `No vasopressor above threshold — the score currently reflects physiology only.`);
+    : (!included ? `Variant ${v.id} doesn't include the treatment-linked feature at all — this path has nothing to carry.` : `No vasopressor active — the score currently reflects physiology only.`);
 
   // State vector
   const chips = [
