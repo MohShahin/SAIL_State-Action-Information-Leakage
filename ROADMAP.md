@@ -151,6 +151,24 @@ not a re-validation of anything already confirmed.
 
 ---
 
+## Note — duplicated explanations across site pages, tracked not fixed (found 2026-09-11)
+
+A site redundancy audit (`/site-audit-and-showcase`'s Part 2, then `/site-ready-sep15`'s Phase 2)
+found several explanations restated at full length on two-or-more pages instead of one linking to
+the other as source of truth — the same failure mode that already caused one real drift
+(mechanisms.html/proof.html's Theorem 1 threshold mismatch, found and fixed 2026-09-09). All of the
+following are currently **factually consistent** with each other; this is a tracked risk, not a
+bug: the H3/paired-bootstrap explanation restated in full on evidence.html, status.html, and
+showcase.html (only evidence.html links back to proof.html's canonical §H3); the verified-figures
+table duplicated verbatim on evidence.html and status.html; the "three bugs found and fixed" list
+restated with different prose on both pages; the terminology/"confounding not leakage" framing and
+the task-specificity caveat each repeated near-verbatim between mechanisms.html and their
+respective canonical sources despite a link already existing. Deliberately not consolidated now
+(three days before the Sept 15 showcase was judged the wrong time for that refactor) — worth a
+dedicated pass once the showcase has passed.
+
+---
+
 ## Phase 2 — Negative controls (Experiment 5)
 
 This is the load-bearing phase for credibility: the 0.108 AUROC gap in Experiment 2 is explicitly
