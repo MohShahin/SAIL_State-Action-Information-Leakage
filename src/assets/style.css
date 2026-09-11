@@ -77,6 +77,13 @@ h3.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36
 .flag.pending{ border-color:var(--gold); color:var(--gold); background:#f7f0df; }
 .flag .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
 
+/* Labeled callout blocks -- a formal statement (accent) or a methodology warning (treat), same
+   recipe as proof.html's own .not-establish, parameterized by color so both live in one place. */
+.statement-block{ background:var(--accent-soft); border:1px solid var(--accent); border-radius:6px; padding:16px 20px; margin:20px 0; font-size:13.5px; line-height:1.65; color:var(--ink); }
+.statement-block .label{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); margin-bottom:8px; }
+.warn-block{ background:var(--treat-soft); border:1px solid var(--treat); border-radius:6px; padding:16px 20px; margin:20px 0; font-size:13.5px; line-height:1.65; color:var(--ink); }
+.warn-block .label{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--treat); margin-bottom:8px; }
+
 /* ---------- HUB CARDS ---------- */
 .hub-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
 .hub-card{
