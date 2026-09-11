@@ -131,11 +131,14 @@ templateEngineOverride: false
   or is it substantially explained by ordinary treatment persistence</b> — vasopressor courses just
   don't change from one decision point to the next very often, independent of any SOFA-construction
   quirk? The pre-registered test for this is a paired cluster bootstrap on the offset-decay curve's
-  AUROC(0)−AUROC(8) difference, specifically because the two AUROCs are computed on the same,
-  correlated patients — a marginal comparison or a point-estimate threshold isn't valid here. That
-  paired-bootstrap test has not yet been implemented (the negative-control battery has run and
-  produced a decay curve, but not this specific test — see
-  <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>).</p>
+  AUROC(0)−AUROC(8) difference — resampling patients once per iteration and computing both AUROCs
+  on that same resample, specifically because the two AUROCs are computed on the same, correlated
+  patients; a marginal comparison or a point-estimate threshold isn't valid here. The
+  negative-control battery has run and produced a real decay curve (0.874 → 0.703) — but that run
+  bootstrapped each offset independently and saved only the aggregate AUROC and CI per offset, not
+  the per-patient predictions a joint resample needs. Closing this is a small, well-scoped next
+  step — save predictions across offsets, one new paired-bootstrap analysis pass — not an
+  open-ended gap. See <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>.</p>
   <p class="plain">Act 2's Variant F result (Experiment 8) is <b>corroborating evidence for the
   persistence explanation, not a resolution of H3</b>: it shows that purely temporal treatment-history
   features are highly predictive on their own, consistent with persistence being a large effect in
