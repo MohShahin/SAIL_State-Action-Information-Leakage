@@ -19,6 +19,10 @@
 }
 *{box-sizing:border-box;}
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); }
+/* Long unbreakable tokens (results/experimentN_..._summary.json links, code identifiers) forced
+   the page wider than the viewport on mobile -- this only engages for tokens that would otherwise
+   overflow; normal text with spaces wraps exactly as before. */
+body{ overflow-wrap:break-word; word-break:break-word; }
 ::selection{ background:var(--accent-soft); color:var(--accent); }
 
 /* ---------- SITE NAV (every page) ---------- */
@@ -96,6 +100,8 @@ footer.page-footer{
 }
 footer.page-footer a{ color:var(--ink-soft); }
 
+.table-scroll{ overflow-x:auto; margin:14px 0; -webkit-overflow-scrolling:touch; }
+.table-scroll table.data{ margin:0; min-width:480px; }
 table.data{ width:100%; border-collapse:collapse; font-size:13px; margin:14px 0; }
 table.data th{ text-align:left; font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); padding:8px 10px; border-bottom:1px solid var(--line); }
 table.data td{ padding:9px 10px; border-bottom:1px solid var(--line-soft); font-family:var(--mono); font-size:12.5px; }
