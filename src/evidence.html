@@ -229,14 +229,9 @@ templateEngineOverride: false
   decay curve, a cross-reference against the variant with no explicit treatment features,
   prevalence-matched placebo features) has run and produced a decay curve (0.874 at 0h down to
   0.703 at 32h) — real data, not a gap in execution. <b>H3 remains open</b> because of what that
-  run didn't save, not because it didn't happen: the pre-registered decision procedure is a paired
-  cluster bootstrap on the AUROC(0)−AUROC(8) difference — resampling patients once per iteration
-  and computing both AUROCs on that same resample — not the marginal decay curve alone, which this
-  project's own analysis is explicit is not a valid test here, since both AUROCs share the same
-  correlated patients. The run bootstrapped each offset independently and kept only the aggregate
-  AUROC and CI per offset, discarding the per-patient predictions a joint resample needs. Closing
-  this is a small, well-scoped next step (save predictions across offsets, one new paired-bootstrap
-  pass), not an open-ended gap. See the
+  run didn't save, not because it didn't happen: it bootstrapped each offset independently and
+  discarded the per-patient predictions the actual pre-registered test (a paired bootstrap on
+  AUROC(0)−AUROC(8)) needs. See the
   <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">pre-registered
   decision procedure</a> and <a href="__PATHPREFIX__/status/" style="color:var(--accent);">current status</a>.</p>
 </div>

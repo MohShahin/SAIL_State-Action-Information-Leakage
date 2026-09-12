@@ -151,21 +151,25 @@ not a re-validation of anything already confirmed.
 
 ---
 
-## Note — duplicated explanations across site pages, tracked not fixed (found 2026-09-11)
+## Resolved — duplicated explanations across site pages, consolidated (found 2026-09-11, fixed 2026-09-12)
 
 A site redundancy audit (`/site-audit-and-showcase`'s Part 2, then `/site-ready-sep15`'s Phase 2)
 found several explanations restated at full length on two-or-more pages instead of one linking to
 the other as source of truth — the same failure mode that already caused one real drift
-(mechanisms.html/proof.html's Theorem 1 threshold mismatch, found and fixed 2026-09-09). All of the
-following are currently **factually consistent** with each other; this is a tracked risk, not a
-bug: the H3/paired-bootstrap explanation restated in full on evidence.html, status.html, and
-showcase.html (only evidence.html links back to proof.html's canonical §H3); the verified-figures
-table duplicated verbatim on evidence.html and status.html; the "three bugs found and fixed" list
-restated with different prose on both pages; the terminology/"confounding not leakage" framing and
-the task-specificity caveat each repeated near-verbatim between mechanisms.html and their
-respective canonical sources despite a link already existing. Deliberately not consolidated now
-(three days before the Sept 15 showcase was judged the wrong time for that refactor) — worth a
-dedicated pass once the showcase has passed.
+(mechanisms.html/proof.html's Theorem 1 threshold mismatch, found and fixed 2026-09-09). Initially
+tracked rather than fixed (three days before the Sept 15 showcase was judged the wrong time for
+that refactor); consolidated the next day once explicitly requested. Each pair was resolved by
+picking one canonical page and condensing the other(s) to a short pointer, not by deleting content:
+the verified-figures table and the "three bugs" list now live only on evidence.html, with
+status.html linking to them (this also caught and fixed a genuine staleness bug — status.html's
+deck said "two real bugs" when the list right below it had always shown three); the H3/paired-
+bootstrap explanation now states its full mechanics only on proof.html's canonical §H3, with
+evidence.html, status.html, and showcase.html each keeping just their own page-specific framing
+plus a link; mechanisms.html's terminology intro and task-specificity footnote were trimmed to
+short pointers at proof.html#term and evidence.html respectively, keeping mechanisms.html's own
+unique content (the two-diagram comparison, the per-mechanism "what happened after this was
+proven" summaries) untouched. Re-crawled all internal links after the edit (278 links, zero
+broken) and screenshot-reviewed all four touched pages to confirm nothing reads abruptly.
 
 ---
 

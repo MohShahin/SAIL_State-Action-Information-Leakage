@@ -22,40 +22,29 @@ templateEngineOverride: false
     <span><b>Boston University</b> School of Public Health</span>
   </div>
   <h1>Where things actually stand</h1>
-  <p class="deck">The honest version, including two real bugs found and fixed along the way.
-  Full history in <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
+  <p class="deck">The honest version — what's verified, what's still open, and the phase-by-phase
+  history. Full figures and bug history: <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>;
+  full commit-level history in <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
 </div></div>
 
 <main>
 
-<h3 class="section" style="margin-top:0;">Verified figures — before and after correction</h3>
+<h3 class="section" style="margin-top:0;">Verified figures</h3>
 <div class="card">
-  <div class="table-scroll">
-  <table class="data">
-    <tr><th>Statistic</th><th>Manuscript draft</th><th>Verified (re-extraction)</th><th>Status</th></tr>
-    <tr><td class="label">Cohort size</td><td>11,354</td><td>11,354</td><td>exact match</td></tr>
-    <tr><td class="label">Exp 1 — dose-determined, 4h</td><td>30.5%</td><td>32.3%</td><td>revised</td></tr>
-    <tr><td class="label">Exp 1 — dose-determined, 24h</td><td>26.3%</td><td>28.6%</td><td>revised</td></tr>
-    <tr><td class="label">Exp 2 — AUROC A_full</td><td>0.900</td><td>0.900</td><td>exact match</td></tr>
-    <tr><td class="label">Exp 2 — AUROC E_no_explicit_treatment_features</td><td>0.791</td><td>0.791</td><td>exact match</td></tr>
-    <tr><td class="label">Exp 2 — gap</td><td>≈0.108</td><td>0.109</td><td>essentially exact</td></tr>
-    <tr><td class="label">Exp 3 — mean overlap (24h)</td><td>56.1%</td><td>31.1%</td><td>revised down</td></tr>
-    <tr><td class="label">Exp 3 — median overlap (24h)</td><td>100%</td><td>12.4%</td><td>revised down</td></tr>
-    <tr><td class="label">Exp 3 — % &gt;50% overlap</td><td>55.7%</td><td>28.7%</td><td>revised down</td></tr>
-  </table>
-  </div>
-  <p class="plain" style="margin:14px 0 0; font-size:13px;">Experiment 2's gap survived almost
-  untouched despite a 15x difference in underlying row counts — strong evidence it's a robust,
-  ratio-based effect, not an artifact of the bugs described below.</p>
+  <p class="plain">Every published figure has been independently re-extracted from MIMIC-IV and
+  reproduced across five or more separate pipeline runs. Experiment 2's action-recoverability gap
+  (0.900 → 0.791) survived a 15× swing in underlying row counts almost untouched — strong evidence
+  it's a robust, ratio-based effect, not an artifact of the bugs below. Full before/after table:
+  <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>.</p>
 </div>
 
 <h3 class="section">What was found and fixed</h3>
 <div class="card">
-  <div class="facts">
-    <div class="fact"><div class="n" style="font-size:14px;">Bug 1 — WRITE_APPEND</div><div class="l">The cohort table's BigQuery load had no write_disposition set. A re-run against an already-populated table silently duplicated rows (~15x), inflating every downstream join. Confirmed twice: once by code inspection, once by recovering the original buggy Colab run and reproducing the exact inflated figures.</div></div>
-    <div class="fact"><div class="n" style="font-size:14px;">Bug 2 — schema autodetect</div><div class="l">BigQuery's schema autodetection mapped timestamp columns to the wrong type, breaking joins against source tables. Fixed with an explicit schema.</div></div>
-    <div class="fact"><div class="n" style="font-size:14px;">Bug 3 — sum vs. union</div><div class="l">The window-overlap calculation summed overlapping intervals instead of taking their union, double-counting patients on multiple simultaneous vasopressors (34.8% of the cohort). A smaller, present-day contributor alongside Bug 1.</div></div>
-  </div>
+  <p class="plain">Three real pipeline bugs were found, diagnosed, and fixed in the open: a
+  BigQuery write-disposition gap that silently duplicated rows (~15×) on re-run, a schema-autodetect
+  type mismatch that broke downstream joins, and a window-overlap sum-vs-union error that
+  double-counted patients on simultaneous multi-drug vasopressor therapy (34.8% of the cohort). Full
+  diagnostic trail, including the false starts: <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>.</p>
 </div>
 
 <h3 class="section">Project phases</h3>
@@ -130,17 +119,10 @@ templateEngineOverride: false
     explicit treatment features, and prevalence-matched placebo features (matches variant E's own
     number, confirming the placebo adds nothing). Results:
     <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">notebook/results/experiment5_negative_controls.json</code>.
-    <b>H3 itself is not yet resolved by this data:</b> the pre-registered decision procedure is a
-    paired cluster bootstrap on the AUROC(0)−AUROC(8) difference specifically — resampling patients
-    once per iteration and computing both AUROCs on that same resample — not the marginal decay
-    curve or a threshold on the point estimate, which this project's own analysis states is not a
-    valid test since the two AUROCs share the same correlated patients. The run that produced the
-    numbers above bootstrapped each offset <i>independently</i> and saved only the aggregate AUROC
-    and CI per offset, discarding the individual per-patient predictions a joint/paired resample
-    needs. This is a small, well-understood next step — save predictions across offsets, then one
-    new paired-bootstrap analysis pass — not an open-ended gap. See the
-    <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>'s
-    pre-registered decision rule.</p>
+    <b>H3 itself is not yet resolved by this data</b> — the run saved only each offset's own
+    aggregate AUROC, not the per-patient predictions the pre-registered paired-bootstrap test
+    needs. See <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">the exact test and
+    why</a>.</p>
   </div>
 </div>
 

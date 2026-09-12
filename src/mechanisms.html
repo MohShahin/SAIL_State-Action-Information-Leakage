@@ -18,11 +18,9 @@ needsMathJax: true
 <h3 class="section" id="term" style="margin-top:0;">Terminology: this is confounding, not ML-sense leakage</h3>
 <div class="card">
   <p class="plain">Both mechanisms below were originally described as "leakage." A reviewer
-  correctly pushed back: <code class="mono" style="background:var(--bg); padding:2px 5px; border-radius:3px;">A_(t-1) → S_t → A_t</code>
-  — prior treatment shaping the current state, which then informs the <i>next</i> decision — is
-  ordinary sequential decision-making, not leakage. True leakage would be a state containing
-  information about the <i>same</i> action epoch it's used to predict, or information not yet
-  available at decision time. The two diagrams below are that distinction, made visual.</p>
+  correctly pushed back — the two diagrams below are the actual distinction, made visual. Full
+  statement: <a href="__PATHPREFIX__/proof/#term" style="color:var(--accent);">Terminology, formal
+  proof page</a>.</p>
 
   <svg width="100%" viewBox="0 0 680 210" role="img" aria-label="Two causal diagrams: the legitimate pattern this project found, prior action to state to next action; and true ML-sense leakage, action to state to a prediction of that same action, which does not occur anywhere in this pipeline" style="margin:16px 0;">
     <text x="10" y="20" font-size="12" font-weight="600" fill="var(--ink)">What this project actually found (ordinary treatment history)</text>
@@ -61,10 +59,10 @@ needsMathJax: true
   indexing bug. Full derivation: <a href="__PATHPREFIX__/proof/#term" style="color:var(--accent);">FORMAL_ANALYSIS.md §1.1</a>.</p>
 
   <p class="plain" style="margin-top:10px; font-size:12.5px; color:var(--ink-faint);">One more
-  distinction worth stating plainly: whether a given feature counts as "confounded for this task"
-  is itself task-specific. A feature that's confounded for predicting the <i>next action</i> may be
-  exactly the right feature for predicting <i>mortality</i> — mortality prediction doesn't carry the
-  same "was this available before the decision" constraint action-prediction does.</p>
+  distinction worth stating plainly: whether a feature counts as "confounded" is itself
+  task-specific — a feature confounded for action-prediction can be exactly right for predicting
+  mortality. See <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence</a> for
+  the full scope note.</p>
 </div>
 
 <h3 class="section">Mechanism 1 — Treatment-confounded severity construction</h3>
