@@ -44,10 +44,12 @@ templateEngineOverride: false
     <span><b>Boston University</b> School of Public Health</span>
   </div>
   <h1>Watch the mechanism happen</h1>
-  <p class="deck">One synthetic patient, three synchronized views. Adjust the controls on the left
-  and watch the causal graph light up, the state vector's cells flip between clean and
-  treatment-confounded, and the predictability gauge move — all three respond to the same underlying
-  mechanism proven on the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>.
+  <p class="deck">One synthetic patient, three synchronized views. Adjust the MAP, vasopressor, and
+  dose controls on the left and watch the causal graph light up and the state vector's cells flip
+  between clean and treatment-confounded — both respond live to the same underlying mechanism
+  proven on the <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">formal proof page</a>.
+  The predictability gauge is separate: it shows that variant's own real, measured AUROC from
+  Experiment 2, so switch variants below to see it move.
   (This is ordinary <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">A(t-1) → S(t)</code>
   treatment history shaping state, not the state containing information about the action it's used
   to predict — see <a href="__PATHPREFIX__/mechanisms/" style="color:var(--accent);">Terminology</a>.)</p>
