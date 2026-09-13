@@ -15,6 +15,9 @@ templateEngineOverride: false
   .cat-related{ background:var(--accent-soft); color:var(--accent); }
   .paper-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
   .paper-tags span{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); background:var(--bg); border:1px solid var(--line); padding:2px 7px; border-radius:3px; }
+  .sc-q{ padding:14px 0; border-top:1px solid var(--line-soft); }
+  .sc-q p{ margin:0 0 10px; font-size:14px; }
+  .sc-ans{ min-width:56px; }
 </style>
 
 <div class="masthead"><div class="masthead-inner">
@@ -32,6 +35,30 @@ templateEngineOverride: false
 </div>
 
 <div id="paperGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:16px;"></div>
+
+<h3 class="section">Think your paper's state representation might have this problem? Self-check</h3>
+<div class="card" id="selfCheckCard">
+  <p class="plain" style="margin-bottom:18px;">This is a self-assessment based on SAIL's own
+  published findings — not an automated review of any paper, code, or document you might have in
+  mind. Nothing is uploaded, read, stored, or analyzed: your answers below are only used, in your
+  own browser, to check which of this project's already-documented patterns your description
+  matches.</p>
+
+  <label for="scPaperLink" style="display:block; font-size:12.5px; font-weight:600; color:var(--ink); margin-bottom:6px;">
+    Link to your paper <span style="font-weight:400; color:var(--ink-faint);">(arXiv, journal, preprint server — optional)</span>
+  </label>
+  <input type="text" id="scPaperLink" placeholder="https://…" autocomplete="off"
+    style="width:100%; font-family:var(--sans); font-size:13.5px; padding:9px 12px; border:1px solid var(--line); border-radius:3px; margin-bottom:6px;">
+  <p class="plain" style="font-size:12px; color:var(--ink-faint); margin-bottom:8px;">Carried
+  through only as a reference for a human reviewer if you choose to contact the team below — never
+  fetched or parsed by this page.</p>
+
+  <div id="scQuestions"></div>
+
+  <div id="scResults"></div>
+
+  <a id="scContactBtn" href="#" target="_blank" rel="noopener" class="navbtn primary" style="margin-top:8px;">Contact the SAIL team about this →</a>
+</div>
 
 </main>
 
@@ -157,4 +184,118 @@ function renderGrid(){
 
 renderFilters();
 renderGrid();
+</script>
+
+<script>
+const SC_QUESTIONS = [
+  { id: "q1", label: "Treatment-derived state variable present", text: "Does your state include any variable whose value is partly determined by the treatment action active at or immediately before the current decision point? (e.g., a composite severity score that takes the current drug or dose as an input — the way SOFA's cardiovascular and respiratory subscores do.)" },
+  { id: "q2", label: "Used to predict next treatment decision", text: "Is that state used to predict, evaluate, or train a policy for the next treatment decision?" },
+  { id: "q3", label: "Aggregation window may overlap treatment", text: "Does your state's aggregation window (if any) span a period during which treatment may already have been active?" },
+  { id: "q4", label: "Tested removing treatment-derived features", text: "Have you tested whether removing treatment-derived features from your state changes model performance — on next-action prediction, an outcome like mortality, or both?" },
+  { id: "q5", label: "Includes same/later decision-point action info", text: "Does your state ever include information about the same or a later decision point's action — information that would not actually have been available yet at the time the decision was made?" },
+];
+
+const scAnswers = { q1: null, q2: null, q3: null, q4: null, q5: null };
+
+function scRenderQuestions(){
+  const wrap = document.getElementById("scQuestions");
+  wrap.innerHTML = SC_QUESTIONS.map((q, i) => `
+    <div class="sc-q">
+      <p class="plain">${i+1}. ${q.text}</p>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="tag-btn sc-ans ${scAnswers[q.id]===true?'on':''}" data-q="${q.id}" data-val="yes">Yes</button>
+        <button type="button" class="tag-btn sc-ans ${scAnswers[q.id]===false?'on':''}" data-q="${q.id}" data-val="no">No</button>
+      </div>
+    </div>`).join('');
+  wrap.querySelectorAll('.sc-ans').forEach(b => {
+    b.addEventListener('click', () => {
+      scAnswers[b.dataset.q] = b.dataset.val === 'yes';
+      scRenderQuestions();
+      scRenderResults();
+      scUpdateContactLink();
+    });
+  });
+}
+
+function scRenderResults(){
+  const el = document.getElementById('scResults');
+  const allAnswered = SC_QUESTIONS.every(q => scAnswers[q.id] !== null);
+  const blocks = [];
+
+  if (scAnswers.q1 === true && scAnswers.q2 === true) {
+    if (scAnswers.q4 === true) {
+      blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment-confounded severity construction</div>
+        This resembles the treatment-confounded severity construction pattern this project documents
+        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1, Proof</a>)
+        — but you've already tested removing the treatment-derived features directly, which is
+        exactly the check this project's own Experiment 6 ran. Worth comparing notes with the team
+        if your result surprised you.</div>`);
+    } else {
+      blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment-confounded severity construction</div>
+        This resembles the treatment-confounded severity construction pattern this project documents
+        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1, Proof</a>)
+        — worth checking directly against your own state definition, not assumed from these answers
+        alone.</div>`);
+    }
+  }
+
+  if (scAnswers.q3 === true) {
+    blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment overlap</div>
+      This resembles the treatment-overlap pattern this project documents (see
+      <a href="__PATHPREFIX__/proof/#prop1" style="color:var(--accent);">Proposition 1, Proof</a>).</div>`);
+  }
+
+  if (scAnswers.q5 === true) {
+    blocks.push(`<div class="warn-block"><div class="label">Worth a closer look</div>
+      Including information about the same or a later decision point's action is closest to the
+      strict sense of "leakage" this project uses (see
+      <a href="__PATHPREFIX__/mechanisms/#term" style="color:var(--treat);">Terminology, Mechanisms</a>)
+      — not the treatment-confounding patterns above.</div>`);
+  }
+
+  if (allAnswered && blocks.length === 0) {
+    blocks.push(`<p class="plain">Based on these answers, none of this project's documented patterns
+      are clearly indicated — that's not a certification of correctness, just that these particular
+      questions didn't surface a match.</p>`);
+  }
+
+  if (blocks.length === 0) {
+    el.innerHTML = '';
+    return;
+  }
+
+  blocks.push(`<p class="plain" style="font-size:12.5px; color:var(--ink-faint); margin-top:4px;">
+    This is a self-check based on published patterns, not a review of your actual paper. If you'd
+    like the SAIL team to look at this directly, use the contact link below.</p>`);
+
+  el.innerHTML = blocks.join('');
+}
+
+function scUpdateContactLink(){
+  const link = document.getElementById('scPaperLink').value.trim();
+  const answerLines = SC_QUESTIONS.map(q => {
+    const v = scAnswers[q.id];
+    const val = v === true ? 'Yes' : v === false ? 'No' : 'Not answered';
+    return `- ${q.label}: ${val}`;
+  }).join('\n');
+
+  const title = 'SAIL self-check inquiry';
+  const body = [
+    `Paper link: ${link || '(not provided)'}`,
+    '',
+    'Self-check answers:',
+    answerLines,
+    '',
+    "I'd like the SAIL team's input on whether this reflects any of the patterns described in this project."
+  ].join('\n');
+
+  const url = `https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('scContactBtn').href = url;
+}
+
+document.getElementById('scPaperLink').addEventListener('input', scUpdateContactLink);
+
+scRenderQuestions();
+scRenderResults();
+scUpdateContactLink();
 </script>
