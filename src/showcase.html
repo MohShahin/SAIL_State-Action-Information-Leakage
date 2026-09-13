@@ -18,6 +18,10 @@ templateEngineOverride: false
   .pt circle{ transition:r .12s; }
   .pt:hover circle, .pt:focus circle{ r:9; }
   .not-built{ border:1px dashed var(--line); border-radius:4px; padding:16px 18px; background:var(--bg); }
+  .video-card{ display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+  .video-card .video-copy{ flex:1 1 260px; min-width:220px; }
+  .video-frame{ flex:0 0 auto; width:220px; max-width:100%; }
+  .video-frame video{ width:100%; display:block; border-radius:8px; background:#0f172a; box-shadow:0 4px 18px rgba(15,23,42,.18); }
 </style>
 
 <div class="masthead"><div class="masthead-inner">
@@ -29,8 +33,26 @@ templateEngineOverride: false
 
 <main class="wide">
 
+<!-- ============ OVERVIEW VIDEO ============ -->
+<div class="act-eyebrow" style="margin-top:0;">Watch the 90-second overview</div>
+<div class="card video-card">
+  <div class="video-frame">
+    <video controls preload="metadata" playsinline
+      aria-label="90-second narrated overview: how a sepsis treatment score leaked into a reinforcement-learning state">
+      <source src="__PATHPREFIX__/assets/video/teaser-overview.mp4" type="video/mp4">
+      Your browser doesn't support embedded video —
+      <a href="__PATHPREFIX__/assets/video/teaser-overview.mp4">download the file directly</a>.
+    </video>
+  </div>
+  <div class="video-copy">
+    <p class="plain" style="margin:0;">A narrated, AI-generated walkthrough of the whole finding —
+    the same story as the three acts below, condensed to under two minutes. Good starting point if
+    you're new here; everything it references is backed by the numbers and proofs on this site.</p>
+  </div>
+</div>
+
 <!-- ============ ACT 1 ============ -->
-<div class="act-eyebrow" style="margin-top:0;">Act 1 — Watch it happen</div>
+<div class="act-eyebrow">Act 1 — Watch it happen</div>
 <div class="card">
   <p class="plain">One synthetic patient, three synchronized views: a causal graph that lights up
   when treatment information flows into the state, a state vector that flips cells between clean
