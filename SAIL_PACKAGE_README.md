@@ -27,24 +27,67 @@ pip install git+https://github.com/MohShahin/SAIL_State-Action-Information-Leaka
 
 ## Quickstart
 
+SAIL doesn't guess what your columns mean — each of the five checks is explicit about exactly
+what it needs, and a check only runs when you give it enough to run correctly. This example uses
+a small toy table shaped like the real state tables from the underlying research project, with two
+numbers (`persistence_auroc`, `full_state_auroc`) taken directly from that project's own verified
+Experiment 8 result — so what you see printed below is a real finding, not a fabricated demo.
+
 ```python
+import pandas as pd
 import sail
+from sail.specs.sofa_cardio import sofa_cardio_row
+
+# Four decision points, all with a fixed dopamine dose while MAP varies --
+# Theorem 1's own worked example (proof.html #thm1).
+df = pd.DataFrame({
+    "map":         [40, 55, 70, 90],
+    "dopamine":    [6, 6, 6, 6],
+    "dobutamine":  [0, 0, 0, 0],
+    "epi":         [0, 0, 0, 0],
+    "norepi":      [0, 0, 0, 0],
+    "sofa_resp":   [2, 0, 1, 3],
+    "sofa_coag":   [1, 0, 2, 0],
+    "sofa_liver":  [0, 0, 1, 2],
+    "sofa_renal":  [1, 0, 0, 1],
+    "sofa_cns":    [0, 0, 1, 0],
+    "t":               [10.0, 34.0, 58.0, 82.0],   # each decision point's timestamp
+    "action_start":    [10.0, 34.0, 58.0, 82.0],   # the next action's window start
+    "action_next":     [1, 0, 1, 0],
+    "window_hours":    [4.0, 4.0, 4.0, 4.0],       # lookback window length
+})
+df["sofa_cardio"] = df.apply(sofa_cardio_row, axis=1)
+df["sofa_total"] = (
+    df["sofa_cardio"] + df["sofa_resp"] + df["sofa_coag"]
+    + df["sofa_liver"] + df["sofa_renal"] + df["sofa_cns"]
+)
 
 report = sail.check(
     df,
-    state_cols=["severity_score", "vital_1", "vital_2"],
+    state_cols=["map", "sofa_resp", "sofa_coag", "sofa_liver", "sofa_renal", "sofa_cns", "sofa_total"],
     action_col="action_next",
-    treatment_col="current_dose",       # enables construction + reconstruction + persistence checks
-    window_col="window_start",          # enables the temporal-overlap check
-    timestamp_col="decision_time",      # enables the timing-violation check
+    timestamp_col="t",                 # feeds categories 3 and 4
+    treatment_col="dopamine",          # default treatment column for construction_spec
+    window_col="window_hours",         # category 3
+    action_start_col="action_start",   # category 4
+    treatment_intervals=[(8.0, 10.0)], # category 3: a shared (start, end) treatment timeline
+    persistence_auroc=0.914,           # category 5: this project's own real Variant F result
+    full_state_auroc=0.900,            # category 5: this project's own real Variant A result
+    construction_spec={"scoring_fn": sofa_cardio_row, "signal_col": "map"},
+    reconstruction_spec={
+        "total_col": "sofa_total",
+        "component_cols": ["sofa_resp", "sofa_coag", "sofa_liver", "sofa_renal", "sofa_cns"],
+        "target_col": "sofa_cardio",
+    },
 )
 
 print(report.summary())
 ```
 
-A report only checks what it has the inputs to check — if you don't provide `window_col`, the
-temporal-overlap category is reported as **not run**, not silently skipped. You'll always know
-exactly what was and wasn't evaluated.
+Every input above is optional except `df`, `state_cols`, and `action_col` — give a check only
+what you have. Drop `treatment_intervals` (or `window_col`, or `timestamp_col`) and only the
+temporal-overlap category is reported as **not run**; everything else still runs. You'll always
+know exactly what was and wasn't evaluated, never a silent guess.
 
 ## The five checks
 
