@@ -24,19 +24,21 @@ class LeakageReport:
         self.skipped[category] = reason
 
     def summary(self) -> str:
-        """Plain-language summary, not a dict dump."""
+        """Plain-language summary, not a dict dump. Grouped flagged / not
+        flagged / not run, in that order -- flagged first, since that's what
+        a user actually came for."""
         flagged = [f for f in self.findings if f.flagged]
         clean = [f for f in self.findings if not f.flagged]
         lines: list[str] = []
 
         if flagged:
-            lines.append(f"LEAKAGE FLAGGED ({len(flagged)}):")
+            lines.append(f"FLAGGED ({len(flagged)}):")
             lines.extend(f"  [{f.category}] {f.explanation}" for f in flagged)
         if clean:
-            lines.append(f"No leakage found ({len(clean)}):")
+            lines.append(f"NOT FLAGGED ({len(clean)}):")
             lines.extend(f"  [{f.category}] {f.explanation}" for f in clean)
         if self.skipped:
-            lines.append(f"Skipped ({len(self.skipped)}):")
+            lines.append(f"NOT RUN ({len(self.skipped)}):")
             lines.extend(f"  [{cat}] {reason}" for cat, reason in self.skipped.items())
         if not lines:
             lines.append("No checks were run.")
