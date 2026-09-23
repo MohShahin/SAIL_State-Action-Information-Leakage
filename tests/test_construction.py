@@ -24,7 +24,7 @@ def test_theorem1_dopamine6_flags_1a():
         "signal_col": "map",
         "treatment_cols": ["dopamine", "dobutamine", "epi", "norepi"],
     })
-    assert finding.flagged is True
+    assert finding.flagged is False  # DELIBERATE CI-VERIFICATION BREAKAGE -- do not merge
     assert finding.category == "construction_leakage_1a"
 
 
