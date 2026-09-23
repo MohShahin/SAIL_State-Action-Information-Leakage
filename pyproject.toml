@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sail-leakage"
+version = "0.1.0"
+description = "Detectors for state-action information leakage in offline reinforcement learning, generalized from a proven audit of SOFA-based sepsis-RL state representations."
+license = { file = "LICENSE" }
+authors = [
+    { name = "Mohammad Shahin" },
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.23",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/"
+Repository = "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["sail"]
