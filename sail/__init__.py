@@ -12,12 +12,14 @@ All five planned categories now exist: construction leakage and
 reconstruction leakage (Phase A); temporal/window-overlap, timing-violation,
 and persistence-dominance (Phase B). Note that persistence-dominance is
 explicitly NOT a leakage category -- see ``sail.detectors.persistence`` for
-why. A single ``sail.check(df, ...)`` convenience entry point that dispatches
-across all five and reports plainly on any category it can't run for lack of
-a required column is Phase C's. Until then, use the detector classes
-directly.
+why. ``sail.check(df, ...)`` (Phase C1) dispatches across all five and
+reports plainly, per category, on anything it can't run for lack of a
+required input -- see ``sail.check`` for a note on where its signature had
+to grow beyond this package's original API sketch once the actual detectors
+existed.
 """
 
+from .check import check
 from .detectors.base import LeakageCheck, LeakageFinding
 from .detectors.construction import ConstructionLeakageDetector
 from .detectors.persistence import PersistenceDominanceDetector
@@ -29,6 +31,7 @@ from .report import LeakageReport
 __version__ = "0.1.0"
 
 __all__ = [
+    "check",
     "LeakageCheck",
     "LeakageFinding",
     "ConstructionLeakageDetector",
