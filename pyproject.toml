@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "sail-leakage"
 version = "0.1.0"
 description = "Detectors for state-action information leakage in offline reinforcement learning, generalized from a proven audit of SOFA-based sepsis-RL state representations."
+readme = "SAIL_PACKAGE_README.md"
 license = { file = "LICENSE" }
 authors = [
     { name = "Mohammad Shahin" },
