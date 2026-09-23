@@ -19,7 +19,7 @@ independently testable checks.
 pip install sail-leakage
 ```
 
-If the package name above isn't live on PyPI yet, install directly from source:
+For the latest development version instead of the latest release, install directly from source:
 
 ```bash
 pip install git+https://github.com/MohShahin/SAIL_State-Action-Information-Leakage.git
