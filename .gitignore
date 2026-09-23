@@ -5,6 +5,16 @@ __pycache__/
 .vscode/
 
 # ---------------------------------------------------------------------------
+# sail/ Python package (docs/SAIL_PACKAGE_ROADMAP.md) -- build/test artifacts,
+# never the package source itself.
+# ---------------------------------------------------------------------------
+.venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# ---------------------------------------------------------------------------
 # Eleventy build — GitHub Actions builds this fresh on every push (see
 # .github/workflows/deploy.yml). Never commit build output or node_modules.
 # ---------------------------------------------------------------------------
