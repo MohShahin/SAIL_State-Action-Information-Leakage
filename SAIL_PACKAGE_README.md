@@ -1,5 +1,8 @@
 # SAIL
 
+[![PyPI version](https://img.shields.io/pypi/v/sail-leakage.svg)](https://pypi.org/project/sail-leakage/)
+[![Tests](https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/actions/workflows/test.yml/badge.svg)](https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/actions/workflows/test.yml)
+
 **Detect state–action information leakage in offline reinforcement learning and clinical prediction
 pipelines — grounded in mathematically proven mechanisms, not heuristics.**
 
