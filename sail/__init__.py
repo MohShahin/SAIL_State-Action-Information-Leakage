@@ -8,17 +8,19 @@ each detector generalizes a specific result this project has already proven,
 not an exhaustive taxonomy. This is a growing, evidence-based specification,
 not a finished standard.
 
-Phase A shipped construction leakage and reconstruction leakage. Phase B adds
-temporal/window-overlap and timing-violation here; persistence-dominance (the
-fifth and last category) is also Phase B's, but gated on explicit sign-off of
-three open design decisions before its code gets written. A single
-``sail.check(df, ...)`` convenience entry point that dispatches across all
-five and reports plainly on any category it can't run for lack of a required
-column is Phase C's. Until then, use the detector classes directly.
+All five planned categories now exist: construction leakage and
+reconstruction leakage (Phase A); temporal/window-overlap, timing-violation,
+and persistence-dominance (Phase B). Note that persistence-dominance is
+explicitly NOT a leakage category -- see ``sail.detectors.persistence`` for
+why. A single ``sail.check(df, ...)`` convenience entry point that dispatches
+across all five and reports plainly on any category it can't run for lack of
+a required column is Phase C's. Until then, use the detector classes
+directly.
 """
 
 from .detectors.base import LeakageCheck, LeakageFinding
 from .detectors.construction import ConstructionLeakageDetector
+from .detectors.persistence import PersistenceDominanceDetector
 from .detectors.reconstruction import ReconstructionLeakageDetector
 from .detectors.temporal_overlap import TemporalOverlapDetector
 from .detectors.timing_violation import TimingViolationDetector
@@ -33,5 +35,6 @@ __all__ = [
     "ReconstructionLeakageDetector",
     "TemporalOverlapDetector",
     "TimingViolationDetector",
+    "PersistenceDominanceDetector",
     "LeakageReport",
 ]
