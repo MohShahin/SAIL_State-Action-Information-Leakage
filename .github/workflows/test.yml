@@ -13,12 +13,22 @@ on:
 
 jobs:
   test:
+    # Same name the job had before ("test (3.9)", ...) for every stable row; only the pre-release row is labelled.
+    name: test (${{ matrix.python-version }}${{ matrix.experimental && ', pre-release' || '' }})
+    # A pre-release Python is expected to break sometimes. That should show up as a red job here (the point
+    # of running it) without failing the workflow. Stable rows have no `experimental` key, so this is false.
+    continue-on-error: ${{ matrix.experimental == true }}
     runs-on: ubuntu-latest
     strategy:
       # Report every Python's result independently instead of cancelling the rest on first failure.
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        include:
+          # Early warning for the next Python (currently a release candidate), run at the newest dependencies.
+          # Deliberately NOT given a minimum-versions row: that row needs a stable floor to be meaningful.
+          - python-version: "3.15"
+            experimental: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,6 +37,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          # Only the pre-release row opts in; for stable rows this evaluates to false, the action's default.
+          allow-prereleases: ${{ matrix.experimental == true }}
           cache: "pip"
 
       - name: Install package with test dependencies
