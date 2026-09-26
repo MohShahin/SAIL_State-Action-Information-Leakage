@@ -35,3 +35,50 @@ jobs:
 
       - name: Check package metadata
         run: twine check dist/*
+
+  # Tests the LOW end of the dependency range, the way the matrix above tests the low end of the
+  # Python range. The pins are the lowest numpy/pandas that have installable wheels for each Python
+  # -- i.e. the floor pip could ever resolve to on that interpreter -- so this job is what backs up
+  # whatever lower bounds pyproject.toml declares. A bound is only claimed once it's been tested here.
+  test-minimum-versions:
+    name: minimum versions (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - python-version: "3.9"
+            numpy: "1.19.3"
+            pandas: "1.1.3"
+          - python-version: "3.12"
+            numpy: "1.26.0"
+            pandas: "2.1.1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the pinned minimum numpy/pandas (binary wheels only)
+        run: |
+          pip install --only-binary=:all: "numpy==${{ matrix.numpy }}" "pandas==${{ matrix.pandas }}" "pytest>=7.0"
+
+      # --no-deps so pip cannot "helpfully" upgrade the pinned minimums to satisfy declared bounds.
+      - name: Install the package without resolving its dependencies
+        run: pip install --no-deps -e .
+
+      # A job that silently tested the latest versions would prove nothing -- fail loudly instead.
+      - name: Assert the minimums are really what is installed
+        run: |
+          python - <<'PY'
+          import numpy, pandas
+          want = {"numpy": "${{ matrix.numpy }}", "pandas": "${{ matrix.pandas }}"}
+          got = {"numpy": numpy.__version__, "pandas": pandas.__version__}
+          print("wanted:", want, "| got:", got)
+          assert got == want, f"minimum-version pins were not honoured: wanted {want}, got {got}"
+          PY
+
+      - name: Run tests at the minimum versions
+        run: pytest tests/ -v
