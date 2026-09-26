@@ -49,6 +49,7 @@ jobs:
           - python-version: "3.9"
             numpy: "1.19.3"
             pandas: "1.1.3"
+            declared-floor: true
           - python-version: "3.12"
             numpy: "1.26.0"
             pandas: "2.1.1"
@@ -68,6 +69,25 @@ jobs:
       # --no-deps so pip cannot "helpfully" upgrade the pinned minimums to satisfy declared bounds.
       - name: Install the package without resolving its dependencies
         run: pip install --no-deps -e .
+
+      # Every declared requirement must actually admit what this job installed.
+      - name: Check the declared bounds admit the pinned minimums
+        run: pip check
+
+      # The declared lower bounds must be EXACTLY what this job verifies -- no looser (an untested
+      # claim) and no tighter (needlessly excluding versions that work). Loosening a bound in
+      # pyproject.toml therefore requires moving the matching pin here in the same change.
+      - name: Assert pyproject's declared lower bounds equal the verified floor
+        if: ${{ matrix.declared-floor }}
+        run: |
+          python - <<'PY'
+          import re, pathlib
+          text = pathlib.Path("pyproject.toml").read_text()
+          declared = {n: re.search(rf'"{n}>=([0-9][0-9.]*)"', text).group(1) for n in ("numpy", "pandas")}
+          verified = {"numpy": "${{ matrix.numpy }}", "pandas": "${{ matrix.pandas }}"}
+          print("declared:", declared, "| verified:", verified)
+          assert declared == verified, f"declared bounds {declared} != verified floor {verified}"
+          PY
 
       # A job that silently tested the latest versions would prove nothing -- fail loudly instead.
       - name: Assert the minimums are really what is installed

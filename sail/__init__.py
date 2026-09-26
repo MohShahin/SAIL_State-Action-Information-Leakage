@@ -28,7 +28,7 @@ from .detectors.temporal_overlap import TemporalOverlapDetector
 from .detectors.timing_violation import TimingViolationDetector
 from .report import LeakageReport
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "check",

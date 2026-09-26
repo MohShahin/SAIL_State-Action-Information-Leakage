@@ -22,6 +22,12 @@ independently testable checks.
 pip install sail-leakage
 ```
 
+**Requirements:** Python 3.9+, pandas ≥ 1.1.3, numpy ≥ 1.19.3. These lower bounds are tested, not
+assumed: CI runs the full test suite at the oldest installable numpy/pandas on both Python 3.9
+(exactly these versions) and Python 3.12 (the oldest with 3.12 wheels: pandas 2.1.1, numpy 1.26.0),
+in addition to the newest releases. Installing into an environment that already meets them won't
+change your existing numpy or pandas.
+
 For the latest development version instead of the latest release, install directly from source:
 
 ```bash
