@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+  schedule:
+    # Mondays 06:00 UTC. The "latest dependencies" rows resolve numpy/pandas at run time, so without a
+    # periodic run they only ever reflect whatever was newest at the last push; a new numpy/pandas
+    # release that breaks the package would go unnoticed until the next unrelated commit.
+    - cron: "0 6 * * 1"
 
 jobs:
   test:
@@ -12,7 +18,7 @@ jobs:
       # Report every Python's result independently instead of cancelling the rest on first failure.
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,6 +72,12 @@ jobs:
           - python-version: "3.12"
             numpy: "1.26.0"
             pandas: "2.1.1"
+          - python-version: "3.13"
+            numpy: "2.1.0"
+            pandas: "2.2.3"
+          - python-version: "3.14"
+            numpy: "2.3.2"
+            pandas: "2.3.3"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -114,4 +126,30 @@ jobs:
           PY
 
       - name: Run tests at the minimum versions
+        run: pytest tests/ -v
+
+  # Every job above runs on Linux. The package is also used on Windows (it is developed there), so run
+  # the suite once natively at the newest dependencies to catch anything platform-specific. One
+  # Python (3.12) is enough: an OS difference is not a Python-version difference, and the Python
+  # range is already covered on Linux.
+  test-windows:
+    name: test (windows, py3.12)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install package with test dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Show what is actually installed
+        run: python -c "import sys, numpy, pandas; print(sys.platform, sys.version.split()[0], 'numpy', numpy.__version__, 'pandas', pandas.__version__)"
+
+      - name: Run tests
         run: pytest tests/ -v
