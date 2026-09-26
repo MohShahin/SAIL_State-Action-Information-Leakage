@@ -7,12 +7,12 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-7c1d2e.svg)](LICENSE)
 [![Data: MIMIC-IV](https://img.shields.io/badge/data-MIMIC--IV%20v3.1-2f5d50.svg)](DATA_ACCESS.md)
-[![Status: preliminary](https://img.shields.io/badge/status-preliminary%20audit-8a6d1f.svg)](status.html)
-[![Live demo](https://img.shields.io/badge/demo-live-7c1d2e.svg)](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/)
+[![Status: preliminary](https://img.shields.io/badge/status-preliminary%20audit-8a6d1f.svg)](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/status/)
+[![Live demo](https://img.shields.io/badge/demo-live-7c1d2e.svg)](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/)
 
 **MIT Laboratory for Computational Physiology  ·  Boston University School of Public Health**
 
-[**Live project site**](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/) — start here, no installation required
+[**Live project site**](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/) — start here, no installation required
 
 </div>
 
@@ -22,7 +22,7 @@
 > for conference presentation, not a peer-reviewed publication. Two independent re-extractions have
 > confirmed the headline findings and corrected two of the original figures — see
 > [Verified results](#verified-results) below and
-> [`status.html`](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/status.html)
+> [`status`](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/status/)
 > for the full, unfiltered history.
 
 ## The question
@@ -35,7 +35,7 @@ to *precede*, undermining the premise the whole framework rests on?
 
 We find two provable mechanisms by which it can, and one open question about how much it actually
 matters in practice — see [`FORMAL_ANALYSIS.md`](FORMAL_ANALYSIS.md) for the proofs, or the
-[interactive proof page](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/proof.html)
+[interactive proof page](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/proof/)
 for the illustrated version.
 
 | | Claim | Status |
@@ -56,11 +56,11 @@ This repository is also a live, five-page site — not just code and a PDF.
 
 | | |
 |---|---|
-| **[Project hub](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/)** | Overview and entry point to everything below |
-| **[Interactive walkthrough](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/demo.html)** | Six-step, plain-language guide — try the live SOFA calculator yourself |
-| **[Live mechanism visualizer](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/visualizer.html)** | Adjust one synthetic patient and watch the mechanism happen: the causal graph, the state vector, and the predictability gauge move together in real time |
-| **[Formal proof](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/proof.html)** | The theorems, illustrated, with a pre-registered test for the one claim that isn't provable in closed form |
-| **[Status & roadmap](https://mohshahin.github.io/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning/status.html)** | What's confirmed, what's open, and the honest history of two bugs found and fixed |
+| **[Project hub](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/)** | Overview and entry point to everything below |
+| **[Interactive walkthrough](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/demo/)** | Six-step, plain-language guide — try the live SOFA calculator yourself |
+| **[Live mechanism visualizer](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/visualizer/)** | Adjust one synthetic patient and watch the mechanism happen: the causal graph, the state vector, and the predictability gauge move together in real time |
+| **[Formal proof](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/proof/)** | The theorems, illustrated, with a pre-registered test for the one claim that isn't provable in closed form |
+| **[Status & roadmap](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/status/)** | What's confirmed, what's open, and the honest history of two bugs found and fixed |
 
 ## Verified results
 
@@ -126,7 +126,7 @@ machine-readable citation metadata.
   author = {Shahin, Mohammad},
   year   = {2026},
   note   = {Preliminary working draft},
-  url    = {https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning}
+  url    = {https://github.com/MohShahin/SAIL_State-Action-Information-Leakage}
 }
 ```
 
