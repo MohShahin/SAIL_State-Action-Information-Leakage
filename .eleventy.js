@@ -10,10 +10,12 @@ module.exports = function (eleventyConfig) {
   // Static assets, copied through as-is
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
+  // notebook/ is deliberately NOT served from the site (pages link to it on GitHub instead):
+  // its saved outputs once held MIMIC-IV row-level data. See DATA_ACCESS.md.
+  //
   // Non-page repo files that pages link out to directly — must be served at the
-  // same absolute paths the HTML uses (/paper/..., /notebook/..., /queries/..., etc.)
+  // same absolute paths the HTML uses (/paper/..., /queries/..., etc.)
   eleventyConfig.addPassthroughCopy("paper");
-  eleventyConfig.addPassthroughCopy("notebook/*.ipynb");
   eleventyConfig.addPassthroughCopy("queries");
   eleventyConfig.addPassthroughCopy("scripts");
   // results/ -- explicit allowlist matching .gitignore's curated-only policy exactly.
