@@ -54,7 +54,7 @@ plausible during iterative development — would silently append another full co
 rows rather than replacing them, duplicating every `stay_id` and producing exactly the kind of
 uniform multiplicative fanout seen in the vasopressor-dose and vitals/labs/FiO2 counts through
 every downstream `JOIN ... USING(stay_id)`. The cell has been patched to set
-`write_disposition="WRITE_TRUNCATE"` (commit `0a32303`), making it idempotent regardless of how
+`write_disposition="WRITE_TRUNCATE"` (commit `9055b61`), making it idempotent regardless of how
 many times it's re-run. The current `sepsis_cohort` table is verified clean (row count exactly
 equals distinct `stay_id` count, 11,354). `icustays` (unfiltered) matches PhysioNet's documented
 total (94,458) exactly, ruling out a partial-dataset/access problem.
