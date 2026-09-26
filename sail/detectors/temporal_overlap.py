@@ -22,7 +22,27 @@ from typing import Any
 from .base import LeakageCheck, LeakageFinding
 
 
+def _merge_intervals(intervals) -> list:
+    """Union of (start, end) intervals as sorted, disjoint intervals.
+
+    Overlapping, nested, touching and duplicate intervals collapse into one span, so every
+    treatment-hour is counted once. Empty or inverted intervals (end <= start) are dropped.
+    Accepts any iterable, including a one-shot iterator, and reads it exactly once.
+    """
+    spans = sorted((s, e) for s, e in intervals if e > s)
+    merged: list = []
+    for start, end in spans:
+        if merged and start <= merged[-1][1]:
+            if end > merged[-1][1]:
+                merged[-1] = (merged[-1][0], end)
+        else:
+            merged.append((start, end))
+    return merged
+
+
 def _overlap_hours(window_start: float, window_end: float, intervals) -> float:
+    """Hours of [window_start, window_end) covered by ``intervals``, which must be disjoint
+    (see ``_merge_intervals``); otherwise shared hours would be counted once per interval."""
     total = 0.0
     for start, end in intervals:
         lo = max(window_start, start)
@@ -36,9 +56,10 @@ class TemporalOverlapDetector(LeakageCheck):
     """Detects Category 3 temporal/window-overlap leakage.
 
     Required ``spec`` keys:
-        treatment_intervals: list of (start, end) tuples, in the same time
+        treatment_intervals: iterable of (start, end) tuples, in the same time
             units as ``time_col`` -- a single shared timeline across every
-            row in ``df``. (Phase B simplification: a real multi-patient
+            row in ``df``. Intervals may overlap, nest or repeat; their union is
+            used, so each treatment-hour counts once. (Phase B simplification: a real multi-patient
             cohort needs a per-patient interval table joined on a patient
             key; deferred to whenever this detector is wired into a
             cohort-level ``sail.check()``.)
@@ -55,7 +76,8 @@ class TemporalOverlapDetector(LeakageCheck):
     """
 
     def run(self, df, spec: dict[str, Any]) -> LeakageFinding:
-        intervals = spec["treatment_intervals"]
+        # Union first: overlapping or duplicated intervals must not double-count shared hours.
+        intervals = _merge_intervals(spec["treatment_intervals"])
         time_col = spec["time_col"]
         threshold = spec.get("threshold", 0.5)
 

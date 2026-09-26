@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 import sail
 from sail.detectors.construction import ConstructionLeakageDetector
@@ -161,3 +162,25 @@ def test_minimal_spec_reports_everything_as_not_run_but_stays_useful():
     assert "NOT RUN (5)" in summary
     for category in report.skipped:
         assert category in summary
+
+
+def test_missing_state_column_raises_keyerror_naming_it():
+    """A typo in state_cols is an input error, not a silent skip."""
+    df = _build_df()
+    with pytest.raises(KeyError, match="no_such_column"):
+        sail.check(df, [*STATE_COLS, "no_such_column"], ACTION_COL)
+
+
+def test_missing_action_column_raises_keyerror_naming_it():
+    df = _build_df()
+    with pytest.raises(KeyError, match="no_such_action"):
+        sail.check(df, STATE_COLS, "no_such_action")
+
+
+def test_every_missing_column_is_reported_at_once():
+    df = _build_df()
+    with pytest.raises(KeyError) as excinfo:
+        sail.check(df, ["missing_a", "map", "missing_b"], "missing_c")
+    for name in ("missing_a", "missing_b", "missing_c"):
+        assert name in str(excinfo.value)
+    assert "'map'" not in str(excinfo.value)   # only the absent ones are named

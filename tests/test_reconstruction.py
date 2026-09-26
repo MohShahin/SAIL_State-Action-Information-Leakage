@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from sail.detectors.reconstruction import ReconstructionLeakageDetector
 from sail.specs.sofa_cardio import sofa_cardio_decomposed
@@ -52,3 +53,16 @@ def test_total_without_target_not_flagged():
         "target_col": "sofa_cardio",
     })
     assert finding.flagged is False
+
+
+def test_target_listed_among_components_raises_valueerror():
+    """Subtracting the target from a total that already excludes it would make the
+    check meaningless (it would 'reconstruct' the target trivially), so it is
+    rejected instead of returning a misleading result."""
+    df = pd.DataFrame({"sofa_cardio": [3, 0], "sofa_resp": [1, 2], "sofa_total": [4, 2]})
+    with pytest.raises(ValueError, match="target_col"):
+        ReconstructionLeakageDetector().run(df, {
+            "total_col": "sofa_total",
+            "component_cols": ["sofa_resp", "sofa_cardio"],
+            "target_col": "sofa_cardio",
+        })

@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from sail.detectors.temporal_overlap import TemporalOverlapDetector
 
@@ -50,3 +51,73 @@ def test_clean_case_not_flagged():
     })
     assert finding.flagged is False
     assert finding.evidence["records"][0]["overlap_fraction"] == 0.0
+
+
+def _record(intervals, w=10.0, t=10.0):
+    finding = TemporalOverlapDetector().run(pd.DataFrame({"t": [t]}), {
+        "treatment_intervals": intervals, "time_col": "t", "window_hours": w,
+    })
+    return finding, finding.evidence["records"][0]
+
+
+@pytest.mark.parametrize("intervals", [
+    [(0.0, 5.0)],                  # one interval: the reference case
+    [(0.0, 3.0), (2.0, 5.0)],      # overlapping: same 5h covered, 1h shared
+    [(0.0, 5.0), (0.0, 5.0)],      # exact duplicate
+])
+def test_overlapping_and_duplicate_intervals_count_each_hour_once(intervals):
+    """Treatment-hours are the UNION of the intervals, not their sum. All three
+    inputs cover exactly hours [0, 5) of the 10h window [0, 10), so each must
+    give 5 treatment-hours = 0.50 -- exactly at, not above, the 0.5 threshold,
+    so none is flagged. (Summing per interval gave 6h / 0.60 for the overlapping
+    case and 10h / 1.00 for the duplicate, both falsely flagged.)"""
+    finding, rec = _record(intervals)
+    assert rec["overlap_hours"] == 5.0
+    assert rec["overlap_fraction"] == 0.5
+    assert finding.flagged is False
+
+
+def test_nested_interval_adds_nothing():
+    """(2, 4) sits entirely inside (0, 10): the union is still 10h, fraction 1.0,
+    not 12h."""
+    _, rec = _record([(0.0, 10.0), (2.0, 4.0)])
+    assert rec["overlap_hours"] == 10.0
+    assert rec["overlap_fraction"] == 1.0
+
+
+def test_union_is_order_independent_and_touching_intervals_merge():
+    """Intervals need not be sorted, and end-to-end (touching) intervals cover
+    their combined span exactly once."""
+    _, rec = _record([(6.0, 8.0), (0.0, 3.0), (3.0, 4.0)])
+    assert rec["overlap_hours"] == 6.0   # [0,4) + [6,8)
+    assert rec["overlap_fraction"] == 0.6
+
+
+def test_union_is_clipped_to_the_window():
+    """Only the part of the union inside [t - w, t) counts."""
+    _, rec = _record([(-5.0, 2.0), (1.0, 4.0), (9.0, 15.0)])   # union [-5,4) + [9,15)
+    assert rec["overlap_hours"] == 5.0   # [0,4) + [9,10)
+
+
+def test_genuinely_overlapping_case_is_still_flagged_when_union_exceeds_threshold():
+    """The fix must not under-report: a union of 6h in a 10h window is 0.60 > 0.5."""
+    finding, rec = _record([(0.0, 4.0), (3.0, 6.0)])   # union [0,6)
+    assert rec["overlap_fraction"] == 0.6
+    assert finding.flagged is True
+
+
+def test_one_shot_iterable_of_intervals_is_used_for_every_row():
+    """An iterator can only be read once; every row must still see all of it."""
+    df = pd.DataFrame({"t": [10.0, 10.0, 10.0]})
+    finding = TemporalOverlapDetector().run(df, {
+        "treatment_intervals": iter([(0.0, 5.0)]), "time_col": "t", "window_hours": 10.0,
+    })
+    assert [r["overlap_fraction"] for r in finding.evidence["records"]] == [0.5, 0.5, 0.5]
+
+
+def test_missing_window_spec_raises_keyerror():
+    """Neither window_hours nor window_col is provided -- an input error, not a default."""
+    with pytest.raises(KeyError, match="window_hours"):
+        TemporalOverlapDetector().run(pd.DataFrame({"t": [10.0]}), {
+            "treatment_intervals": [(0.0, 5.0)], "time_col": "t",
+        })
