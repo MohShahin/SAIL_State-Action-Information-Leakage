@@ -1,0 +1,25 @@
+name: Repo hygiene
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  no-patient-data:
+    name: no patient data in tracked files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Fails on saved notebook outputs and on MIMIC-shaped identifier values (subject_id / hadm_id /
+      # stay_id ranges) in any tracked text file. Policy: DATA_ACCESS.md.
+      - name: Check tracked files for notebook outputs and MIMIC identifiers
+        run: python .github/scripts/check_no_patient_data.py

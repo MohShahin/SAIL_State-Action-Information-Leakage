@@ -1,0 +1,2 @@
+# One "path:number" per line for an 8-digit number in REDACTED-39999999 that is NOT a patient
+# identifier (e.g. a timestamp). Empty on purpose: the check found no such cases in this repo.

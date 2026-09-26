@@ -1,0 +1,19 @@
+# Enable once per clone:  pip install pre-commit && pre-commit install
+# CI runs the same patient-data check (.github/workflows/hygiene.yml), so skipping the hook locally
+# does not skip the check -- it just fails later.
+repos:
+  # Strips saved outputs (and execution counts) from notebooks at commit time.
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.2
+    hooks:
+      - id: nbstripout
+
+  # Same script CI runs: fails on notebook outputs and on MIMIC-shaped identifier values.
+  - repo: local
+    hooks:
+      - id: no-patient-data
+        name: no MIMIC identifiers or notebook outputs
+        entry: python .github/scripts/check_no_patient_data.py
+        language: system
+        pass_filenames: false
+        always_run: true
