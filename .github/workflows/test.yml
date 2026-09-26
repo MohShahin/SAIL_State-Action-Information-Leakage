@@ -9,8 +9,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      # Report every Python's result independently instead of cancelling the rest on first failure.
+      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,12 +46,23 @@ jobs:
     name: minimum versions (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
+          # One entry per Python in the matrix above. Each pin pair is the oldest numpy/pandas with
+          # wheels for that Python on both Linux and Windows (checked against PyPI's file listings and
+          # confirmed resolvable as Linux CPython). The 3.9 entry is the absolute floor and is the one
+          # pyproject.toml's declared lower bounds must equal.
           - python-version: "3.9"
             numpy: "1.19.3"
             pandas: "1.1.3"
             declared-floor: true
+          - python-version: "3.10"
+            numpy: "1.21.3"
+            pandas: "1.3.4"
+          - python-version: "3.11"
+            numpy: "1.23.2"
+            pandas: "1.5.0"
           - python-version: "3.12"
             numpy: "1.26.0"
             pandas: "2.1.1"
