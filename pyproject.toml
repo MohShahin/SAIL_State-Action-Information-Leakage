@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sail-leakage"
-version = "0.1.1"
+version = "0.1.2"
 description = "Detectors for state-action information leakage in offline reinforcement learning, generalized from a proven audit of SOFA-based sepsis-RL state representations."
 readme = "SAIL_PACKAGE_README.md"
 license = { file = "LICENSE" }
@@ -21,6 +21,12 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
 ]
 
