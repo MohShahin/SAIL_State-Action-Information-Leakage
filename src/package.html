@@ -1,0 +1,147 @@
+---
+layout: base.njk
+title: "Package"
+templateEngineOverride: false
+extraHead: |
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+---
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>sail-leakage</h1>
+  <p class="deck">Five detectors for state–action information leakage in offline reinforcement
+  learning and clinical prediction pipelines — grounded in mathematically proven mechanisms, not
+  heuristics.</p>
+</div></div>
+
+<main class="wide">
+<div class="grid-container">
+
+<div class="statement-block">
+  <div class="label">Status</div>
+  Early, actively developed. Five detector categories exist and are tested against
+  already-verified results from the underlying research project. This is not a claim of
+  exhaustive coverage — see "What this does and doesn't check" below.
+</div>
+
+<h3 class="section" id="install">Install</h3>
+<div class="card">
+  <pre style="margin:0 0 12px; background:var(--ink); color:#fff; padding:var(--space-2) var(--space-3); border-radius:6px; font-family:var(--mono); font-size:var(--text-sm); overflow-x:auto;"><code>pip install sail-leakage</code></pre>
+  <p class="plain" style="margin:0;">For the latest development version instead of the latest release, install directly from source:</p>
+  <pre style="margin:12px 0 0; background:var(--ink); color:#fff; padding:var(--space-2) var(--space-3); border-radius:6px; font-family:var(--mono); font-size:var(--text-sm); overflow-x:auto;"><code>pip install git+https://github.com/MohShahin/SAIL_State-Action-Information-Leakage.git</code></pre>
+</div>
+
+<h3 class="section" id="quickstart">Quickstart</h3>
+<div class="card">
+  <p class="plain">SAIL doesn't guess what your columns mean — each of the five checks is explicit
+  about exactly what it needs, and a check only runs when you give it enough to run correctly. This
+  example uses a small toy table shaped like the real state tables from the underlying research
+  project, with two numbers (<code>persistence_auroc</code>, <code>full_state_auroc</code>) taken
+  directly from that project's own verified Experiment 8 result — so what you see printed below is
+  a real finding, not a fabricated demo.</p>
+
+<pre class="language-python" style="border-radius:6px; overflow-x:auto; font-size:12.5px;"><code class="language-python">import pandas as pd
+import sail
+from sail.specs.sofa_cardio import sofa_cardio_row
+
+# Four decision points, all with a fixed dopamine dose while MAP varies --
+# Theorem 1's own worked example (proof.html #thm1).
+df = pd.DataFrame({
+    "map":         [40, 55, 70, 90],
+    "dopamine":    [6, 6, 6, 6],
+    "dobutamine":  [0, 0, 0, 0],
+    "epi":         [0, 0, 0, 0],
+    "norepi":      [0, 0, 0, 0],
+    "sofa_resp":   [2, 0, 1, 3],
+    "sofa_coag":   [1, 0, 2, 0],
+    "sofa_liver":  [0, 0, 1, 2],
+    "sofa_renal":  [1, 0, 0, 1],
+    "sofa_cns":    [0, 0, 1, 0],
+    "t":               [10.0, 34.0, 58.0, 82.0],   # each decision point's timestamp
+    "action_start":    [10.0, 34.0, 58.0, 82.0],   # the next action's window start
+    "action_next":     [1, 0, 1, 0],
+    "window_hours":    [4.0, 4.0, 4.0, 4.0],       # lookback window length
+})
+df["sofa_cardio"] = df.apply(sofa_cardio_row, axis=1)
+df["sofa_total"] = (
+    df["sofa_cardio"] + df["sofa_resp"] + df["sofa_coag"]
+    + df["sofa_liver"] + df["sofa_renal"] + df["sofa_cns"]
+)
+
+report = sail.check(
+    df,
+    state_cols=["map", "sofa_resp", "sofa_coag", "sofa_liver", "sofa_renal", "sofa_cns", "sofa_total"],
+    action_col="action_next",
+    timestamp_col="t",                 # feeds categories 3 and 4
+    treatment_col="dopamine",          # default treatment column for construction_spec
+    window_col="window_hours",         # category 3
+    action_start_col="action_start",   # category 4
+    treatment_intervals=[(8.0, 10.0)], # category 3: a shared (start, end) treatment timeline
+    persistence_auroc=0.914,           # category 5: this project's own real Variant F result
+    full_state_auroc=0.900,            # category 5: this project's own real Variant A result
+    construction_spec={"scoring_fn": sofa_cardio_row, "signal_col": "map"},
+    reconstruction_spec={
+        "total_col": "sofa_total",
+        "component_cols": ["sofa_resp", "sofa_coag", "sofa_liver", "sofa_renal", "sofa_cns"],
+        "target_col": "sofa_cardio",
+    },
+)
+
+print(report.summary())</code></pre>
+
+  <p class="plain" style="margin-top:12px;">Every input above is optional except <code>df</code>,
+  <code>state_cols</code>, and <code>action_col</code> — give a check only what you have. Drop
+  <code>treatment_intervals</code> (or <code>window_col</code>, or <code>timestamp_col</code>) and
+  only the temporal-overlap category is reported as <b>not run</b>; everything else still runs.
+  You'll always know exactly what was and wasn't evaluated, never a silent guess.</p>
+</div>
+
+<h3 class="section" id="categories">The five checks</h3>
+<div class="card">
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>#</th><th>Category</th><th>What it catches</th><th>Proven by</th></tr></thead>
+    <tbody>
+      <tr><td class="label">1</td><td class="label">Construction leakage</td><td class="label">A state feature is partly <i>defined</i> by treatment, making it non-identifiable (or shift-colliding) with the signal it claims to measure</td><td class="label">Theorem 1 / Proposition 3</td></tr>
+      <tr><td class="label">2</td><td class="label">Reconstruction leakage</td><td class="label">A "removed" feature is still exactly recoverable from other retained features</td><td class="label">Theorem 2</td></tr>
+      <tr><td class="label">3</td><td class="label">Temporal-overlap leakage</td><td class="label">A feature's aggregation window overlaps a period when treatment was already active</td><td class="label">Proposition 1</td></tr>
+      <tr><td class="label">4</td><td class="label">Timing-violation leakage</td><td class="label">The state's window extends into or past the action being predicted — the strict sense of "leakage"</td><td class="label">Direct timestamp verification</td></tr>
+      <tr><td class="label">5</td><td class="label">Persistence-dominance flag</td><td class="label">A trivial "last action repeats" baseline matches or exceeds the full state's predictive power — not leakage, but a related and equally important diagnostic</td><td class="label">Motivated directly by this project's own Variant F result</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="plain" style="margin:14px 0 0; font-size:12.5px;">Full mathematical detail for each:
+  see <a href="__PATHPREFIX__/proof/" style="color:var(--accent);">the formal proof
+  page</a>.</p>
+</div>
+
+<h3 class="section">What this does and doesn't check</h3>
+<div class="card">
+  <p class="plain"><b>It doesn't read or understand your paper or your code.</b> SAIL checks the
+  data you give it against five specific, well-defined patterns — it has no opinion about anything
+  outside those patterns, and a clean report is not a certificate that your pipeline has no leakage
+  of any kind.</p>
+  <p class="plain"><b>It doesn't train a model.</b> The persistence-dominance check (category 5)
+  takes AUROC numbers you already computed as input — it never fits anything itself, so it has no
+  hidden assumptions about your modeling choices.</p>
+  <p class="plain" style="margin:0;"><b>It's five categories, not a standard.</b> This is what one
+  research project proved exists. If you find a leakage pattern this package doesn't catch, that's
+  expected, not a bug —
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues" style="color:var(--accent);">open an issue</a>.</p>
+</div>
+
+<h3 class="section">Links</h3>
+<div class="card">
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <a href="https://pypi.org/project/sail-leakage/" class="navbtn" style="text-decoration:none;">PyPI project page →</a>
+    <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage" class="navbtn" style="text-decoration:none;">GitHub repository →</a>
+  </div>
+  <p class="plain" style="margin:16px 0 0;">Want the proofs and the empirical audit behind these
+  five checks? <a href="__PATHPREFIX__/research/" style="color:var(--accent);">Read the
+  research →</a></p>
+</div>
+
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>

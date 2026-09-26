@@ -6,6 +6,22 @@
   --ink:#0f172a;
   --ink-soft:#475569;
   --ink-faint:#64748b;
+
+  /* ---------------------------------------------------------------------
+     Color discipline (docs/WEBSITE_RESTRUCTURE_PLAN.md, "Color" section).
+     This is a RULE, not just a palette -- Phase 4's audit checks every
+     page against it:
+       - --accent (cyan) is the ONE brand/navigation accent: links, active
+         nav states, primary CTAs. Nothing else uses it.
+       - --treat (red) and --physio (teal) are reserved STRICTLY for
+         semantic status (flagged / clean) -- the meanings are load-bearing
+         across pages already shipped (including the published PyPI
+         README). Never use either decoratively or as general UI chrome,
+         even where the color would "look fine" -- if a use isn't actually
+         signaling flagged/clean status, it doesn't belong in these two.
+       - Everything structural (borders, dividers, backgrounds) is
+         grayscale -- --line/--line-soft/--ink*/--bg/--paper only.
+     --------------------------------------------------------------------- */
   --accent:#0891B2;
   --accent-soft:#ecfeff;
   --physio:#0F766E;
@@ -13,9 +29,52 @@
   --treat:#DC2626;
   --treat-soft:#fef2f2;
   --gold:#8a6d1f;
+
   --serif: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---------------------------------------------------------------------
+     Modular type scale (~1.25 ratio). Every heading/body size site-wide
+     maps to one of these eight -- no per-page arbitrary sizing. Three
+     weights only: 400 (--weight-body), 600 (--weight-emphasis, subheads),
+     800 (--weight-display, hero/page titles only, used sparingly).
+     --------------------------------------------------------------------- */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   20px;
+  --text-xl:   25px;
+  --text-2xl:  31px;
+  --text-3xl:  39px;
+  --text-4xl:  49px;
+
+  --weight-body: 400;
+  --weight-emphasis: 600;
+  --weight-display: 800;
+
+  /* ---------------------------------------------------------------------
+     8px base spacing unit. Every margin/padding/gap is a multiple of 8
+     (--space-half:4px for the tightest cases only). This is the single
+     change most responsible for the site reading as "considered" rather
+     than "assembled over many sessions" -- inconsistent spacing is the
+     most common tell of exactly that.
+     --------------------------------------------------------------------- */
+  --space-half: 4px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 56px;
+  --space-8: 64px;
+
+  /* 12-column grid: fixed max-width, consistent gutter -- content aligns
+     to this instead of the previous ad hoc wide-w/prose-w containers. */
+  --grid-max-width: 1152px;
+  --grid-gutter: var(--space-3);
+  --grid-columns: 12;
 }
 *{box-sizing:border-box;}
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); }
@@ -117,3 +176,24 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 }
 .navbtn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
 .navbtn:disabled{ opacity:.3; cursor:default; }
+
+/* ---------------------------------------------------------------------
+   12-column grid (website-restructure-phase-1). Fixed max-width,
+   consistent gutter -- content aligns to this instead of arbitrary
+   per-page containers. Used by the new gateway/package/research pages
+   only in this phase; existing pages keep their current containers until
+   Phase 3's reskin.
+   --------------------------------------------------------------------- */
+.grid-container{
+  max-width:var(--grid-max-width); margin:0 auto; padding:0 var(--grid-gutter);
+}
+.grid-12{
+  display:grid; grid-template-columns:repeat(var(--grid-columns), 1fr); gap:var(--grid-gutter);
+}
+.col-span-4{ grid-column:span 4; }
+.col-span-6{ grid-column:span 6; }
+.col-span-8{ grid-column:span 8; }
+.col-span-12{ grid-column:span 12; }
+@media (max-width: 720px){
+  .col-span-4, .col-span-6, .col-span-8{ grid-column:span 12; }
+}
