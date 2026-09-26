@@ -13,7 +13,7 @@ authors:
       of Public Health
 type: software
 repository-code: >-
-  https://github.com/MohShahin/State-Action-Information-Leakage-in-Sepsis-Reinforcement-Learning
+  https://github.com/MohShahin/SAIL_State-Action-Information-Leakage
 license: MIT
 date-released: 2026-08-15
 keywords:
