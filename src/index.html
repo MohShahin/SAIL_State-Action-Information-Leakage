@@ -5,43 +5,114 @@ activeNav: home
 templateEngineOverride: false
 ---
 
+<div class="landing-dark">
+
 <div class="masthead"><div class="masthead-inner" style="text-align:center;">
+  <div class="brand-row">
+    <img src="__PATHPREFIX__/assets/img/logo-cropped.png" alt="SAIL logo">
+    <span>SAIL</span>
+  </div>
   <h1 style="font-size:var(--text-3xl); font-weight:var(--weight-display);">We gave a model a question and accidentally also gave it the answer.</h1>
-  <p class="deck" style="max-width:560px; margin-left:auto; margin-right:auto;">State–Action Information Leakage — a provably-grounded research audit, and the
-  open-source detector it produced.</p>
+  <p class="deck" style="max-width:600px; margin-left:auto; margin-right:auto;">This is that story — and it's not about a bad model. It's about a widely-used
+  clinical score that was never designed to be a machine-learning feature, and the open-source
+  detector that catches it before it ships into one.</p>
 </div></div>
 
 <main class="wide">
 <div class="grid-container">
 
-  <div style="text-align:center; margin:var(--space-6) var(--space-2) var(--space-6);">
-    <div style="display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:var(--space-2); background:var(--ink); color:#fff; border-radius:6px; padding:var(--space-2) var(--space-3); max-width:100%;">
-      <code id="installCmd" style="font-family:var(--mono); font-size:var(--text-base); white-space:nowrap;">pip install sail-leakage</code>
-      <button onclick="navigator.clipboard.writeText(document.getElementById('installCmd').textContent)"
-        style="font-family:var(--sans); font-size:var(--text-xs); color:#fff; background:transparent; border:1px solid rgba(255,255,255,.35); border-radius:4px; padding:4px 10px; cursor:pointer; white-space:nowrap; flex:0 0 auto;">Copy</button>
+  <div style="text-align:center; margin:var(--space-4) var(--space-2) var(--space-6);">
+    <div class="install-row">
+      <code id="installCmd">pip install sail-leakage</code>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('installCmd').textContent)">Copy</button>
+    </div>
+    <p class="ext-note">Also available as a VS Code extension (setup wizard, plain-language results,
+    no Python typing required). It isn't on the Marketplace yet — build the <code>.vsix</code> from
+    source: see the
+    <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/tree/vscode-extension/extension">extension's README</a>.</p>
+  </div>
+
+  <div class="demo-frame">
+    <img src="__PATHPREFIX__/assets/img/extension/demo.gif" alt="The SAIL VS Code extension running a real check against the example dataset, from the setup wizard through to the results view and sidebar — a real recording, not a mockup.">
+  </div>
+
+  <h2 style="text-align:center; margin-top:var(--space-6);">How it works</h2>
+  <div class="grid-12">
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <span class="step-num">1</span>
+        <h3 style="border:none; padding:0; margin:0 0 6px; text-transform:none; font-size:15px; color:inherit; font-weight:600;">Pick your dataset</h3>
+        <p class="plain" style="margin:0;">A CSV or Parquet file from your workspace, or try the
+        example data first — no setup beyond having <code>sail-leakage</code> installed.</p>
+      </div>
+    </div>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <span class="step-num">2</span>
+        <h3 style="border:none; padding:0; margin:0 0 6px; text-transform:none; font-size:15px; color:inherit; font-weight:600;">Confirm the columns</h3>
+        <p class="plain" style="margin:0;">SAIL auto-detects the patient ID, time step, treatment
+        and outcome fields from typical column names — you just confirm or correct them.</p>
+      </div>
+    </div>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <span class="step-num">3</span>
+        <h3 style="border:none; padding:0; margin:0 0 6px; text-transform:none; font-size:15px; color:inherit; font-weight:600;">Read the report</h3>
+        <p class="plain" style="margin:0;">Five checks, each explained in plain language: what it
+        checks, what SAIL found, and what to do about it. Everything runs on your computer.</p>
+      </div>
     </div>
   </div>
 
+  <h2 style="text-align:center; margin-top:var(--space-6);">What it checks</h2>
+  <p class="plain" style="text-align:center; max-width:640px; margin:0 auto var(--space-3);">Five
+  categories, each a generalization of a mathematically proven mechanism from the underlying
+  research — not a heuristic guess.</p>
   <div class="grid-12">
-    <div class="col-span-6">
-      <div class="card" style="height:100%; display:flex; flex-direction:column;">
-        <h3 style="font-family:var(--sans); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:var(--weight-emphasis); margin:0 0 var(--space-2);">For builders</h3>
-        <p class="plain" style="flex:1;">Five detectors for state–action information leakage in offline RL and clinical
-        prediction pipelines — each a generalization of a mathematically proven result, tested against
-        already-verified numbers, not new heuristics. Install it and check your own data in minutes.</p>
-        <a href="__PATHPREFIX__/package/" class="navbtn" style="text-decoration:none; text-align:center; margin-top:var(--space-2);">Use the package →</a>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <p class="check-name">Construction leakage</p>
+        <p class="check-q">Is a treatment dose built into one of the patient-state scores?</p>
       </div>
     </div>
-    <div class="col-span-6">
-      <div class="card" style="height:100%; display:flex; flex-direction:column;">
-        <h3 style="font-family:var(--sans); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:var(--weight-emphasis); margin:0 0 var(--space-2);">For reviewers</h3>
-        <p class="plain" style="flex:1;">The formal proofs, the empirical audit on 11,354 real ICU stays, the live
-        interactive visualizer, and the honest account of what's still open — including a pre-registered,
-        not-yet-run statistical test.</p>
-        <a href="__PATHPREFIX__/research/" class="navbtn" style="text-decoration:none; text-align:center; margin-top:var(--space-2);">Read the research →</a>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <p class="check-name">Reconstruction leakage</p>
+        <p class="check-q">Can a hidden score be rebuilt from the scores the model can see?</p>
       </div>
     </div>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <p class="check-name">Temporal overlap</p>
+        <p class="check-q">Does the treatment period overlap the time window the state describes?</p>
+      </div>
+    </div>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <p class="check-name">Timing violation</p>
+        <p class="check-q">Is any state value measured after the treatment it should come before?</p>
+      </div>
+    </div>
+    <div class="col-span-4">
+      <div class="card" style="height:100%;">
+        <p class="check-name">Persistence dominance</p>
+        <p class="check-q">Would simply repeating the last treatment beat your model?</p>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:var(--space-3);">
+    <a href="__PATHPREFIX__/package/" class="navbtn primary" style="text-decoration:none;">See the checks in depth →</a>
+  </div>
+
+  <div class="footer-nav">
+    <a href="__PATHPREFIX__/about/">About</a>
+    <a href="__PATHPREFIX__/package/">Detectors</a>
+    <a href="__PATHPREFIX__/papers/">Papers</a>
+    <a href="__PATHPREFIX__/datasets-and-models/">Datasets &amp; Models</a>
+    <a href="__PATHPREFIX__/privacy/">Privacy</a>
+    <a href="__PATHPREFIX__/research/">Understanding Leakage</a>
   </div>
 
 </div>
 </main>
+</div>

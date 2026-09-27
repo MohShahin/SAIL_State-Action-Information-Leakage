@@ -197,3 +197,67 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 @media (max-width: 720px){
   .col-span-4, .col-span-6, .col-span-8{ grid-column:span 12; }
 }
+
+/* ---------------------------------------------------------------------
+   Homepage-only dark product page (website rebuild Phase 1). Scoped
+   entirely under .landing-dark -- it does NOT touch :root's --accent /
+   --physio / --treat, which stay reserved for the site-wide color
+   discipline above (nav/active-state cyan, clean teal, flagged red;
+   "load-bearing across pages already shipped, including the published
+   PyPI README"). The homepage's own teal/blue tones below are a separate,
+   self-contained palette matching the VS Code extension's own theme
+   (extension/media/theme.css), used only inside this one section.
+   --------------------------------------------------------------------- */
+.landing-dark{
+  background:#14171a; color:#dfe6ee;
+}
+.landing-dark .masthead{ background:transparent; border-bottom:none; }
+.landing-dark .masthead-inner{ max-width:760px; padding-top:56px; }
+.landing-dark .masthead h1{ color:#f3f6f9; }
+.landing-dark .masthead p.deck{ color:#a9b7c4; }
+.landing-dark .brand-row{
+  display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:var(--space-3);
+}
+.landing-dark .brand-row img{ height:36px; width:auto; display:block; }
+.landing-dark .brand-row span{
+  font-family:var(--serif); font-size:15px; color:#a9b7c4; letter-spacing:.02em;
+}
+.landing-dark .install-row{
+  display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:var(--space-2);
+  background:#0c0e10; border:1px solid #2a2f35; color:#fff; border-radius:6px;
+  padding:var(--space-2) var(--space-3); max-width:100%;
+}
+.landing-dark .install-row code{ font-family:var(--mono); font-size:var(--text-base); white-space:nowrap; }
+.landing-dark .install-row button{
+  font-family:var(--sans); font-size:var(--text-xs); color:#fff; background:transparent;
+  border:1px solid rgba(255,255,255,.35); border-radius:4px; padding:4px 10px; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto;
+}
+.landing-dark .ext-note{ font-size:12.5px; color:#8592a0; margin-top:10px; }
+.landing-dark .ext-note a{ color:#7fd8ca; }
+.landing-dark .demo-frame{
+  border:1px solid #2a2f35; border-radius:8px; overflow:hidden; margin:var(--space-4) 0; line-height:0;
+}
+.landing-dark .demo-frame img{ width:100%; height:auto; display:block; }
+.landing-dark h2{ color:#f3f6f9; }
+.landing-dark .plain{ color:#a9b7c4; }
+.landing-dark .card{
+  background:#1b1f24; border:1px solid #2a2f35; color:#dfe6ee;
+}
+.landing-dark .card h3{ color:#8592a0; border-bottom-color:#2a2f35; }
+.landing-dark .step-num{
+  display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
+  border-radius:50%; background:#7fd8ca; color:#0c0e10; font-family:var(--sans); font-weight:700;
+  font-size:13px; margin-bottom:10px;
+}
+.landing-dark .check-name{ font-family:var(--sans); font-weight:600; font-size:14.5px; color:#f3f6f9; margin:0 0 4px; }
+.landing-dark .check-q{ font-size:13px; color:#a9b7c4; margin:0; }
+.landing-dark .navbtn.primary{ background:#7fd8ca; border-color:#7fd8ca; color:#0c0e10; font-weight:600; }
+.landing-dark .navbtn{ border-color:#3a4048; color:#dfe6ee; background:transparent; }
+.landing-dark .footer-nav{
+  border-top:1px solid #2a2f35; margin-top:var(--space-6); padding:var(--space-4) 0 var(--space-2);
+  display:flex; flex-wrap:wrap; gap:var(--space-1) var(--space-4); justify-content:center;
+}
+.landing-dark .footer-nav a{ font-family:var(--sans); font-size:13px; color:#a9b7c4; text-decoration:none; }
+.landing-dark .footer-nav a:hover{ color:#7fd8ca; }
+}
