@@ -1,0 +1,38 @@
+name: Submit a dataset or model
+description: Suggest a dataset or model known or suspected to involve state-action leakage
+title: "[Dataset/model submission] "
+labels: ["dataset-model-submission"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Is this a dataset or a model?
+      options:
+        - Dataset
+        - Model
+        - Both / a paired dataset-model pipeline
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Name
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link (repository, PhysioNet page, paper, etc.)
+    validations:
+      required: true
+  - type: textarea
+    id: concern
+    attributes:
+      label: What's the specific leakage concern?
+      description: Which of SAIL's categories does this resemble, if any — or describe the pattern if it's a new one.
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Your name or handle (optional)

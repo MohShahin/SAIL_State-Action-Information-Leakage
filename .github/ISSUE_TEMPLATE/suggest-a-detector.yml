@@ -1,0 +1,36 @@
+name: Suggest a new leakage detector
+description: Propose a new category of leakage SAIL should check for
+title: "[Detector suggestion] "
+labels: ["detector-suggestion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every existing detector in SAIL traces to a proven, tested mechanism — not a heuristic
+        guess. A suggestion that gets the strongest consideration explains *why* the pattern is
+        provably a problem, not just that it seems suspicious.
+  - type: textarea
+    id: description
+    attributes:
+      label: What pattern are you describing?
+      description: Describe the leakage pattern in plain language.
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Why is this actually leakage, not just correlation?
+      description: The strongest case explains the causal or mathematical reason, not just an observation.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: A concrete example (real or constructed)
+      description: A worked example, similar to Theorem 1's dopamine=6 case, makes this far easier to evaluate.
+    validations:
+      required: false
+  - type: input
+    id: contact
+    attributes:
+      label: Your name or handle (optional)

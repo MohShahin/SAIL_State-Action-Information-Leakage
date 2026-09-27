@@ -1,0 +1,29 @@
+name: Submit a paper
+description: Suggest a paper for the SAIL papers library
+title: "[Paper submission] "
+labels: ["paper-submission"]
+body:
+  - type: input
+    id: citation
+    attributes:
+      label: Full citation
+      placeholder: "Authors. Title. Venue, Year."
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link (DOI, arXiv, or publisher page)
+    validations:
+      required: true
+  - type: textarea
+    id: relevance
+    attributes:
+      label: How does this relate to state-action leakage?
+      description: A sentence or two on why this belongs in the library — a new mechanism, a related critique, foundational context, etc.
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Your name or handle (optional)
