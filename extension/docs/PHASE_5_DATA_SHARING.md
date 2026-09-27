@@ -1,5 +1,11 @@
 # Phase 5 carry-forward: one data-sharing mechanism, three tiers
 
+> **Status: spec complete, implementation not started.** Nothing in this document is built. There is no MCP
+> server, no `mcp/` folder, and no AI-assistant-facing code anywhere in this repository -- confirmed by
+> direct search, not inferred from commit history. This file records the requirements Phase 5 must satisfy
+> whenever it is built; it is not itself a feature, and shipping the rest of the extension around it does not
+> change that status. See [README.md](../README.md)'s status line, which links back here.
+
 Recorded from the project owner's instructions on 2026-09-27, so the Phase 5 (local MCP server) spec starts
 from them instead of re-deriving them. This is a **requirements note, not the design**: the LLM-assisted
 fix-suggestion design this refers to is not in this repository, so where it may say more than this note, it wins
@@ -35,6 +41,23 @@ turned on. What that implies for Phase 5 (to be confirmed in the spec):
   sentence. If a snippet was sent, the line says so.
 * The sidebar's existing line ("Runs on this computer. Your patient data is never uploaded.") describes local
   processing. When Phase 5 adds anything that can send data, that line must come from the same module too.
+
+## Where the API key lives, and where the model runs
+
+* **Bring your own key.** Any credential for a cloud API (tier 2's opt-in code-snippet path) is stored with
+  VS Code's `SecretStorage` API, never in `settings.json` and never in any file this extension writes.
+  `SecretStorage` is backed by the OS keychain (Windows Credential Manager, Keychain, or libsecret), is
+  per-machine, and is never included in a workspace's settings sync or exported config. A key is never logged,
+  never put in an error message, and never passed to a tool as a plain argument that could land in a
+  process-list snapshot or a log.
+* **A local-model path is offered alongside the cloud option, not instead of it.** A local runtime (for
+  example Ollama) can serve tiers 1 and 2 without any network call leaving the machine at all -- for a user
+  who wants LLM-assisted suggestions but doesn't want a cloud API in the picture regardless of tier. This
+  does not relax tier 3: raw data values stay unsent no matter which backend answers, because tier 3's
+  guarantee is enforced by the payload schema, not by which model reads the payload.
+* Whichever backend is selected, the pre-send preview (tier 2) and the sent-record used to generate the
+  privacy line (see above) work identically -- the backend choice changes where an approved payload goes,
+  never what is allowed into a payload in the first place.
 
 ## The proof (required deliverable of Phase 5)
 
