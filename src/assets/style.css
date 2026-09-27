@@ -240,7 +240,9 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 }
 .landing-dark .demo-frame img{ width:100%; height:auto; display:block; }
 .landing-dark h2{ color:#f3f6f9; }
+.landing-dark h3.section{ color:#f3f6f9; }
 .landing-dark .plain{ color:#a9b7c4; }
+.landing-dark .plain b{ color:#f3f6f9; }
 .landing-dark .card{
   background:#1b1f24; border:1px solid #2a2f35; color:#dfe6ee;
 }
@@ -260,4 +262,24 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 }
 .landing-dark .footer-nav a{ font-family:var(--sans); font-size:13px; color:#a9b7c4; text-decoration:none; }
 .landing-dark .footer-nav a:hover{ color:#7fd8ca; }
+.landing-dark .pagenav a{ border-color:#3a4048; color:#dfe6ee; }
+.landing-dark .pagenav a.primary{ background:#7fd8ca; border-color:#7fd8ca; color:#0c0e10; }
+
+/* Placeholder cards (website rebuild Phase 2) -- deliberately NOT styled to look like finished
+   content: dashed border, muted text, an explicit "Placeholder" tag. A real card (once filled in)
+   is a plain .card with no dashed border and no tag, so the two states can never be confused. */
+.landing-dark .placeholder-icon{
+  width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:#0c0e10; margin-bottom:12px; color:#5a6472; flex:0 0 auto;
 }
+.landing-dark .placeholder-icon svg{ width:26px; height:26px; }
+.landing-dark .card.placeholder{
+  background:transparent; border:1px dashed #3a4048;
+}
+.landing-dark .card.placeholder .placeholder-tag{
+  display:inline-block; font-family:var(--sans); font-size:10.5px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:#5a6472; border:1px solid #3a4048; border-radius:3px;
+  padding:2px 7px; margin-bottom:10px;
+}
+.landing-dark .card.placeholder .check-name{ color:#5a6472; }
+.landing-dark .card.placeholder .check-q{ color:#4a5361; font-style:italic; }

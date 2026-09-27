@@ -5,13 +5,16 @@ activeNav: about
 templateEngineOverride: false
 ---
 
+<div class="landing-dark">
+
 <div class="masthead"><div class="masthead-inner">
   <h1>About SAIL</h1>
   <p class="deck">State–Action Information Leakage — a methodological audit, not a treatment
   recommendation system.</p>
 </div></div>
 
-<main>
+<main class="wide">
+<div class="grid-container">
 
 <h3 class="section" style="margin-top:0;">What is SAIL?</h3>
 <p class="plain">SAIL audits whether the state representations used in offline reinforcement
@@ -47,7 +50,7 @@ construction.</p>
 
 <h3 class="section">Scientific contribution</h3>
 <ul class="plain" style="padding-left:20px;">
-  <li>Two mathematically proven treatment-confounding mechanisms (non-identifiability, algebraic reconstructibility) — see <a href="__PATHPREFIX__/mechanisms/#term" style="color:var(--accent);">Terminology</a> for why this is confounding, not ML-sense leakage</li>
+  <li>Two mathematically proven treatment-confounding mechanisms (non-identifiability, algebraic reconstructibility) — see <a href="__PATHPREFIX__/mechanisms/#term" style="color:#7fd8ca;">Terminology</a> for why this is confounding, not ML-sense leakage</li>
   <li>A causal-graph formalization explaining why predictability alone can't settle whether the AUROC gap reflects these mechanisms specifically, or ordinary treatment persistence</li>
   <li>An independently re-extracted, five-times-reproduced empirical audit — including three real
   pipeline bugs found, diagnosed, and fixed in the open</li>
@@ -57,21 +60,104 @@ construction.</p>
 <h3 class="section">Open science</h3>
 <p class="plain">Every extraction query, the full analysis notebook, and the complete bug-fix
 history are public. Patient-level MIMIC-IV data is not — see
-<a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:var(--accent);">DATA_ACCESS.md</a> for the governance policy
+<a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a> for the governance policy
 this project holds itself to.</p>
 
-<h3 class="section">Research team &amp; affiliation</h3>
-<p class="plain">Conducted at the <b>MIT Laboratory for Computational Physiology</b> and the
-<b>Boston University School of Public Health</b>. Full author and citation metadata in
-<a href="__PATHPREFIX__/CITATION.cff" style="color:var(--accent);">CITATION.cff</a>.</p>
+<h3 class="section">Team</h3>
+<p class="plain">One real entry, confirmed against <code>CITATION.cff</code>. The rest are placeholder
+cards, not fabricated people — see each card's comment for exactly what real content replaces it.</p>
+<div class="grid-12">
+
+  <div class="col-span-4">
+    <div class="card" style="height:100%;">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg>
+      </div>
+      <p class="check-name">Mohammad Shahin</p>
+      <p class="check-q">Author — MIT Laboratory for Computational Physiology; Boston University
+      School of Public Health</p>
+      <!-- Real, from CITATION.cff. No bio or photo on file yet -- add a one-line bio and a photo
+           path (e.g. /assets/img/team/mohammad-shahin.jpg) here when available. -->
+    </div>
+  </div>
+
+  <div class="col-span-4">
+    <div class="card placeholder" style="height:100%;">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg>
+      </div>
+      <p class="placeholder-tag">Placeholder</p>
+      <p class="check-name">Name</p>
+      <p class="check-q">Role</p>
+      <!-- Fill in: full name, role/title, a one-line bio, and a photo path (e.g.
+           /assets/img/team/<slug>.jpg). Replace this entire card -- remove class="placeholder"
+           and the placeholder-tag element -- once real content exists. -->
+    </div>
+  </div>
+
+  <div class="col-span-4">
+    <div class="card placeholder" style="height:100%;">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg>
+      </div>
+      <p class="placeholder-tag">Placeholder</p>
+      <p class="check-name">Name</p>
+      <p class="check-q">Role</p>
+      <!-- Fill in: full name, role/title, a one-line bio, and a photo path (e.g.
+           /assets/img/team/<slug>.jpg). Replace this entire card -- remove class="placeholder"
+           and the placeholder-tag element -- once real content exists. -->
+    </div>
+  </div>
+
+</div>
+
+<h3 class="section">Community &amp; related work</h3>
+<p class="plain">Other work from this lab worth seeing — none listed yet. Every card below is an
+explicit placeholder, not a real project.</p>
+<div class="grid-12">
+
+  <div class="col-span-4">
+    <div class="card placeholder" style="height:100%;">
+      <p class="placeholder-tag">Placeholder</p>
+      <p class="check-name">Project name</p>
+      <p class="check-q">One-line description of the related lab project.</p>
+      <!-- Fill in: project name, one-line description, an external link (href), and optionally a
+           screenshot image path. Replace this entire card once a real project is chosen. -->
+    </div>
+  </div>
+
+  <div class="col-span-4">
+    <div class="card placeholder" style="height:100%;">
+      <p class="placeholder-tag">Placeholder</p>
+      <p class="check-name">Project name</p>
+      <p class="check-q">One-line description of the related lab project.</p>
+      <!-- Fill in: project name, one-line description, an external link (href), and optionally a
+           screenshot image path. Replace this entire card once a real project is chosen. -->
+    </div>
+  </div>
+
+  <div class="col-span-4">
+    <div class="card placeholder" style="height:100%;">
+      <p class="placeholder-tag">Placeholder</p>
+      <p class="check-name">Project name</p>
+      <p class="check-q">One-line description of the related lab project.</p>
+      <!-- Fill in: project name, one-line description, an external link (href), and optionally a
+           screenshot image path. Replace this entire card once a real project is chosen. -->
+    </div>
+  </div>
+
+</div>
 
 <h3 class="section">Contact &amp; collaboration</h3>
 <p class="plain">For questions, corrections, or collaboration inquiries, open an issue on the
-<a href="https://github.com/MohShahin__PATHPREFIX__" style="color:var(--accent);">GitHub repository</a>.</p>
+<a href="https://github.com/MohShahin__PATHPREFIX__" style="color:#7fd8ca;">GitHub repository</a>.</p>
 
+</div>
 </main>
 
 <div class="pagenav">
   <a href="__PATHPREFIX__/papers/">← Papers</a>
   <a href="__PATHPREFIX__/" class="primary">Back to home →</a>
+</div>
+
 </div>
