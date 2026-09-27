@@ -1,0 +1,32 @@
+# SAIL
+
+> State–Action Information Leakage — a methodological audit, not a treatment recommendation
+> system.
+
+SAIL produced two real, separate artifacts from that audit: an open-source Python package,
+`sail-leakage`, that checks a treatment dataset for five categories of state-action leakage, and
+the research (proofs plus an empirical audit on 11,354 real ICU stays) that package generalizes
+from. Everything below is real and currently shipped; nothing here is a roadmap item.
+
+## Package
+
+- [sail-leakage on PyPI](https://pypi.org/project/sail-leakage/): `pip install sail-leakage`
+- [Quickstart and the five detector categories](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/SAIL_PACKAGE_README.md): the verified-working `sail.check()` call, its real parameters, and the five real category names (`construction_leakage_1a`/`1b`, `reconstruction_leakage`, `temporal_overlap_leakage`, `timing_violation_leakage`, `persistence_dominance`)
+- [Detectors, in depth](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/detectors/): what each category catches and the exact theorem or verification behind it
+
+## VS Code extension
+
+- [Extension README](https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/vscode-extension/extension/README.md): a setup wizard around the same package, plain-language results, everything local. Not yet on the Marketplace — build the `.vsix` from source (instructions in the README).
+
+## Research
+
+- [FORMAL_ANALYSIS.md](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/FORMAL_ANALYSIS.md): the full proofs each detector generalizes from
+- [Proof](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/proof/): the same proofs, as an interactive page
+- [Evidence](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/evidence/): the empirical audit's numbers, including two extraction bugs found and corrected in the open
+
+## Optional
+
+- [About](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/about/): who did this and why
+- [Papers](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/papers/): the eight sources this project's claims actually rely on
+- [Datasets & Models](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/datasets-and-models/): where community-flagged datasets and models would go (empty today)
+- [Privacy](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/privacy/): what runs locally versus what isn't built yet

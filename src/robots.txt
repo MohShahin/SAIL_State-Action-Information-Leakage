@@ -1,0 +1,30 @@
+# This site is meant to be read by AI agents and coding assistants integrating sail-leakage, not
+# just by humans -- see /llms.txt for a curated entry point. Nothing here is restricted for any
+# crawler; the named entries below exist so a future edit doesn't accidentally add one.
+
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /

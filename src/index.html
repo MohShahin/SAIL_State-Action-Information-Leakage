@@ -3,6 +3,27 @@ layout: base.njk
 title: "SAIL"
 activeNav: home
 templateEngineOverride: false
+extraHead: |
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["SoftwareApplication", "SoftwareSourceCode"],
+    "name": "sail-leakage",
+    "description": "Detectors for state-action information leakage in offline reinforcement learning, generalized from a proven audit of SOFA-based sepsis-RL state representations.",
+    "url": "https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/",
+    "downloadUrl": "https://pypi.org/project/sail-leakage/",
+    "codeRepository": "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage",
+    "license": "https://opensource.org/licenses/MIT",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "OS Independent",
+    "programmingLanguage": "Python",
+    "softwareVersion": "0.1.4",
+    "author": {
+      "@type": "Person",
+      "name": "Mohammad Shahin"
+    }
+  }
+  </script>
 ---
 
 <div class="landing-dark">

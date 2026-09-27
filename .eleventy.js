@@ -10,6 +10,12 @@ module.exports = function (eleventyConfig) {
   // Static assets, copied through as-is
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
+  // AI-agent readability (website rebuild Phase 6). Plain-text files Eleventy would
+  // otherwise ignore (its template formats don't include .txt) -- passthrough-copied
+  // explicitly, same as everything else in this list.
+  eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
+  eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
+
   // notebook/ is deliberately NOT served from the site (pages link to it on GitHub instead):
   // its saved outputs once held MIMIC-IV row-level data. See DATA_ACCESS.md.
   //
@@ -34,6 +40,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("ROADMAP.md");
   eleventyConfig.addPassthroughCopy("DATA_ACCESS.md");
   eleventyConfig.addPassthroughCopy("FORMAL_ANALYSIS.md");
+  eleventyConfig.addPassthroughCopy("SAIL_PACKAGE_README.md");
   eleventyConfig.addPassthroughCopy("CITATION.cff");
   eleventyConfig.addPassthroughCopy("LICENSE");
   eleventyConfig.addPassthroughCopy({ ".nojekyll": ".nojekyll" });
