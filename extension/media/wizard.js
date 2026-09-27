@@ -29,9 +29,12 @@
     return b;
   }
 
-  function errorBanner(message) {
-    if (!message) return null;
-    return el('div', 'error', message);
+  function errorBanner(error) {
+    if (!error) return null;
+    const wrap = el('div', 'error');
+    wrap.append(el('div', 'error-message', error.message));
+    if (error.detail) wrap.append(el('div', 'error-detail', error.detail));
+    return wrap;
   }
 
   function renderWelcome(vm) {
