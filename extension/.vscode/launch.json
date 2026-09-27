@@ -2,12 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      // Press Ctrl+F5 (Run Without Debugging) for the reliable, fast start. F5 also works on most
+      // machines, but it attaches a debugger, and on machines where "localhost" resolves to IPv6 (::1)
+      // the debugger cannot attach and the window reports "Extension host did not start in 10 seconds".
       "name": "Run SAIL extension",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceFolder}/out/**/*.js"],
-      "preLaunchTask": "npm: compile"
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        // Load only SAIL in the test window: your other extensions can't slow its startup.
+        "--disable-extensions"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: bundle"
     }
   ]
 }

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="720" height="440" rx="14" fill="#17191c"/>
+  <text x="40" y="58" font-size="12" fill="#8d9298" font-weight="600" letter-spacing="1">LEAKAGE REPORT · EXAMPLE DATA</text>
+  <text x="40" y="92" font-size="26" fill="#e8e6e1" font-weight="500">3 of 5 checks found leakage</text>
+  <g font-size="15">
+    <rect x="40" y="116" width="640" height="46" rx="10" fill="#22272b" stroke="#7fd8ca"/>
+    <text x="60" y="145" fill="#e8e6e1" font-weight="500">Construction leakage</text>
+    <rect x="590" y="127" width="70" height="24" rx="12" fill="#f5a15a"/><text x="625" y="144" font-size="12" text-anchor="middle" fill="#1a1206" font-weight="600">Flagged</text>
+
+    <rect x="40" y="172" width="640" height="46" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <text x="60" y="201" fill="#e8e6e1" font-weight="500">Reconstruction leakage</text>
+    <rect x="590" y="183" width="70" height="24" rx="12" fill="#f5a15a"/><text x="625" y="200" font-size="12" text-anchor="middle" fill="#1a1206" font-weight="600">Flagged</text>
+
+    <rect x="40" y="228" width="640" height="46" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <text x="60" y="257" fill="#e8e6e1" font-weight="500">Temporal overlap</text>
+    <rect x="590" y="239" width="70" height="24" rx="12" fill="#f5a15a"/><text x="625" y="256" font-size="12" text-anchor="middle" fill="#1a1206" font-weight="600">Flagged</text>
+
+    <rect x="40" y="284" width="640" height="46" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <text x="60" y="313" fill="#e8e6e1" font-weight="500">Timing violation</text>
+    <rect x="590" y="295" width="70" height="24" rx="12" fill="#2f5f8f"/><text x="625" y="312" font-size="12" text-anchor="middle" fill="#e3eefa" font-weight="600">Passed</text>
+
+    <rect x="40" y="340" width="640" height="46" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <text x="60" y="369" fill="#e8e6e1" font-weight="500">Persistence dominance</text>
+    <rect x="590" y="351" width="70" height="24" rx="12" fill="#2f5f8f"/><text x="625" y="368" font-size="12" text-anchor="middle" fill="#e3eefa" font-weight="600">Passed</text>
+  </g>
+  <text x="40" y="416" font-size="12" fill="#8d9298">All names and findings shown are example data, not real results.</text>
+</svg>

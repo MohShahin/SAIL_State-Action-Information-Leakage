@@ -65,3 +65,4 @@ extension/out/
 extension/.vscode-test/
 extension/*.vsix
 !extension/.vscode/
+extension/dist/

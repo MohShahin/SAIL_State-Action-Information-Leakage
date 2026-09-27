@@ -1,8 +1,8 @@
 /*
- * SAIL sidebar. Surfaces, text and borders come from the user's VS Code theme (--vscode-*), so the
- * panel follows any light, dark or high-contrast theme. Only the three SAIL accents are our own:
- * teal (brand / active), amber (flagged) and blue (passed). Each has a light-theme tone, because
- * the dark-theme tones from the design do not have enough contrast on a light background.
+ * SAIL sidebar. Surfaces, text and borders come from the user's VS Code theme (--vscode-*), so the panel
+ * follows any light, dark or high-contrast theme, and the font is the user's own. Only the three SAIL
+ * accents are ours: teal (brand / active), amber (flagged) and blue (passed). Each has a light-theme tone,
+ * because the dark-theme tones from the design do not have enough contrast on a light background.
  */
 :root {
   --sail-accent: #7fd8ca;
@@ -14,6 +14,11 @@ body.vscode-high-contrast-light {
   --sail-accent: #0b6b5e;
   --sail-flagged: #9a5200;
   --sail-passed: #2f5f8f;
+}
+
+/* Our own "display: flex" rules would otherwise beat the browser's built-in hidden behaviour. */
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -32,6 +37,13 @@ body {
   display: flex;
   flex-direction: column;
   padding: 8px 18px 18px;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: sail-fade-in 180ms ease-out;
 }
 
 .eyebrow {
@@ -65,6 +77,9 @@ section + section {
   font-size: 0.95em;
   overflow-wrap: anywhere;
 }
+.dataset-label:not(.is-empty) {
+  color: var(--vscode-foreground);
+}
 
 /* CHECKS */
 .checks {
@@ -87,6 +102,12 @@ section + section {
   font-size: 11px;
   color: var(--vscode-descriptionForeground);
 }
+.tag-flagged {
+  color: var(--sail-flagged);
+}
+.tag-passed {
+  color: var(--sail-passed);
+}
 
 .glyph {
   box-sizing: border-box;
@@ -98,7 +119,8 @@ section + section {
   justify-content: center;
 }
 /* waiting to run */
-.glyph-pending {
+.glyph-pending,
+.glyph-off {
   border-radius: 50%;
   border: 1.5px solid var(--vscode-descriptionForeground);
   opacity: 0.7;
@@ -108,6 +130,12 @@ section + section {
   border-radius: 50%;
   border: 2px solid var(--sail-accent);
   border-top-color: transparent;
+  animation: sail-spin 900ms linear infinite;
+}
+.glyph-done {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sail-accent) 28%, transparent);
+  color: var(--sail-accent);
 }
 .glyph-flagged {
   border-radius: 4px;
@@ -152,10 +180,73 @@ body.vscode-high-contrast-light .glyph-flagged {
 .privacy p {
   margin: 0;
 }
-
 body.vscode-high-contrast .privacy,
 body.vscode-high-contrast-light .privacy {
   border-color: var(--vscode-contrastBorder);
+}
+
+/* Loading skeleton: the same shapes as the real content, shown until the extension sends its state. */
+.skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--vscode-foreground) 8%, transparent) 25%,
+    color-mix(in srgb, var(--vscode-foreground) 16%, transparent) 50%,
+    color-mix(in srgb, var(--vscode-foreground) 8%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: sail-shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-eyebrow {
+  width: 64px;
+  height: 11px;
+  margin: 12px 0 10px;
+}
+.skeleton-box {
+  height: 40px;
+  border-radius: 8px;
+}
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+}
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+}
+.skeleton-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+.skeleton-line {
+  width: 62%;
+  height: 12px;
+}
+
+@keyframes sail-fade-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sail-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes sail-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app,
+  .skeleton,
+  .glyph-running {
+    animation: none;
+  }
 }
 
 :focus-visible {
