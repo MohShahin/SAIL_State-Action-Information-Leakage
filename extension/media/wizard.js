@@ -160,19 +160,65 @@
   }
 
   function renderDone(vm) {
-    const wrap = el('div', 'step-body');
+    const wrap = el('div', 'results');
     const banner = errorBanner(vm.error);
     if (banner) {
       wrap.append(el('h2', null, 'The check could not finish'), banner);
-    } else {
-      wrap.append(el('h2', null, 'Done'));
-      wrap.append(el('pre', 'summary', vm.resultSummary || ''));
-      wrap.append(el('p', 'phase-note', 'This plain-text summary is a placeholder. The full results view (five cards, export) arrives in Phase 4.'));
+      const actions = el('div', 'welcome-actions');
+      actions.append(button('New check', 'btn btn-secondary', () => send('restart')));
+      wrap.append(actions);
+      return wrap;
     }
+
+    const header = el('div', 'results-header');
+    const heading = el('div', 'results-heading');
+    heading.append(
+      el('div', 'eyebrow', 'LEAKAGE REPORT' + (vm.isExample ? ' · EXAMPLE DATA' : '')),
+      el('h2', null, vm.headline)
+    );
     const actions = el('div', 'welcome-actions');
-    actions.append(button('New check', 'btn btn-secondary', () => send('restart')));
-    wrap.append(actions);
+    actions.append(
+      button('New check', 'btn btn-secondary', () => send('restart')),
+      button('Export report', 'btn btn-primary', () => send('exportReport'))
+    );
+    header.append(heading, actions);
+    wrap.append(header);
+
+    const body = el('div', 'results-body');
+    const list = el('div', 'results-list');
+    vm.results.forEach((r) => {
+      const card = button('', 'result-card' + (r.selected ? ' selected' : ''), () => send('selectResult', { id: r.id }));
+      const top = el('div', 'result-card-top');
+      top.append(el('span', 'result-card-name', r.name), el('span', 'badge badge-' + r.status, r.verdictLabel));
+      const snippet = el('div', 'result-card-snippet', r.explanation);
+      card.append(top, snippet);
+      list.append(card);
+    });
+    body.append(list);
+
+    const detail = el('div', 'result-detail');
+    const sel = vm.selectedResult;
+    if (sel) {
+      const badgeRow = el('div', 'result-detail-badges');
+      badgeRow.append(el('span', 'badge badge-' + sel.status, sel.verdictLabel));
+      detail.append(badgeRow, el('h3', null, sel.name));
+      detail.append(sectionBlock('WHAT THIS CHECKS', sel.question));
+      detail.append(sectionBlock('WHAT SAIL FOUND', sel.explanation || '(no detail available)'));
+      detail.append(sectionBlock('WHAT TO DO', sel.fix));
+    }
+    body.append(detail);
+    wrap.append(body);
+
+    if (vm.isExample) {
+      wrap.append(el('p', 'phase-note', 'All names and findings shown are example data, not real results.'));
+    }
     return wrap;
+  }
+
+  function sectionBlock(label, text) {
+    const block = el('div', 'result-section');
+    block.append(el('div', 'result-section-label', label), el('div', 'result-section-body', text));
+    return block;
   }
 
   function renderNav(vm) {
@@ -184,7 +230,8 @@
 
   function render(vm) {
     root.textContent = '';
-    const wrap = el('div', 'wizard');
+    // The results step needs a wider two-column layout than the rest of the wizard's narrow form.
+    const wrap = el('div', vm.isDone && !vm.error ? 'wizard wizard-wide' : 'wizard');
     if (vm.isWelcome) {
       wrap.append(renderWelcome(vm));
     } else {

@@ -3,9 +3,19 @@ import * as vscode from 'vscode';
 import { AppStateStore } from './appState';
 import { autoDetect } from './columnMapping';
 import { CHECKS } from './checks';
-import { computeViewModel, DataFile, initialWizardState, mapReportToStatuses, ReportLike, WizardState } from './wizardModel';
+import {
+  buildResultCards,
+  computeViewModel,
+  DataFile,
+  initialWizardState,
+  mapReportToStatuses,
+  ReportLikeWithText,
+  ResultCard,
+  WizardState,
+} from './wizardModel';
 import { resolvePython, verifySail } from './pythonRuntime';
 import { BridgeResult, callBridge, CheckReportData, ColumnsData } from './sailBridge';
+import { buildReportHtml } from './reportHtml';
 
 /**
  * The three-step setup wizard, in an editor tab (a WebviewPanel, not the sidebar). One panel at a time:
@@ -35,6 +45,15 @@ export class WizardPanel {
       }
     });
     return instance;
+  }
+
+  /** True and revealed if a wizard panel is already open; false (does nothing) otherwise. */
+  static revealIfOpen(): boolean {
+    if (WizardPanel.current) {
+      WizardPanel.current.panel.reveal();
+      return true;
+    }
+    return false;
   }
 
   private state: WizardState = initialWizardState();
@@ -162,9 +181,44 @@ export class WizardPanel {
       case 'toggleCheck':
         this.setState({ enabled: { ...this.state.enabled, [m.payload.id]: !this.state.enabled[m.payload.id] } });
         return;
+      case 'selectResult':
+        this.setState({ selectedResultId: m.payload?.id ?? null });
+        return;
+      case 'exportReport':
+        await this.exportReport();
+        return;
       case 'restart':
         this.setState({ ...initialWizardState(), step: 'data', files: this.state.files });
         return;
+    }
+  }
+
+  private async exportReport(): Promise<void> {
+    if (!this.state.results) {
+      return;
+    }
+    const target = await vscode.window.showSaveDialog({
+      filters: { 'Web page': ['html'] },
+      defaultUri: vscode.Uri.file('sail-report.html'),
+    });
+    if (!target) {
+      return;
+    }
+    const html = buildReportHtml({
+      datasetLabel: this.state.datasetLabel,
+      isExample: this.state.isExample,
+      cards: this.state.results,
+    });
+    try {
+      await vscode.workspace.fs.writeFile(target, Buffer.from(html, 'utf8'));
+    } catch (err) {
+      this.setState({ error: `Could not save the report: ${String(err)}` });
+      return;
+    }
+    const openIt = 'Open in Browser';
+    const choice = await vscode.window.showInformationMessage(`Report saved to ${target.fsPath}`, openIt);
+    if (choice === openIt) {
+      await vscode.env.openExternal(target);
     }
   }
 
@@ -237,15 +291,23 @@ export class WizardPanel {
 
   private finishRun(result: BridgeResult<CheckReportData>, enabled: Record<string, boolean>, datasetLabel: string): void {
     if (!result.ok) {
-      this.setState({ step: 'done', error: result.error, resultSummary: null });
+      this.setState({ step: 'done', error: result.error, results: null });
       return;
     }
-    const statuses = mapReportToStatuses(result.data as ReportLike, enabled);
+    const report = result.data as ReportLikeWithText;
+    const statuses = mapReportToStatuses(report, enabled);
     for (const [id, status] of Object.entries(statuses)) {
       this.store.setCheckStatus(id, status);
     }
     this.store.setDataset(datasetLabel);
-    this.setState({ step: 'done', error: null, resultSummary: result.data.summary });
+    const results: readonly ResultCard[] = buildResultCards(report, enabled);
+    this.setState({
+      step: 'done',
+      error: null,
+      datasetLabel,
+      results,
+      selectedResultId: results[0]?.id ?? null,
+    });
   }
 
   private render(webview: vscode.Webview, media: vscode.Uri): string {
