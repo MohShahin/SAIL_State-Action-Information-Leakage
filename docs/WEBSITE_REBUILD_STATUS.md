@@ -12,6 +12,7 @@ standing rule — that file is kept for its historical reasoning, not as the cur
 | 3 — Header/nav unification | **Shipped** (`ef6742b`) | `base.njk`'s shared header re-themed to `.landing-dark` with the logo, applied identically across all 15 pages. Nav trimmed to the 5 pages that actually exist today (Home, About, Papers, Datasets & Models, Privacy) — Detectors deliberately left out, since that page didn't exist yet. Closes the "site-wide top nav still isn't migrated" item this doc previously tracked. |
 | 4 — Detectors | **Shipped** (`afa9260`) | New `/detectors/` page, five cards reusing `SAIL_PACKAGE_README.md`'s table and the detectors' own docstring/explanation text verbatim. Each "See the math" link deep-links to the exact proof/evidence anchor (verified to land on the right heading, not just a non-404 URL) — including one, construction leakage's Proposition 3 shape, that has no in-site anchor and links to the live GitHub-rendered `FORMAL_ANALYSIS.md` instead, and one, persistence dominance, for which a `evidence.html#variant-f` anchor was added since none existed. "Detectors" added to the shared nav; the homepage's "What it checks" teaser now points here instead of `/package/`. |
 | 5 — Libraries | **Shipped** (`77ed43a`) | `papers.html` re-skinned into a card grid (the real 8 citations, tag-filter and self-check tool reused as-is, not rewritten); `datasets-and-models.html` given a genuine empty-state design instead of prose, since it has zero real entries. Giscus embedded on both pages from Phase 0's `docs/giscus_snippet.html`; confirmed with real evidence (each page's injected iframe URL, not assumed) that `data-mapping: pathname` gives them separate comment threads. "Suggest a paper" / "Submit a dataset or model" now use the same live `?template=` URL pattern as Phase 4's "Suggest a new detector." |
+| 6 — AI-agent readability | **Shipped** (`2bb65c3`) | `/llms.txt` (real spec structure: H1, blockquote, four H2 file-list sections, verified programmatically), `/robots.txt` (explicit `Allow: /` for named AI crawlers — see the open item below on where this file actually sits), and a `SoftwareApplication`/`SoftwareSourceCode` JSON-LD block on the homepage, validated against the real `validator.schema.org` (0 errors, 0 warnings, driven live, not just checked as syntactically-valid JSON). `SAIL_PACKAGE_README.md` is now passthrough-copied and served for the first time, since `llms.txt` needed a real URL for it. Audited `showcase.html`'s six-variant chart for a text-reading agent: the key finding is already stated in prose right after the chart (verified, not assumed) — no fix needed. |
 | Understanding Leakage | Not started | No nav entry yet. `/research/` already serves this role as the existing research hub page and is linked from the homepage's own footer. |
 
 ## Open item: eight pages still carry the old light-theme content
@@ -34,6 +35,19 @@ Phase 3 commit message).
 `/research/`, the existing research hub page, already serves this role and is linked from the
 homepage's own footer, but has no dedicated nav slot yet — add one once a purpose-built page exists,
 same reasoning Phase 4 just resolved for Detectors.
+
+## Note: `robots.txt` sits at a non-authoritative path, by necessity of GitHub Pages project sites
+
+`/robots.txt` is served at `/SAIL_State-Action-Information-Leakage/robots.txt`, not at the site's
+true origin root (`mohshahin.github.io/robots.txt`) — which we cannot publish to at all under this
+hosting setup (that would require a separate `mohshahin/mohshahin.github.io` user-site repo, which
+doesn't exist). Standard crawlers, per the Robots Exclusion Protocol, only check the origin root.
+Checked live: `mohshahin.github.io/robots.txt` returns GitHub's "Site not found" — there is no
+origin-root site at all, which itself already means every well-behaved crawler treats this whole
+origin, including this project's path, as fully open by default. This project's `robots.txt` is
+still worth having (self-documenting, and some tools do check nested paths), but its explicit
+`Allow:` directives are not the thing actually granting access — the absence of any origin-root file
+already does that.
 
 ## Open item: none of the three `?template=` submission links' exact rendering was visually verified
 
