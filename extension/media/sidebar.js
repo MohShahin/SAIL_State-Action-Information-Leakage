@@ -10,17 +10,19 @@
   const list = document.getElementById('checks');
 
   const NO_DATASET = 'No dataset chosen';
-  const TAGS = { flagged: 'Flagged', passed: 'Passed', off: 'Off' };
+  const TAGS = { flagged: 'Flagged', passed: 'Passed', off: 'Off', 'not-run': 'Not run' };
   const TICK =
     '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>';
 
   function glyph(status) {
+    // 'not-run' draws like 'pending' (an open circle: no verdict either way) but keeps its own tag text.
+    const glyphStatus = status === 'not-run' ? 'pending' : status;
     const el = document.createElement('span');
-    el.className = 'glyph glyph-' + status;
+    el.className = 'glyph glyph-' + glyphStatus;
     el.setAttribute('aria-hidden', 'true');
     if (status === 'flagged') {
       el.textContent = '!';
-    } else if (status === 'passed' || status === 'done') {
+    } else if (status === 'passed') {
       el.innerHTML = TICK; // constant markup, no user text
     }
     return el;
