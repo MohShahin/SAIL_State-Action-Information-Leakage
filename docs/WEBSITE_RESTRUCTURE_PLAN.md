@@ -1,5 +1,10 @@
 # SAIL Website Restructuring — Plan
 
+> **Superseded.** The two-track `/package/`+`/research/` IA below is no longer the current plan — the
+> website rebuild (`.claude/commands/website-phase-*.md`) replaces it with a different structure. Kept
+> here for its historical reasoning. See [WEBSITE_REBUILD_STATUS.md](WEBSITE_REBUILD_STATUS.md) for
+> what's actually shipped.
+
 ## The real problem to solve first, before any visual decision
 
 The site currently has one flat, ten-item nav trying to serve two genuinely different visitors:
