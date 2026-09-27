@@ -7,20 +7,32 @@ standing rule — that file is kept for its historical reasoning, not as the cur
 | Phase | Status | What it covers |
 |---|---|---|
 | 0 — Submission infrastructure | **Shipped** (`6ae6dd2`, `921f2b0`) | Three GitHub Issue Form templates, `config.yml` disabling blank issues, `docs/giscus_snippet.html` saved for Phase 4. |
-| 1 — Homepage | **Shipped** (`ea7bae3`) | `index.html` rebuilt as a product landing page around the real extension demo GIF. New footer nav (About, Detectors, Papers, Datasets & Models, Privacy, Understanding Leakage) added, but only on the homepage — see the open item below. |
-| 2 — About page | Not started | |
-| 3 — Detectors page | Not started | The homepage's "Detectors" footer link currently points at the existing `/package/` page as an honest interim target, not a stub. |
+| 1 — Homepage | **Shipped** (`ea7bae3`) | `index.html` rebuilt as a product landing page around the real extension demo GIF. Introduced the `.landing-dark` visual system and the new 6-item footer nav, homepage-only at the time. |
+| 2 — About page | **Shipped** (`21f4215`) | `about.html` converted to `.landing-dark`. Team and Community sections use explicit, obviously-marked placeholders (dashed border, "Placeholder" tag) — no fabricated names, bios, photos, or projects. One real Team card (Mohammad Shahin, from `CITATION.cff`). |
+| 3 — Header/nav unification | **Shipped** (`ef6742b`) | `base.njk`'s shared header re-themed to `.landing-dark` with the logo, applied identically across all 15 pages. Nav trimmed to the 5 pages that actually exist today (Home, About, Papers, Datasets & Models, Privacy) — Detectors and Understanding Leakage deliberately left out, since those pages don't exist yet (see the new open item below). Closes the "site-wide top nav still isn't migrated" item this doc previously tracked. |
 | 4 — Comments | Not started | Will embed `docs/giscus_snippet.html`, prepared in Phase 0. |
+| Detectors page | Not started | The "Detectors" nav item doesn't exist yet — `/package/` (which already documents the five detectors in depth) is the honest interim target used wherever a link needs to point somewhere real, e.g. the homepage's "What it checks" teaser. |
+| Understanding Leakage | Not started | No nav entry yet. `/research/` already serves this role as the existing research hub page and is linked from the homepage's own footer. |
 
-## Open item: the site-wide top nav still isn't migrated
+## Open item: eight pages still carry the old light-theme content
 
-`src/_includes/base.njk`'s top nav is still the old flat 10-item list (Home, Mechanisms, Visualizer,
-Evidence, Showcase, Proof, Reproducibility, Papers, About, Status) on every page **except** the new
-homepage footer. This was a deliberate, flagged decision in Phase 1 — migrating all 10 existing pages
-to the new 6-item IA in the same phase as "rebuild the homepage" would have been the same kind of
-scope creep that has broken this site's links twice before, done under time pressure instead of as
-its own reviewed step.
+Phase 3 unified the *header* only, exactly as scoped. The content area of these 8 pages is still the
+original light theme, not yet converted to `.landing-dark`: `proof.html`, `mechanisms.html`,
+`evidence.html`, `visualizer.html`, `reproducibility.html`, `status.html`, `demo.html`,
+`showcase.html`. The dark-header-over-light-content seam on these pages is a known, accepted interim
+state (verified by screenshot to read as a deliberate two-tone transition, not a rendering error),
+not an oversight.
 
-**This needs to happen as its own explicit phase, before or alongside Phase 3** — not bundled
-silently into Phase 2, Phase 3, or any other work. Until then, the top nav and the homepage's own
-footer nav intentionally disagree, and that's a known, accepted seam, not an oversight.
+**This needs to happen as its own explicit, tracked phase** — reskinning eight pages' worth of
+content is real work (tables, math, callout blocks, the interactive visualizer) and doing it
+piecemeal inside another phase risks the same kind of undertested change that Phase 3 itself had to
+catch and fix once already (a real mobile nav-wrapping bug, found and fixed before shipping — see the
+Phase 3 commit message).
+
+## Open item: no nav entry yet for Detectors or Understanding Leakage
+
+Both concepts have a real, existing page they can point to today (`/package/`, `/research/`) but
+neither has a dedicated nav slot, because giving them one before their purpose-built pages exist would
+either be misleading (a "Detectors" link that's really the package's install/quickstart page) or
+require deciding page-existence questions ahead of the phase meant to answer them. Add these once
+their real pages ship.
