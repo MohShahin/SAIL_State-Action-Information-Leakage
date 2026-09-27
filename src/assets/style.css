@@ -352,6 +352,10 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 .landing-dark .sc-q{ padding:14px 0; border-top:1px solid #2a2f35; }
 .landing-dark .statement-block{ background:rgba(127,216,202,.08); border:1px solid #2f5f56; color:#dfe6ee; }
 .landing-dark .statement-block .label{ color:#7fd8ca; }
+.landing-dark table.data th{ color:#8592a0; border-bottom-color:#2a2f35; }
+.landing-dark table.data td{ color:#dfe6ee; border-bottom-color:#2a2f35; }
+.landing-dark table.data td.label{ color:#f3f6f9; }
+.landing-dark table.data tr.old td{ color:#5a6472; }
 .landing-dark .warn-block{ background:rgba(245,161,90,.08); border:1px solid #6b4a26; color:#dfe6ee; }
 .landing-dark .warn-block .label{ color:#f5a15a; }
 .landing-dark input[type="text"]{

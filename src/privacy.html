@@ -5,15 +5,18 @@ activeNav: privacy
 templateEngineOverride: false
 ---
 
+<div class="landing-dark">
+
 <div class="masthead"><div class="masthead-inner">
   <h1>Privacy</h1>
   <p class="deck">Both real, shipped pieces of SAIL run entirely on your machine. This page states
   exactly what that means today, and is explicit about the one thing that's designed but not built.</p>
 </div></div>
 
-<main>
+<main class="wide">
+<div class="grid-container">
 
-<h3 class="section" style="margin-top:0;">The <code>sail-leakage</code> package</h3>
+<h3 class="section" style="margin-top:0;">The <code>sail-leakage</code> package is local-only</h3>
 <p class="plain">The package reads the file (or DataFrame) you give it and returns a report. It makes
 no network requests, sends no telemetry, and has no server component — there is nothing in its
 dependency chain that talks to the network. Verifying this is as simple as reading its source; there
@@ -25,25 +28,62 @@ a local Python subprocess on your own machine, the same way the package itself w
 terminal. The sidebar states this directly: <b>"Runs on this computer. Your patient data is never
 uploaded."</b> That line isn't marketing copy sitting next to the mechanism — it describes what the
 code actually does, which you can check in
-<a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/tree/vscode-extension/extension/src/sailBridge.ts">the extension's source</a>.</p>
+<a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/tree/vscode-extension/extension/src/sailBridge.ts" style="color:#7fd8ca;">the extension's source</a>.</p>
 
 <h3 class="section">What isn't built yet: AI-assistant fix suggestions</h3>
 <p class="plain">A future feature (an MCP server offering LLM-assisted fix suggestions inside the
 editor) is fully designed but <b>not implemented</b> — no server, no AI-assistant-facing code, and no
-network path for your data exist anywhere in the codebase today. The design commits to three tiers
-before a line of it is written: aggregate finding metadata sent by default, code snippets requiring a
-separate explicit opt-in plus a pre-send preview of the exact payload every time, and raw data values
-that are never transmissible by construction — not a setting that could be switched on. Any cloud API
-key it eventually uses would live in VS Code's <code>SecretStorage</code> (your OS keychain), never in
-a settings file, and a local-model option (e.g. Ollama) would sit alongside the cloud option so a
-network call is never required at all. The full spec, marked with its current
-"not started" status, is
-<a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/vscode-extension/extension/docs/PHASE_5_DATA_SHARING.md">public</a>.</p>
+network path for your data exist anywhere in the codebase today, confirmed by direct search of the
+repository, not inferred from a roadmap. There is exactly one data-sharing mechanism in the design;
+the privacy line an assistant view would show is required to be generated from that same mechanism,
+not written next to it as separately-worded marketing copy. Its three tiers, reproduced directly from
+the source spec below:</p>
+
+<div class="table-scroll">
+<table class="data" style="margin:14px 0;">
+  <tr><th>Tier</th><th>What may leave the machine</th><th>When</th></tr>
+  <tr><td class="label">1. Aggregate metadata</td><td>Counts, flags, verdicts, thresholds and other summary numbers</td><td>Default, always</td></tr>
+  <tr><td class="label">2. Code snippets</td><td>Code (for example a suggested fix)</td><td>Only after a separate, explicit opt-in, and only after the user has seen a pre-send preview of exactly what will be sent</td></tr>
+  <tr><td class="label">3. Raw data values</td><td>Nothing</td><td>Never. Not gated by a setting: there is no path that can carry a data value</td></tr>
+</table>
+</div>
+
+<p class="plain">Tier 3 is enforced by construction, not by a switch that could be turned on: every
+payload that can leave the machine is built from a closed schema with an allowlist, and the code that
+reads the dataset has no route to the outbound path other than through that schema. Any cloud API key
+the feature eventually uses would live in VS Code's <code>SecretStorage</code> (your OS keychain),
+never in a settings file, and a local-model option (e.g. Ollama) would sit alongside the cloud option
+so a network call is never required at all, for either tier 1 or tier 2.</p>
+
+<div class="statement-block">
+  <div class="label">Status</div>
+  Spec complete, implementation not started. Nothing in this section is built — stated exactly as the
+  source document states it, not implied to be further along than it is.
+</div>
+
+<h3 class="section">HIPAA: architectural reasoning, not a compliance certification</h3>
+<p class="plain">Because tier 3 architecturally never transmits raw data values, and tier 2's code
+snippets require a separate opt-in plus a pre-send preview the user can review before anything leaves
+the machine, the LLM-suggestion feature — once built — is designed so that no patient data (PHI) is
+transmitted to any third party by default, and can only be sent at all in a form the user has
+explicitly reviewed first. That architecture is the reason a Business Associate Agreement (BAA) with
+an LLM provider would likely not be required for the default, tier-1 path: no PHI leaves the machine
+to begin with. <b>This describes the architecture, not a legal compliance certification.</b> I'm not a
+lawyer, and this isn't a substitute for your own institution's compliance review confirming this
+satisfies your specific HIPAA obligations before you rely on it — the same standard this project holds
+itself to in <a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a> for
+MIMIC-IV's own data-use terms.</p>
+
+<p class="plain">Full technical detail, including the payload-schema and pre-send-preview requirements
+this summary doesn't try to fully reproduce:
+<a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/vscode-extension/extension/docs/PHASE_5_DATA_SHARING.md" style="color:#7fd8ca;">PHASE_5_DATA_SHARING.md</a>.</p>
 
 <h3 class="section">This project's own data handling</h3>
 <p class="plain">The research behind SAIL was built on credentialed MIMIC-IV data under a PhysioNet
 Data Use Agreement, which restricts what can be published at row level. See
-<a href="__PATHPREFIX__/DATA_ACCESS.md">DATA_ACCESS.md</a> for exactly what that means and what this
-repository does and doesn't contain as a result.</p>
+<a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a> for exactly what that
+means and what this repository does and doesn't contain as a result.</p>
 
+</div>
 </main>
+</div>
