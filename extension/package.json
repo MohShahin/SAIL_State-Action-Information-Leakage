@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "publisher": "mohshahin",
   "license": "MIT",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage.git",
@@ -140,13 +141,15 @@
     "watch": "node esbuild.js --watch",
     "vscode:prepublish": "node esbuild.js --production",
     "pretest": "npm run build && npm run build:tests",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "vsix": "npm run build && vsce package"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.0",
     "@types/vscode": "1.85.0",
     "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.21.5",
     "mocha": "^10.4.0",
     "svg2ttf": "^6.0.3",

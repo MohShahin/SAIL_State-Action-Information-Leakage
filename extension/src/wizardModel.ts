@@ -6,6 +6,7 @@
 import { CHECKS } from './checks';
 import { CheckStatus } from './state';
 import { FieldMap } from './columnMapping';
+import { FriendlyError } from './friendlyError';
 
 export type WizardStep = 'welcome' | 'data' | 'map' | 'checks' | 'running' | 'done';
 
@@ -17,7 +18,7 @@ export interface DataFile {
 
 export interface WizardState {
   readonly step: WizardStep;
-  readonly error: string | null;
+  readonly error: FriendlyError | null;
   readonly files: readonly DataFile[];
   readonly selectedFileId: string | null;
   readonly columns: readonly string[];
@@ -81,7 +82,7 @@ export interface ViewResultCard extends ResultCard {
 }
 export interface ViewModel {
   readonly step: WizardStep;
-  readonly error: string | null;
+  readonly error: FriendlyError | null;
   readonly isWelcome: boolean;
   readonly isData: boolean;
   readonly isMap: boolean;

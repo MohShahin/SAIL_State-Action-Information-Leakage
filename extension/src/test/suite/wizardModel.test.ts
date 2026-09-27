@@ -4,6 +4,7 @@ import { buildResultCards, computeViewModel, initialWizardState, mapReportToStat
 import { CHECKS } from '../../checks';
 import { computeStatusBar } from '../../state';
 import { buildReportHtml, escapeHtml } from '../../reportHtml';
+import { explainBridgeError, explainPythonMissing, explainSailMissing } from '../../friendlyError';
 
 suite('column auto-detect (pure)', () => {
   test('detects the four generic fields from typical names', () => {
@@ -170,6 +171,42 @@ suite('status bar text (pure)', () => {
       stateWith({ c1: 'flagged', c2: 'flagged', c3: 'flagged', c4: 'passed', c5: 'passed' })
     );
     assert.strictEqual(three.text, 'SAIL: 3 issues found');
+  });
+});
+
+suite('plain-language error messages (pure)', () => {
+  test('every message is a plain sentence: no exception class names, no stack traces', () => {
+    const cases = [
+      explainPythonMissing(['python3', 'python']),
+      explainSailMissing('/usr/bin/python3', "ModuleNotFoundError: No module named 'sail'"),
+      explainBridgeError("FileNotFoundError: [Errno 2] No such file or directory: '/tmp/x.csv'"),
+      explainBridgeError('PermissionError: [Errno 13] Permission denied'),
+      explainBridgeError("UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff"),
+      explainBridgeError('ParserError: Error tokenizing data'),
+      explainBridgeError('KeyError: \'no_such_column\''),
+    ];
+    for (const c of cases) {
+      assert.ok(!/Error\b/.test(c.message), `"${c.message}" still reads like a stack trace`);
+      assert.ok(!/Traceback/.test(c.message));
+      assert.ok(c.message.length > 0);
+    }
+  });
+
+  test('the raw technical text is never thrown away -- it is always in `detail`', () => {
+    const raw = "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/x.csv'";
+    const error = explainBridgeError(raw);
+    assert.ok(error.detail?.includes(raw));
+  });
+
+  test('an unrecognised error still gets a plain-language message plus the raw detail, never crashes', () => {
+    const error = explainBridgeError('some brand new exception type nobody has seen before');
+    assert.ok(error.message.length > 0);
+    assert.ok(error.detail);
+  });
+
+  test('the sail-missing message tells the user the actual fix (pip install)', () => {
+    const error = explainSailMissing('/usr/bin/python3', "No module named 'sail'");
+    assert.ok(error.detail?.includes('pip install sail-leakage'));
   });
 });
 

@@ -3,11 +3,12 @@
 Check a treatment dataset for state-action information leakage, with plain-language results. Everything
 runs on your computer: your patient data is never uploaded.
 
-> **Status: in development (Phase 4 of 6).** The setup wizard runs the real, installed `sail-leakage`
-> package and shows a full results view: five cards, a detail panel, sidebar status icons, a status bar
-> issue count and an HTML export. Plain-language error messages and packaging as a `.vsix` are Phase 6.
+> **Status: Phase 6 of 6.** The setup wizard runs the real, installed `sail-leakage` package and shows a
+> full results view: five cards, a detail panel, sidebar status icons, a status bar issue count and an HTML
+> export. Errors are translated into plain language, and the extension can be packaged as an installable
+> `.vsix`.
 
-![The SAIL panel in a dark and a light theme](docs/screenshots/panel-dark-and-light.png)
+![Checking a dataset with SAIL, from the wizard to the results view](docs/demo.gif)
 
 ## What is in it
 
@@ -35,6 +36,10 @@ runs on your computer: your patient data is never uploaded.
   safe to open or share on its own
   ([dark](docs/screenshots/wizard-results-dark.png) /
   [light](docs/screenshots/wizard-results-light.png)).
+* **Plain-language errors**: if the Python interpreter is missing, `sail-leakage` isn't installed, or the
+  file can't be read, the wizard shows a one-sentence explanation and, underneath it, the exact underlying
+  error -- never hidden, just not the first thing a non-programmer has to read
+  ([screenshot](docs/screenshots/wizard-error-dark.png)).
 
 ### An honest limit of the wizard right now
 
@@ -109,6 +114,23 @@ SAIL_TEST_PYTHON=/path/to/python/with/sail-leakage npm test
 ```
 
 `sail.pythonPath` is set only inside the test's own throwaway profile; your real settings are untouched.
+
+## Packaging as a `.vsix`
+
+```
+npm run vsix
+```
+
+This type-checks, bundles, and runs `vsce package`, producing `sail-leakage-checks-<version>.vsix` in this
+folder. Install it in any VS Code without opening this repo at all:
+
+```
+code --install-extension sail-leakage-checks-<version>.vsix
+```
+
+The packaged `.vsix` was verified the same way a real user would use it: installed into a completely empty,
+non-development VS Code profile (no other extensions, no workspace settings from this repo) and run there
+end to end, reproducing the same result as `npm test`'s integration suite.
 
 ## Repository rules
 

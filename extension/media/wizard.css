@@ -157,7 +157,8 @@ button:disabled {
   gap: 20px;
 }
 
-/* ERROR BANNER */
+/* ERROR BANNER: a plain-language headline first, the raw technical detail second and smaller --
+   never hidden, just not the first thing a non-programmer has to read. */
 .error {
   padding: 12px 14px;
   border-radius: 8px;
@@ -165,6 +166,17 @@ button:disabled {
   background: var(--vscode-inputValidation-errorBackground, transparent);
   color: var(--vscode-inputValidation-errorForeground, var(--vscode-foreground));
   font-size: 13px;
+}
+.error-message {
+  font-weight: 500;
+}
+.error-detail {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--vscode-inputValidation-errorBorder, #a1260d) 40%, transparent);
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 12px;
+  opacity: 0.85;
   white-space: pre-wrap;
 }
 

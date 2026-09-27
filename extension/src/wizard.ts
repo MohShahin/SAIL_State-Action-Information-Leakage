@@ -16,6 +16,7 @@ import {
 import { resolvePython, verifySail } from './pythonRuntime';
 import { BridgeResult, callBridge, CheckReportData, ColumnsData } from './sailBridge';
 import { buildReportHtml } from './reportHtml';
+import { explainBridgeError, explainPythonError, explainPythonMissing, explainSailMissing, explainSaveError } from './friendlyError';
 
 /**
  * The three-step setup wizard, in an editor tab (a WebviewPanel, not the sidebar). One panel at a time:
@@ -103,20 +104,16 @@ export class WizardPanel {
     }
     const found = await resolvePython();
     if (!found) {
-      this.setState({
-        error:
-          'No Python interpreter was found (checked python3, python on PATH). Set "sail.pythonPath" in Settings, ' +
-          'or install the Python extension and select an interpreter.',
-      });
+      this.setState({ error: explainPythonMissing(['python3', 'python']) });
       return null;
     }
     const probe = await verifySail(found);
     if (!probe.ok) {
-      const message =
+      const error =
         probe.stage === 'sail'
-          ? `sail-leakage is not installed for "${found}": ${probe.message}\nRun: pip install sail-leakage`
-          : `Could not run Python at "${found}": ${probe.message}`;
-      this.setState({ error: message });
+          ? explainSailMissing(found, probe.message ?? '')
+          : explainPythonError(found, probe.message ?? '');
+      this.setState({ error });
       return null;
     }
     this.log.info(`using Python at "${found}" (sail-leakage ${probe.version})`);
@@ -212,7 +209,7 @@ export class WizardPanel {
     try {
       await vscode.workspace.fs.writeFile(target, Buffer.from(html, 'utf8'));
     } catch (err) {
-      this.setState({ error: `Could not save the report: ${String(err)}` });
+      this.setState({ error: explainSaveError(String(err)) });
       return;
     }
     const openIt = 'Open in Browser';
@@ -242,7 +239,7 @@ export class WizardPanel {
       }
       const result = await callBridge<ColumnsData>(python, this.bridgeScript(), { cmd: 'columns', path: file.id });
       if (!result.ok) {
-        this.setState({ error: `Could not read that file:\n${result.error}` });
+        this.setState({ error: explainBridgeError(result.error) });
         return;
       }
       this.setState({ error: null, step: 'map', columns: result.data.columns, map: autoDetect(result.data.columns) });
@@ -291,7 +288,7 @@ export class WizardPanel {
 
   private finishRun(result: BridgeResult<CheckReportData>, enabled: Record<string, boolean>, datasetLabel: string): void {
     if (!result.ok) {
-      this.setState({ step: 'done', error: result.error, results: null });
+      this.setState({ step: 'done', error: explainBridgeError(result.error), results: null });
       return;
     }
     const report = result.data as ReportLikeWithText;
