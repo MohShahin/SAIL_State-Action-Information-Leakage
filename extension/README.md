@@ -7,6 +7,11 @@ runs on your computer: your patient data is never uploaded.
 > full results view: five cards, a detail panel, sidebar status icons, a status bar issue count and an HTML
 > export. Errors are translated into plain language, and the extension can be packaged as an installable
 > `.vsix`.
+>
+> **Phase 5 (an MCP server for AI-assistant fix suggestions) is speced but not built.** No server, no
+> `mcp/` folder, and no AI-assistant-facing code exist in this repository. The full three-tier data-sharing
+> design it must satisfy when it is built lives in
+> [docs/PHASE_5_DATA_SHARING.md](docs/PHASE_5_DATA_SHARING.md).
 
 ![Checking a dataset with SAIL, from the wizard to the results view](docs/demo.gif)
 
