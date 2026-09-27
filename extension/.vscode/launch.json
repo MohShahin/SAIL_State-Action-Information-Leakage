@@ -2,17 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
-      // Press Ctrl+F5 (Run Without Debugging) for the reliable, fast start. F5 also works on most
-      // machines, but it attaches a debugger, and on machines where "localhost" resolves to IPv6 (::1)
-      // the debugger cannot attach and the window reports "Extension host did not start in 10 seconds".
-      "name": "Run SAIL extension",
+      // F5. Opens the test window itself (see the "debuggable" task) with the extension host's debug port
+      // on 127.0.0.1, then attaches to exactly that address. VS Code's own "extensionHost" launcher picks
+      // "localhost" instead, which resolves to IPv6 (::1) on some machines where the port is not listening,
+      // so it can never attach and reports "Extension host did not start in 10 seconds".
+      "name": "Debug SAIL",
+      "type": "node",
+      "request": "attach",
+      "address": "127.0.0.1",
+      "port": 5870,
+      "timeout": 60000,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "SAIL: open test window (debuggable)"
+    },
+    {
+      // VS Code's built-in launcher. Fine on most machines; see the note above if it hangs.
+      "name": "Run SAIL (VS Code's launcher)",
       "type": "extensionHost",
       "request": "launch",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        // Load only SAIL in the test window: your other extensions can't slow its startup.
-        "--disable-extensions"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}", "--disable-extensions"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "preLaunchTask": "npm: bundle"
     }

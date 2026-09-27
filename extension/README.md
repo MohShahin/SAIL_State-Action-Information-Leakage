@@ -26,15 +26,41 @@ runs on your computer: your patient data is never uploaded.
 
 1. In VS Code choose **File → Open Folder…** and open this `extension` folder.
 2. Run `npm install` once in a terminal there.
-3. Press **Ctrl+F5** (*Run Without Debugging*). A window titled *[Extension Development Host]* opens with only
-   SAIL loaded. Click the sail icon in its activity bar.
+3. Press **F5**. A window titled *[Extension Development Host]* opens with only SAIL loaded, and the
+   debugger is attached to it (set breakpoints in `src/`). Click the sail icon in its activity bar.
 
-**If plain F5 says "Extension host did not start in 10 seconds"**, that is not SAIL. F5 attaches a
-debugger to the new window, and on machines where `localhost` resolves to IPv6 (`::1`) the debugger's
-connection is refused, so the window waits for a debugger that never attaches. Use **Ctrl+F5**, or run the
-task **SAIL: open test window (no debugger)** (*Terminal → Run Task*). Both skip the debugger. To confirm the
-cause on your machine, open *Help → Toggle Developer Tools* in the main window and look for
-`ECONNREFUSED ::1`.
+No debugger needed? Run the task **SAIL: open test window (no debugger)** (*Terminal → Run Task*).
+
+### Why F5 is set up this way
+
+VS Code's own extension launcher attaches its debugger to the test window using the address `localhost`.
+On machines where `localhost` resolves to IPv6 (`::1`) first, the test window's debug port is not listening
+there, so the connection is refused hundreds of times and VS Code reports *"Extension host did not start in
+10 seconds, it might be stopped on the first line and needs a debugger to continue."* That is not a SAIL
+problem, and it affects any extension.
+
+So F5 here runs the **Debug SAIL** configuration instead. It first runs the task *SAIL: open test window
+(debuggable)*, which opens the test window with its debug port on `127.0.0.1` (IPv4), and then attaches to
+exactly that address. The original launcher is still there as *Run SAIL (VS Code's launcher)* if you prefer it.
+
+* The tasks run the `code` command, not VS Code's executable directly. `code` exits as soon as the window
+  is open; the executable does not, which leaves F5 stuck on "Waiting for preLaunchTask".
+* Debug port `5870` must be free. If a previous test window is still open, close it first.
+* The tasks send the test window to the VS Code you ran them from. If you start VS Code with a custom
+  `--user-data-dir`, add the same flag to the two tasks.
+
+### How long it takes
+
+Measured with F5 pressed in a throwaway VS Code (your settings and extension folder copied, not modified):
+
+| | No extensions | 36 extensions loaded |
+|---|---|---|
+| Test window opens | 6.2 s | 10.3 to 14.4 s |
+| **SAIL and the status bar item are active** | **11.7 s** | **16.5 to 22.3 s** |
+| Panel content shown after you open it | about 0.2 s | 0.2 to 0.4 s |
+
+SAIL itself activates in under 10 ms and needs about 0.2 s to draw the panel. Nearly all of the wait is VS
+Code creating a new window, which is slower when many extensions are loaded in the window you launch from.
 
 ## Build and test
 
