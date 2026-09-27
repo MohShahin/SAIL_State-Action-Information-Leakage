@@ -313,3 +313,53 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
   color:#5a6472; margin:0 0 4px;
 }
 .landing-dark .see-math{ display:inline-block; margin-top:10px; font-size:13px; color:#7fd8ca; }
+
+/* Library card grid (website rebuild Phase 5), shared by papers.html and
+   datasets-and-models.html -- one system, not two. */
+.landing-dark .lib-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:16px;
+}
+.landing-dark .lib-card{ border:1px solid #2a2f35; border-radius:6px; padding:20px; background:#1b1f24; }
+.landing-dark .lib-card h3{
+  font-family:var(--serif); font-weight:400; font-size:16px; margin:10px 0 4px; color:#f3f6f9;
+  border:none; padding:0; text-transform:none; letter-spacing:normal;
+}
+.landing-dark .lib-card .lib-meta{ font-size:12.5px; color:#5a6472; }
+.landing-dark .lib-card .lib-desc{ font-size:13px; color:#a9b7c4; line-height:1.55; margin-top:10px; }
+.landing-dark .lib-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
+.landing-dark .lib-tags span{
+  font-family:var(--mono); font-size:10px; color:#8592a0; background:#14171a; border:1px solid #2a2f35;
+  padding:2px 7px; border-radius:3px;
+}
+.landing-dark .lib-card .view-link{ display:inline-block; margin-top:12px; font-size:12.5px; color:#7fd8ca; }
+.landing-dark .lib-badge{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
+.landing-dark .badge-confound{ background:rgba(201,151,77,.15); color:#c9974d; }
+.landing-dark .badge-context{ background:rgba(255,255,255,.06); color:#8592a0; }
+.landing-dark .badge-related{ background:rgba(127,216,202,.12); color:#7fd8ca; }
+.landing-dark .badge-dataset{ background:rgba(143,189,232,.14); color:#8fbde8; }
+.landing-dark .badge-model{ background:rgba(127,216,202,.12); color:#7fd8ca; }
+.landing-dark .tag-btn{
+  font-family:var(--sans); font-size:11.5px; padding:6px 12px; border-radius:14px; border:1px solid #2a2f35;
+  background:#1b1f24; color:#a9b7c4; cursor:pointer;
+}
+.landing-dark .tag-btn.on{ border-color:#7fd8ca; color:#7fd8ca; background:rgba(127,216,202,.12); font-weight:600; }
+.landing-dark .lib-empty{
+  text-align:center; padding:56px 24px; border:1px dashed #2a2f35; border-radius:8px; margin-top:16px;
+}
+.landing-dark .lib-empty p{ color:#a9b7c4; font-size:15px; margin:0 0 18px; }
+
+/* Self-check tool (papers.html), reused as-is -- only re-themed. */
+.landing-dark .sc-q{ padding:14px 0; border-top:1px solid #2a2f35; }
+.landing-dark .statement-block{ background:rgba(127,216,202,.08); border:1px solid #2f5f56; color:#dfe6ee; }
+.landing-dark .statement-block .label{ color:#7fd8ca; }
+.landing-dark .warn-block{ background:rgba(245,161,90,.08); border:1px solid #6b4a26; color:#dfe6ee; }
+.landing-dark .warn-block .label{ color:#f5a15a; }
+.landing-dark input[type="text"]{
+  background:#14171a; border:1px solid #2a2f35; color:#dfe6ee;
+}
+.landing-dark input[type="text"]::placeholder{ color:#5a6472; }
+.landing-dark label{ color:#dfe6ee !important; }
+
+/* Giscus comment section: a fixed-height slot before the widget's iframe injects itself, so the
+   page doesn't visibly jump once it loads. */
+.landing-dark .comments-section{ min-height:180px; }

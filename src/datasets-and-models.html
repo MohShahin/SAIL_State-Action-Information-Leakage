@@ -5,31 +5,79 @@ activeNav: datasets-and-models
 templateEngineOverride: false
 ---
 
+<div class="landing-dark">
+
 <div class="masthead"><div class="masthead-inner">
   <h1>Datasets & Models</h1>
   <p class="deck">A place to flag datasets and models known or suspected to involve state-action
-  leakage. There's no catalog here yet — this page states what exists today and how to contribute.</p>
+  leakage — built the same way as the Papers library, currently with zero real entries.</p>
 </div></div>
 
-<main>
+<main class="wide">
+<div class="grid-container">
 
-<h3 class="section" style="margin-top:0;">Know a dataset or model with this problem?</h3>
-<p class="plain">If a published dataset or model resembles one of
-<a href="__PATHPREFIX__/package/">SAIL's five leakage categories</a> — or a pattern that isn't one of
-the five yet — file it through the structured submission form:
-<a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new/choose">Submit a dataset or model</a>.
-It asks whether it's a dataset, a model, or a paired pipeline, a link, and the specific leakage
-concern.</p>
+<div id="libraryGrid"></div>
 
 <h3 class="section">This project's own dataset</h3>
 <p class="plain">SAIL's research was built on MIMIC-IV, a credentialed-access ICU dataset. What this
 repository can and can't publish about it — and why — is documented in
-<a href="__PATHPREFIX__/DATA_ACCESS.md">DATA_ACCESS.md</a>.</p>
+<a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a>.</p>
 
-<h3 class="section">What's not here yet</h3>
-<p class="plain">A browsable catalog of submitted datasets and models is a later addition, once there
-are submissions worth displaying. Submitting one now is still useful: it's the first entry, not a
-message into a void — <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues?q=is%3Aissue+label%3Adataset-model-submission">open submissions are visible on GitHub</a>
-in the meantime.</p>
+<h3 class="section">Comments</h3>
+<div class="card comments-section">
+  <script src="https://giscus.app/client.js"
+          data-repo="MohShahin/SAIL_State-Action-Information-Leakage"
+          data-repo-id="R_kgDOUtfz3g"
+          data-category="Q&A"
+          data-category-id="DIC_kwDOUtfz3s4DGhxr"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="bottom"
+          data-theme="preferred_color_scheme"
+          data-lang="en"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
 
+</div>
 </main>
+</div>
+
+<script>
+// Same lib-card system as papers.html, currently with zero real entries -- see
+// docs/WEBSITE_REBUILD_STATUS.md. When real entries exist, this becomes an array of
+// { title, kind: "Dataset"|"Model", description, tags, link } rendered the same way
+// papers.html renders PAPERS, using .badge-dataset / .badge-model.
+const ENTRIES = [];
+
+function renderLibrary(){
+  const el = document.getElementById('libraryGrid');
+  if (ENTRIES.length === 0) {
+    el.innerHTML = `
+      <div class="lib-empty">
+        <p><b>This library is just getting started</b> — help us grow it.</p>
+        <p>Know a published dataset or model that resembles one of
+        <a href="__PATHPREFIX__/detectors/" style="color:#7fd8ca;">SAIL's five leakage categories</a>
+        — or a pattern that isn't one of the five yet? Be the first real entry, not a message into a
+        void: <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues?q=is%3Aissue+label%3Adataset-model-submission" style="color:#7fd8ca;">open submissions are already visible on GitHub</a>.</p>
+        <a class="navbtn primary" style="text-decoration:none;"
+           href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new?template=submit-a-dataset-or-model.yml">Submit a dataset or model →</a>
+      </div>`;
+    return;
+  }
+  el.className = 'lib-grid';
+  el.innerHTML = ENTRIES.map(e => `
+    <div class="lib-card">
+      <span class="lib-badge ${e.kind === 'Dataset' ? 'badge-dataset' : 'badge-model'}">${e.kind}</span>
+      <h3>${e.title}</h3>
+      <p class="lib-desc">${e.description}</p>
+      <div class="lib-tags">${(e.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>
+      <a href="${e.link}" target="_blank" rel="noopener" class="view-link">View source →</a>
+    </div>`).join('');
+}
+
+renderLibrary();
+</script>

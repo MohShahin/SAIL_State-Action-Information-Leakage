@@ -5,36 +5,31 @@ activeNav: papers
 templateEngineOverride: false
 ---
 
-<style>
-  .tag-btn{ font-family:var(--sans); font-size:11.5px; padding:6px 12px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink-soft); cursor:pointer; }
-  .tag-btn.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600; }
-  .paper-card{ border:1px solid var(--line); border-radius:4px; padding:20px; background:var(--paper); }
-  .paper-card .cat{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
-  .cat-confound{ background:var(--treat-soft); color:var(--treat); }
-  .cat-context{ background:var(--line-soft); color:var(--ink-soft); }
-  .cat-related{ background:var(--accent-soft); color:var(--accent); }
-  .paper-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
-  .paper-tags span{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); background:var(--bg); border:1px solid var(--line); padding:2px 7px; border-radius:3px; }
-  .sc-q{ padding:14px 0; border-top:1px solid var(--line-soft); }
-  .sc-q p{ margin:0 0 10px; font-size:14px; }
-  .sc-ans{ min-width:56px; }
-</style>
+<div class="landing-dark">
 
 <div class="masthead"><div class="masthead-inner">
   <h1>Related literature</h1>
   <p class="deck">Eight sources, each doing real work for this project's own claims — not a padded
   reading list. A fuller literature review (additional sepsis-RL studies, temporal-bias
-  references) is planned; see <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>
+  references) is planned; see <a href="__PATHPREFIX__/ROADMAP.md" style="color:#7fd8ca;">ROADMAP.md</a>
   Phase 6. Nothing below is labeled beyond what's actually verified.</p>
 </div></div>
 
 <main class="wide">
+<div class="grid-container">
 
 <div class="card" style="margin-bottom:8px;">
   <div id="tagFilters" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
 </div>
 
-<div id="paperGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:16px;"></div>
+<div id="paperGrid" class="lib-grid"></div>
+
+<div style="text-align:center; margin-top:var(--space-4); padding-top:var(--space-4); border-top:1px solid #2a2f35;">
+  <p class="plain" style="margin-bottom:var(--space-2);">Know a paper doing real work for or against
+  this project's claims that isn't listed here?</p>
+  <a class="navbtn primary" style="text-decoration:none;"
+     href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new?template=submit-a-paper.yml">Suggest a paper →</a>
+</div>
 
 <h3 class="section">Think your paper's state representation might have this problem? Self-check</h3>
 <div class="card" id="selfCheckCard">
@@ -44,12 +39,12 @@ templateEngineOverride: false
   own browser, to check which of this project's already-documented patterns your description
   matches.</p>
 
-  <label for="scPaperLink" style="display:block; font-size:12.5px; font-weight:600; color:var(--ink); margin-bottom:6px;">
-    Link to your paper <span style="font-weight:400; color:var(--ink-faint);">(arXiv, journal, preprint server — optional)</span>
+  <label for="scPaperLink" style="display:block; font-size:12.5px; font-weight:600; margin-bottom:6px;">
+    Link to your paper <span style="font-weight:400; color:#5a6472;">(arXiv, journal, preprint server — optional)</span>
   </label>
   <input type="text" id="scPaperLink" placeholder="https://…" autocomplete="off"
-    style="width:100%; font-family:var(--sans); font-size:13.5px; padding:9px 12px; border:1px solid var(--line); border-radius:3px; margin-bottom:6px;">
-  <p class="plain" style="font-size:12px; color:var(--ink-faint); margin-bottom:8px;">Carried
+    style="width:100%; font-family:var(--sans); font-size:13.5px; padding:9px 12px; border-radius:3px; margin-bottom:6px;">
+  <p class="plain" style="font-size:12px; color:#5a6472; margin-bottom:8px;">Carried
   through only as a reference for a human reviewer if you choose to contact the team below — never
   fetched or parsed by this page.</p>
 
@@ -60,11 +55,33 @@ templateEngineOverride: false
   <a id="scContactBtn" href="#" target="_blank" rel="noopener" class="navbtn primary" style="margin-top:8px;">Contact the SAIL team about this →</a>
 </div>
 
+<h3 class="section">Comments</h3>
+<div class="card comments-section">
+  <script src="https://giscus.app/client.js"
+          data-repo="MohShahin/SAIL_State-Action-Information-Leakage"
+          data-repo-id="R_kgDOUtfz3g"
+          data-category="Q&A"
+          data-category-id="DIC_kwDOUtfz3s4DGhxr"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="bottom"
+          data-theme="preferred_color_scheme"
+          data-lang="en"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
+
+</div>
 </main>
 
 <div class="pagenav">
   <a href="__PATHPREFIX__/reproducibility/">← Reproducibility</a>
   <a href="__PATHPREFIX__/about/" class="primary">About →</a>
+</div>
+
 </div>
 
 <script>
@@ -74,7 +91,7 @@ const PAPERS = [
     authors: "Vincent, J.-L. et al.",
     venue: "Intensive Care Medicine, 1996",
     category: "Documented treatment-confounding source",
-    catClass: "cat-confound",
+    catClass: "badge-confound",
     tags: ["SOFA score", "Clinical scoring", "Sepsis"],
     relevance: "Defines the exact cardiovascular scoring rule proven non-identifiable from MAP alone (Theorem 1) — the source of Mechanism 1. The rule's treatment-dependence is documented here and known to clinicians; SAIL's contribution isn't discovering that dependence, but proving that offline sepsis-RL pipelines treat this therapy-dependent score as a valid pre-decision state feature without accounting for it — and that Theorem 2's reconstruction result means removing the subscore alone doesn't fix it.",
     link: "https://doi.org/10.1007/BF01709751"
@@ -84,7 +101,7 @@ const PAPERS = [
     authors: "Komorowski, M. et al.",
     venue: "Nature Medicine, 2018",
     category: "Included for context",
-    catClass: "cat-context",
+    catClass: "badge-context",
     tags: ["Clinical AI", "Reinforcement learning", "Sepsis"],
     relevance: "The offline-RL framework whose state-representation assumptions this audit examines directly.",
     link: "https://doi.org/10.1038/s41591-018-0213-5"
@@ -94,7 +111,7 @@ const PAPERS = [
     authors: "Hernán, M. A. & Robins, J. M.",
     venue: "Chapman & Hall/CRC, 2020",
     category: "Related methodological issue",
-    catClass: "cat-related",
+    catClass: "badge-related",
     tags: ["Causal inference", "Confounding"],
     relevance: "The general principle — conditioning prediction on a variable affected by treatment — underlying why the state is a descendant of prior action (Proposition 2).",
     link: "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/"
@@ -104,7 +121,7 @@ const PAPERS = [
     authors: "Robins, J. M.",
     venue: "Mathematical Modelling, 1986 (errata & addendum, Computers and Mathematics with Applications, 1987)",
     category: "Documented treatment-confounding source",
-    catClass: "cat-confound",
+    catClass: "badge-confound",
     tags: ["Causal inference", "g-methods", "Time-varying confounding", "Treatment-confounder feedback"],
     relevance: "The classical biostatistics answer to exactly the causal structure SAIL's mechanisms instantiate: a time-varying confounder (SOFA cardio score) affected by prior treatment, feeding back into the next treatment decision — precisely the treatment-confounder-feedback structure this paper's g-computation algorithm was built to handle, and the same structure underlying Proposition 2's causal graph. But g-methods (later extended to marginal structural models by Robins, Hernán & Brumback, 2000, Epidemiology 11(5):550–560) and SAIL solve different problems, not competing ones. G-computation and marginal structural models are <b>estimation</b> tools: they presuppose the treatment-confounder-feedback structure is already known and ask how to consistently estimate a treatment's causal effect on an outcome despite it. SAIL's contribution is upstream of that — a <b>detection</b> result: proving that a specific pre-decision state construction (the SOFA cardiovascular subscore) is non-identifiable from physiology once treatment is present, and that naive feature removal (Theorem 2) doesn't fix it. SAIL estimates no causal effect and makes no such claim; it establishes that a particular offline-RL state representation has a structural problem before anyone reaches the estimation question g-methods answer. The two literatures are complementary: g-methods would be the natural next step for anyone wanting to estimate treatment effects despite the exact feedback structure SAIL diagnoses, not an alternative to diagnosing it in the first place.",
     link: "https://www.semanticscholar.org/paper/4d508675ee414f4a8041a7270f63f3307ce50476"
@@ -114,7 +131,7 @@ const PAPERS = [
     authors: "Gottesman, O., Johansson, F., Komorowski, M., Faisal, A., Sontag, D., Doshi-Velez, F. & Celi, L. A.",
     venue: "Nature Medicine, 2019",
     category: "Related methodological issue",
-    catClass: "cat-related",
+    catClass: "badge-related",
     tags: ["Reinforcement learning", "Off-policy evaluation", "Clinical AI", "Guidelines"],
     relevance: "Field-level guidance on confounding, distributional shift, and off-policy evaluation pitfalls in clinical RL — the general methodological concerns this project's Experiment 5 negative controls are designed to address for one specific mechanism.",
     link: "https://doi.org/10.1038/s41591-018-0310-5"
@@ -124,7 +141,7 @@ const PAPERS = [
     authors: "Jeter, R., Josef, C., Shashikumar, S. & Nemati, S.",
     venue: "arXiv:1902.03271, 2019",
     category: "Related methodological issue",
-    catClass: "cat-related",
+    catClass: "badge-related",
     tags: ["Reinforcement learning", "Off-policy evaluation", "Sepsis", "Temporal binning", "Critique"],
     relevance: "An independent critique of the AI Clinician's methodology. Section 6.1 documents a related but mechanistically distinct temporal-binning confound: a 4-hour bin can average over a MAP crash and its vasopressor-driven recovery, so the bin's summary looks normal despite the treatment that occurred within it — within-bin masking, not the cross-bin window overlap this project's Mechanism 2 proves.",
     link: "https://arxiv.org/abs/1902.03271"
@@ -134,7 +151,7 @@ const PAPERS = [
     authors: "Daoud, A., Jerzak, C. T. & Johansson, R.",
     venue: "NAACL 2022, pp. 5638–5645",
     category: "Related methodological issue",
-    catClass: "cat-related",
+    catClass: "badge-related",
     tags: ["Causal inference", "Treatment leakage", "Text-based causal inference", "Collider bias"],
     relevance: "Names and formalizes \"treatment leakage\" as a general causal phenomenon: a representation (there, text used as a confounder proxy) that is itself affected by treatment, inducing post-treatment/collider bias when conditioned on — the same causal pathology SAIL's Theorem 1 instantiates, in a different (text, not longitudinal clinical state) representation-learning setting. SAIL's contribution is not this general concept, but a mechanism-specific, provable proof for a concrete, widely-used clinical score, situated in a sequential-decision (RL) setting rather than a single-timepoint effect-estimation one.",
     link: "https://aclanthology.org/2022.naacl-main.413/"
@@ -144,7 +161,7 @@ const PAPERS = [
     authors: "Tang, S., Yao, J., Wiens, J. & Parbhoo, S.",
     venue: "npj Digital Medicine, May 2026",
     category: "Related methodological issue",
-    catClass: "cat-related",
+    catClass: "badge-related",
     tags: ["Reinforcement learning", "Temporal misalignment", "Sepsis", "MIMIC-III", "Index alignment"],
     relevance: "A genuinely different pathology from either of SAIL's own mechanisms: the *index* assigned to states vs. actions is misaligned in common preprocessing practice, so a_t ends up contemporaneously aligned with s_t instead of following it — this is actual target/temporal leakage in the strict sense (see Terminology), not the treatment-confounded-construction or treatment-overlap pathways SAIL documents. 335 of 750 states (44.7%) showed disagreeing optimal actions between aligned and misaligned policies on real, already-trained MIMIC-III policies. Complementary, not competing, evidence: an index-based leakage mechanism, distinct in kind from SAIL's content-based mechanisms (Theorem 1's definitional treatment-dependence, Proposition 1's window overlap) — the same underlying problem class (temporal structure in EHR data breaking causal assumptions required for valid RL), diagnosed a different way. This project's own action-label construction was directly verified to avoid this specific mechanism (see Terminology).",
     link: "https://www.nature.com/articles/s41746-026-02625-2"
@@ -172,13 +189,13 @@ function renderFilters(){
 function renderGrid(){
   const filtered = activeTag ? PAPERS.filter(p => p.tags.includes(activeTag)) : PAPERS;
   document.getElementById('paperGrid').innerHTML = filtered.map(p => `
-    <div class="paper-card">
-      <span class="cat ${p.catClass}">${p.category}</span>
-      <h3 style="font-family:var(--serif); font-weight:400; font-size:16px; margin:10px 0 4px;">${p.title}</h3>
-      <div style="font-size:12.5px; color:var(--ink-faint);">${p.authors} · ${p.venue}</div>
-      <p style="font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:10px;">${p.relevance}</p>
-      <div class="paper-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>
-      <a href="${p.link}" target="_blank" rel="noopener" style="display:inline-block; margin-top:12px; font-size:12.5px; color:var(--accent);">View source →</a>
+    <div class="lib-card">
+      <span class="lib-badge ${p.catClass}">${p.category}</span>
+      <h3>${p.title}</h3>
+      <div class="lib-meta">${p.authors} · ${p.venue}</div>
+      <p class="lib-desc">${p.relevance}</p>
+      <div class="lib-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <a href="${p.link}" target="_blank" rel="noopener" class="view-link">View source →</a>
     </div>`).join('') || `<p class="plain">No papers match this filter yet.</p>`;
 }
 
@@ -203,11 +220,11 @@ function scRenderQuestions(){
     <div class="sc-q">
       <p class="plain">${i+1}. ${q.text}</p>
       <div style="display:flex; gap:8px;">
-        <button type="button" class="tag-btn sc-ans ${scAnswers[q.id]===true?'on':''}" data-q="${q.id}" data-val="yes">Yes</button>
-        <button type="button" class="tag-btn sc-ans ${scAnswers[q.id]===false?'on':''}" data-q="${q.id}" data-val="no">No</button>
+        <button type="button" class="tag-btn ${scAnswers[q.id]===true?'on':''}" data-q="${q.id}" data-val="yes">Yes</button>
+        <button type="button" class="tag-btn ${scAnswers[q.id]===false?'on':''}" data-q="${q.id}" data-val="no">No</button>
       </div>
     </div>`).join('');
-  wrap.querySelectorAll('.sc-ans').forEach(b => {
+  wrap.querySelectorAll('.tag-btn[data-q]').forEach(b => {
     b.addEventListener('click', () => {
       scAnswers[b.dataset.q] = b.dataset.val === 'yes';
       scRenderQuestions();
@@ -226,14 +243,14 @@ function scRenderResults(){
     if (scAnswers.q4 === true) {
       blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment-confounded severity construction</div>
         This resembles the treatment-confounded severity construction pattern this project documents
-        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1, Proof</a>)
+        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:#7fd8ca;">Theorem 1, Proof</a>)
         — but you've already tested removing the treatment-derived features directly, which is
         exactly the check this project's own Experiment 6 ran. Worth comparing notes with the team
         if your result surprised you.</div>`);
     } else {
       blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment-confounded severity construction</div>
         This resembles the treatment-confounded severity construction pattern this project documents
-        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:var(--accent);">Theorem 1, Proof</a>)
+        (see <a href="__PATHPREFIX__/proof/#thm1" style="color:#7fd8ca;">Theorem 1, Proof</a>)
         — worth checking directly against your own state definition, not assumed from these answers
         alone.</div>`);
     }
@@ -242,14 +259,14 @@ function scRenderResults(){
   if (scAnswers.q3 === true) {
     blocks.push(`<div class="statement-block"><div class="label">Resembles: treatment overlap</div>
       This resembles the treatment-overlap pattern this project documents (see
-      <a href="__PATHPREFIX__/proof/#prop1" style="color:var(--accent);">Proposition 1, Proof</a>).</div>`);
+      <a href="__PATHPREFIX__/proof/#prop1" style="color:#7fd8ca;">Proposition 1, Proof</a>).</div>`);
   }
 
   if (scAnswers.q5 === true) {
     blocks.push(`<div class="warn-block"><div class="label">Worth a closer look</div>
       Including information about the same or a later decision point's action is closest to the
       strict sense of "leakage" this project uses (see
-      <a href="__PATHPREFIX__/mechanisms/#term" style="color:var(--treat);">Terminology, Mechanisms</a>)
+      <a href="__PATHPREFIX__/proof/#term" style="color:#f5a15a;">Terminology, Proof</a>)
       — not the treatment-confounding patterns above.</div>`);
   }
 
@@ -264,7 +281,7 @@ function scRenderResults(){
     return;
   }
 
-  blocks.push(`<p class="plain" style="font-size:12.5px; color:var(--ink-faint); margin-top:4px;">
+  blocks.push(`<p class="plain" style="font-size:12.5px; color:#5a6472; margin-top:4px;">
     This is a self-check based on published patterns, not a review of your actual paper. If you'd
     like the SAIL team to look at this directly, use the contact link below.</p>`);
 
