@@ -285,6 +285,19 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
   background:#0c0e10; margin-bottom:12px; color:#5a6472; flex:0 0 auto;
 }
 .landing-dark .placeholder-icon svg{ width:26px; height:26px; }
+.landing-dark .team-photo{
+  width:64px; height:64px; border-radius:50%; object-fit:cover; display:block; margin-bottom:12px;
+  border:1px solid #2a2f35; flex:0 0 auto;
+}
+/* An externally-branded logo (e.g. a sibling lab's) drawn in dark marks on the assumption of a
+   light background -- wrapped in one so it stays legible here rather than nearly-invisible on
+   dark-on-dark. */
+.landing-dark .affiliate-badge{
+  display:inline-flex; align-items:center; gap:10px; background:#f4f4f4; border-radius:6px;
+  padding:8px 14px; margin-top:var(--space-2);
+}
+.landing-dark .affiliate-badge img{ height:28px; width:auto; display:block; }
+.landing-dark .affiliate-badge span{ font-family:var(--sans); font-size:12px; color:#333; }
 .landing-dark .card.placeholder{
   background:transparent; border:1px dashed #3a4048;
 }
