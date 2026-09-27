@@ -1,0 +1,164 @@
+/*
+ * SAIL sidebar. Surfaces, text and borders come from the user's VS Code theme (--vscode-*), so the
+ * panel follows any light, dark or high-contrast theme. Only the three SAIL accents are our own:
+ * teal (brand / active), amber (flagged) and blue (passed). Each has a light-theme tone, because
+ * the dark-theme tones from the design do not have enough contrast on a light background.
+ */
+:root {
+  --sail-accent: #7fd8ca;
+  --sail-flagged: #f5a15a;
+  --sail-passed: #8fbde8;
+}
+body.vscode-light,
+body.vscode-high-contrast-light {
+  --sail-accent: #0b6b5e;
+  --sail-flagged: #9a5200;
+  --sail-passed: #2f5f8f;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--vscode-foreground);
+  background: transparent;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  line-height: 1.45;
+}
+
+.sail {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 18px 18px;
+}
+
+.eyebrow {
+  margin: 0;
+  padding: 10px 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--vscode-descriptionForeground);
+}
+
+section + section {
+  margin-top: 8px;
+}
+
+/* DATASET */
+.dataset {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--vscode-descriptionForeground);
+  background: color-mix(in srgb, var(--vscode-foreground) 7%, transparent);
+}
+.dataset svg {
+  flex-shrink: 0;
+}
+.dataset-label {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.95em;
+  overflow-wrap: anywhere;
+}
+
+/* CHECKS */
+.checks {
+  margin: 0 -10px 24px;
+  padding: 0;
+  list-style: none;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.check-name {
+  flex-grow: 1;
+}
+.check-tag {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.glyph {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+/* waiting to run */
+.glyph-pending {
+  border-radius: 50%;
+  border: 1.5px solid var(--vscode-descriptionForeground);
+  opacity: 0.7;
+}
+/* used from Phase 4 on */
+.glyph-running {
+  border-radius: 50%;
+  border: 2px solid var(--sail-accent);
+  border-top-color: transparent;
+}
+.glyph-flagged {
+  border-radius: 4px;
+  background: var(--sail-flagged);
+  color: #1a1206;
+  font-size: 12px;
+  font-weight: 700;
+}
+.glyph-passed {
+  border-radius: 50%;
+  background: var(--sail-passed);
+  color: #ffffff;
+}
+body.vscode-dark .glyph-passed,
+body.vscode-high-contrast .glyph-passed {
+  color: #10243a;
+}
+body.vscode-light .glyph-flagged,
+body.vscode-high-contrast-light .glyph-flagged {
+  color: #ffffff;
+}
+
+/* Privacy note */
+.privacy {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  /* pushed to the bottom of the panel; the checks list keeps a minimum gap above it */
+  margin-top: auto;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--sail-accent) 45%, transparent);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--vscode-foreground);
+}
+.privacy svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--sail-accent);
+}
+.privacy p {
+  margin: 0;
+}
+
+body.vscode-high-contrast .privacy,
+body.vscode-high-contrast-light .privacy {
+  border-color: var(--vscode-contrastBorder);
+}
+
+:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}

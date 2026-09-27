@@ -56,3 +56,12 @@ bigquery-credentials*
 !results/experiment6_mortality_vs_action_recoverability.json
 !results/experiment7_respiratory_sofa_summary.json
 !results/experiment8_variant_f_summary.json
+
+# ---------------------------------------------------------------------------
+# VS Code extension (extension/): build output and packages are never committed,
+# but its launch/tasks config is (the repo-wide ".vscode/" rule above would hide it).
+# ---------------------------------------------------------------------------
+extension/out/
+extension/.vscode-test/
+extension/*.vsix
+!extension/.vscode/
