@@ -2,12 +2,34 @@
   "version": "2.0.0",
   "tasks": [
     {
+      // What F5 / Ctrl+F5 run first. Bundling takes about 0.3 s; the slower type-check is a separate task.
       "type": "npm",
-      "script": "compile",
+      "script": "bundle",
       "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "label": "npm: bundle",
+      "detail": "bundle src/extension.ts into dist/extension.js (fast)"
+    },
+    {
+      "type": "npm",
+      "script": "typecheck",
       "problemMatcher": "$tsc",
-      "label": "npm: compile",
-      "detail": "tsc -p ./"
+      "label": "npm: typecheck",
+      "detail": "tsc --noEmit (about 5 s)"
+    },
+    {
+      // No debugger involved at all, so nothing to attach. Run it from Terminal > Run Task.
+      "label": "SAIL: open test window (no debugger)",
+      "type": "process",
+      "command": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--disable-extensions",
+        "--new-window"
+      ],
+      "dependsOn": ["npm: bundle"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent" }
     }
   ]
 }

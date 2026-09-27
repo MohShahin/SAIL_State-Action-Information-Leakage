@@ -21,7 +21,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -43,15 +43,89 @@
     },
     "commands": [
       {
+        "command": "sail.checkDataset",
+        "title": "SAIL: Check a dataset",
+        "icon": "$(sail-logo)"
+      },
+      {
         "command": "sail.focus",
         "title": "SAIL: Show Leakage Checks"
+      },
+      {
+        "command": "sail.openWalkthrough",
+        "title": "SAIL: Get Started"
+      },
+      {
+        "command": "sail.moveToSecondarySideBar",
+        "title": "SAIL: Move to Secondary Side Bar"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "sail.checkDataset",
+          "group": "navigation@100"
+        }
+      ]
+    },
+    "icons": {
+      "sail-logo": {
+        "description": "The SAIL sail mark",
+        "default": {
+          "fontPath": "./media/sail-icons.woff",
+          "fontCharacter": "\\e900"
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "sail.gettingStarted",
+        "title": "Get started with SAIL",
+        "description": "Check a treatment dataset for hidden leakage in three short steps. No code, and your data stays on this computer.",
+        "steps": [
+          {
+            "id": "sail.step.data",
+            "title": "Choose your data",
+            "description": "Pick the table your model trains on: one row per patient per time step, as a CSV or Parquet file.\n[Check a dataset](command:sail.checkDataset)",
+            "media": {
+              "image": "media/walkthrough/choose-data.svg",
+              "altText": "A list of dataset files with one of them selected"
+            },
+            "completionEvents": [
+              "onCommand:sail.checkDataset"
+            ]
+          },
+          {
+            "id": "sail.step.columns",
+            "title": "Confirm the columns",
+            "description": "SAIL reads your column names and guesses which one is the patient ID, the time step, the treatment and the outcome. Change anything that's wrong.",
+            "media": {
+              "image": "media/walkthrough/confirm-columns.svg",
+              "altText": "Four column choices, each already filled in and marked auto-detected"
+            }
+          },
+          {
+            "id": "sail.step.report",
+            "title": "Read the report",
+            "description": "Five checks, each explained in plain language with what SAIL found and what to do about it. Export the report as a web page.\n[Open SAIL](command:sail.focus)",
+            "media": {
+              "image": "media/walkthrough/read-report.svg",
+              "altText": "Five result cards, some marked Flagged and some marked Passed"
+            }
+          }
+        ]
       }
     ]
   },
   "scripts": {
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile",
+    "typecheck": "tsc -p ./ --noEmit",
+    "bundle": "node esbuild.js",
+    "build": "npm run typecheck && npm run bundle",
+    "build:tests": "tsc -p ./",
+    "build:icons": "node scripts/build-icons.js",
+    "watch": "node esbuild.js --watch",
+    "vscode:prepublish": "node esbuild.js --production",
+    "pretest": "npm run build && npm run build:tests",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
@@ -59,7 +133,11 @@
     "@types/node": "^20.11.0",
     "@types/vscode": "1.85.0",
     "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.21.5",
     "mocha": "^10.4.0",
+    "svg2ttf": "^6.0.3",
+    "svgicons2svgfont": "^10.0.6",
+    "ttf2woff": "^3.0.0",
     "typescript": "^5.4.0"
   }
 }
