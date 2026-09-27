@@ -84,23 +84,35 @@ html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-fam
 body{ overflow-wrap:break-word; word-break:break-word; }
 ::selection{ background:var(--accent-soft); color:var(--accent); }
 
-/* ---------- SITE NAV (every page) ---------- */
+/* ---------- SITE NAV (every page) ---------------------------------------------------------
+   Phase 3: unified across all pages in the new dark system, regardless of whether that page's
+   own content area has been reskinned yet (see docs/WEBSITE_REBUILD_STATUS.md -- the header/
+   content seam on not-yet-reskinned pages is a known, accepted interim state, not a bug). Uses
+   the same hex values as .landing-dark below rather than :root's --accent/--physio/--treat, for
+   the same color-discipline reason those aren't reused for decoration. ---------------------- */
 .sitenav{
-  background:var(--paper); border-bottom:1px solid var(--line);
+  background:#14171a; border-bottom:1px solid #2a2f35;
   position:sticky; top:0; z-index:50;
 }
 .sitenav-inner{
-  max-width:960px; margin:0 auto; padding:12px 24px;
+  max-width:1040px; margin:0 auto; padding:10px 24px;
   display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px 20px;
 }
-.sitenav-brand{ font-family:var(--serif); font-size:15px; color:var(--ink); text-decoration:none; }
+.sitenav-brand{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--serif); font-size:15px; color:#f3f6f9; text-decoration:none;
+}
+.sitenav-brand img{ height:24px; width:auto; display:block; }
 .sitenav-links{ display:flex; gap:4px; flex-wrap:wrap; }
+@media (max-width: 560px){
+  .sitenav-inner{ flex-direction:column; align-items:stretch; }
+}
 .sitenav-links a{
-  font-family:var(--sans); font-size:12.5px; color:var(--ink-soft); text-decoration:none;
+  font-family:var(--sans); font-size:12.5px; color:#a9b7c4; text-decoration:none;
   padding:7px 12px; border-radius:3px;
 }
-.sitenav-links a:hover{ background:var(--bg); color:var(--ink); }
-.sitenav-links a.active{ color:var(--accent); font-weight:600; }
+.sitenav-links a:hover{ background:#1b1f24; color:#f3f6f9; }
+.sitenav-links a.active{ color:#7fd8ca; font-weight:600; }
 
 /* ---------- MASTHEAD ---------- */
 .masthead{ background:var(--paper); border-bottom:3px double var(--line); }

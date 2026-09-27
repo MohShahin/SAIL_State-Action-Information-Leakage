@@ -22,18 +22,16 @@
 <body>
 
 <nav class="sitenav"><div class="sitenav-inner">
-  <a class="sitenav-brand" href="__PATHPREFIX__/">SAIL</a>
+  <a class="sitenav-brand" href="__PATHPREFIX__/">
+    <img src="__PATHPREFIX__/assets/img/logo-cropped.png" alt="SAIL logo">
+    <span>SAIL</span>
+  </a>
   <div class="sitenav-links">
     <a href="__PATHPREFIX__/"{% if activeNav == "home" %} class="active"{% endif %}>Home</a>
-    <a href="__PATHPREFIX__/mechanisms/"{% if activeNav == "mechanisms" %} class="active"{% endif %}>Mechanisms</a>
-    <a href="__PATHPREFIX__/visualizer/"{% if activeNav == "visualizer" %} class="active"{% endif %}>Visualizer</a>
-    <a href="__PATHPREFIX__/evidence/"{% if activeNav == "evidence" %} class="active"{% endif %}>Evidence</a>
-    <a href="__PATHPREFIX__/showcase/"{% if activeNav == "showcase" %} class="active"{% endif %}>Showcase</a>
-    <a href="__PATHPREFIX__/proof/"{% if activeNav == "proof" %} class="active"{% endif %}>Proof</a>
-    <a href="__PATHPREFIX__/reproducibility/"{% if activeNav == "reproducibility" %} class="active"{% endif %}>Reproducibility</a>
-    <a href="__PATHPREFIX__/papers/"{% if activeNav == "papers" %} class="active"{% endif %}>Papers</a>
     <a href="__PATHPREFIX__/about/"{% if activeNav == "about" %} class="active"{% endif %}>About</a>
-    <a href="__PATHPREFIX__/status/"{% if activeNav == "status" %} class="active"{% endif %}>Status</a>
+    <a href="__PATHPREFIX__/papers/"{% if activeNav == "papers" %} class="active"{% endif %}>Papers</a>
+    <a href="__PATHPREFIX__/datasets-and-models/"{% if activeNav == "datasets-and-models" %} class="active"{% endif %}>Datasets &amp; Models</a>
+    <a href="__PATHPREFIX__/privacy/"{% if activeNav == "privacy" %} class="active"{% endif %}>Privacy</a>
   </div>
 </div></nav>
 
