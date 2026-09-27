@@ -1,0 +1,143 @@
+---
+layout: base.njk
+title: "Detectors"
+activeNav: detectors
+templateEngineOverride: false
+---
+
+<div class="landing-dark">
+
+<div class="masthead"><div class="masthead-inner">
+  <h1>Detectors</h1>
+  <p class="deck">Five categories, each a generalization of something this project proved or directly
+  verified — not a heuristic assembled under deadline pressure. The plain-language text below is
+  reused from <code>SAIL_PACKAGE_README.md</code> and the detectors' own source, not rewritten.</p>
+</div></div>
+
+<main class="wide">
+<div class="grid-container">
+
+<div class="grid-12">
+
+  <div class="col-span-12">
+    <div class="card">
+      <p class="check-name">1 &middot; Construction leakage</p>
+      <p class="proven-by">Proven by: Theorem 1 / Proposition 3</p>
+      <p class="check-q" style="margin-bottom:10px;">A state feature is partly defined by treatment,
+      making it non-identifiable (or shift-colliding) with the signal it claims to measure.</p>
+      <details class="expand"><summary>Read the full explanation</summary>
+        <div class="expand-body">
+          <p>Checked as two distinct, mutually exclusive shapes:</p>
+          <p><b>1a &mdash; full non-identifiability</b> (Theorem 1's shape): once treatment is active,
+          the score becomes constant with respect to the signal it's supposed to measure, across every
+          signal value observed while treatment is active. The detector's own flagged explanation
+          reads: "&lsquo;{signal}&rsquo; has no effect on the score once treatment is active&nbsp;&hellip;
+          across N distinct active treatment level(s) tested, each spanning multiple &lsquo;{signal}&rsquo;
+          values, the score stayed constant."</p>
+          <p><b>1b &mdash; score-shift collision</b> (Proposition 3's shape): the score still varies with
+          the signal, but at least one signal value maps to a different score depending on treatment
+          status alone. Checked only when 1a does not hold.</p>
+          <p><a class="see-math" href="__PATHPREFIX__/proof/#thm1">See the math — Theorem 1 (full non-identifiability) →</a></p>
+          <p><a class="see-math" href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/main/FORMAL_ANALYSIS.md#45-a-second-mechanism-instance-respiratory-sofas-ventilatory-support-conditional">See the math — Proposition 3 (score-shift collision) →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="col-span-12">
+    <div class="card">
+      <p class="check-name">2 &middot; Reconstruction leakage</p>
+      <p class="proven-by">Proven by: Theorem 2</p>
+      <p class="check-q" style="margin-bottom:10px;">A "removed" feature is still exactly recoverable
+      from other retained features.</p>
+      <details class="expand"><summary>Read the full explanation</summary>
+        <div class="expand-body">
+          <p>A feature removed from a state definition is still exactly (or near-exactly) recoverable
+          by subtracting the other retained component features from a retained total. The tolerance
+          defaults to 1e-9 &mdash; Theorem 2 is an algebraic identity, not an approximation. The
+          detector's own flagged explanation reads: "&lsquo;{target}&rsquo; is exactly recoverable from
+          &lsquo;{total}&rsquo; minus {components}&nbsp;&hellip; removing &lsquo;{target}&rsquo; from the
+          state does not remove the information it carries."</p>
+          <p><a class="see-math" href="__PATHPREFIX__/proof/#thm2">See the math — Theorem 2 →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="col-span-12">
+    <div class="card">
+      <p class="check-name">3 &middot; Temporal-overlap leakage</p>
+      <p class="proven-by">Proven by: Proposition 1</p>
+      <p class="check-q" style="margin-bottom:10px;">A feature's aggregation window overlaps a period
+      when treatment was already active.</p>
+      <details class="expand"><summary>Read the full explanation</summary>
+        <div class="expand-body">
+          <p>A feature's lookback window overlaps a period when treatment was already active,
+          contaminating what's meant to be a clean pre-decision snapshot. The overlap fraction is
+          computed directly from its definition for whatever window length it's given, by design: the
+          total overlap hours are proven monotone non-decreasing as the window widens (Proposition 1),
+          but the <i>fraction</i> of the window that's overlapped is not monotonic &mdash; it can rise
+          or fall as the window grows, so the detector never assumes a direction.</p>
+          <p><a class="see-math" href="__PATHPREFIX__/proof/#prop1">See the math — Proposition 1 →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="col-span-12">
+    <div class="card">
+      <p class="check-name">4 &middot; Timing-violation leakage</p>
+      <p class="proven-by">Proven by: Direct timestamp verification</p>
+      <p class="check-q" style="margin-bottom:10px;">The state's window extends into or past the
+      action being predicted — the strict sense of "leakage."</p>
+      <details class="expand"><summary>Read the full explanation</summary>
+        <div class="expand-body">
+          <p>This is the strict, reserved sense of "leakage" in this project's own taxonomy: a state's
+          window extends into or past the timestamp of the action it's meant to precede. A row is a
+          violation only when the action's window starts strictly before the state's window ends —
+          genuine boundary overlap; an action window that starts exactly when the state window ends is
+          adjacent, not overlapping, and is not a violation. This project's own action label was
+          verified to have zero overlap with the state window it follows — that verified real case is
+          this detector's own first test.</p>
+          <p><a class="see-math" href="__PATHPREFIX__/proof/#term">See the verification — terminology and the zero-overlap check →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="col-span-12">
+    <div class="card">
+      <p class="check-name">5 &middot; Persistence-dominance flag</p>
+      <p class="proven-by">Proven by: Motivated directly by this project's own Variant F result</p>
+      <p class="check-q" style="margin-bottom:10px;">A trivial "last action repeats" baseline matches
+      or exceeds the full state's predictive power — not leakage, but a related and equally important
+      diagnostic.</p>
+      <details class="expand"><summary>Read the full explanation</summary>
+        <div class="expand-body">
+          <p><b>Not leakage.</b> A related, equally useful diagnostic this project's own Variant F
+          result motivates directly: two purely temporal treatment-history features, with no raw
+          treatment-dose term of any kind, out-predicted the full physiological state
+          (action-recoverability AUROC 0.914 vs. 0.900). A package that only checked
+          construction/reconstruction/temporal-overlap/timing-violation leakage would miss exactly the
+          finding that made this project's own result sharper than expected: sometimes a state's
+          predictive power is mostly ordinary treatment persistence, not any of the leakage mechanisms
+          above. Every explanation this detector produces, flagged or not, states plainly that this is
+          not a leakage finding.</p>
+          <p><a class="see-math" href="__PATHPREFIX__/evidence/#variant-f">See the evidence — the Variant F result →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center; margin-top:var(--space-5); padding-top:var(--space-4); border-top:1px solid #2a2f35;">
+  <p class="plain" style="margin-bottom:var(--space-2);">Think a pattern is missing? The strongest
+  case explains why it's provably a problem, not just that it seems suspicious.</p>
+  <a class="navbtn primary" style="text-decoration:none;"
+     href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new?template=suggest-a-detector.yml">Suggest a new detector →</a>
+</div>
+
+</div>
+</main>
+</div>

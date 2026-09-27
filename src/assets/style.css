@@ -295,3 +295,21 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 }
 .landing-dark .card.placeholder .check-name{ color:#5a6472; }
 .landing-dark .card.placeholder .check-q{ color:#4a5361; font-style:italic; }
+
+/* Expandable detail sections (website rebuild Phase 4), matching proof.html's existing
+   details.expand pattern -- same markup, dark-appropriate colors instead of that page's
+   light-theme inline <style>. */
+.landing-dark details.expand{ border:1px solid #2a2f35; border-radius:6px; margin:14px 0 0; }
+.landing-dark details.expand summary{
+  padding:11px 16px; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:600;
+  color:#dfe6ee; list-style:none; display:flex; justify-content:space-between; align-items:center;
+}
+.landing-dark details.expand summary::-webkit-details-marker{ display:none; }
+.landing-dark details.expand summary::after{ content:"+"; font-size:18px; color:#5a6472; }
+.landing-dark details.expand[open] summary::after{ content:"\2212"; }
+.landing-dark details.expand .expand-body{ padding:0 16px 14px; font-size:13px; color:#a9b7c4; line-height:1.65; }
+.landing-dark .proven-by{
+  font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+  color:#5a6472; margin:0 0 4px;
+}
+.landing-dark .see-math{ display:inline-block; margin-top:10px; font-size:13px; color:#7fd8ca; }
