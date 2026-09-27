@@ -3,18 +3,20 @@
 Check a treatment dataset for state-action information leakage, with plain-language results. Everything
 runs on your computer: your patient data is never uploaded.
 
-> **Status: in development (Phase 3 of 6).** The setup wizard picks a real dataset, reads its real columns
-> and runs the real, installed `sail-leakage` package through a local Python process. What it shows when a
-> check finishes is a plain-text placeholder, not the five-card results view -- that arrives in Phase 4.
+> **Status: in development (Phase 4 of 6).** The setup wizard runs the real, installed `sail-leakage`
+> package and shows a full results view: five cards, a detail panel, sidebar status icons, a status bar
+> issue count and an HTML export. Plain-language error messages and packaging as a `.vsix` are Phase 6.
 
 ![The SAIL panel in a dark and a light theme](docs/screenshots/panel-dark-and-light.png)
 
 ## What is in it
 
 * **SAIL panel** (sail icon in the activity bar): the dataset, the five checks and the privacy note, drawn
-  with your theme's colors and fonts. A loading skeleton shows until the panel has its content
-  ([screenshot](docs/screenshots/loading-skeleton-dark.png)).
-* **Status bar**: the sail icon and *SAIL: Ready*. Click it to open the panel.
+  with your theme's colors and fonts, and updated live as a check runs. A loading skeleton shows until the
+  panel has its content ([screenshot](docs/screenshots/loading-skeleton-dark.png)).
+* **Status bar**: the sail icon plus *Ready*, *Checking…*, *No issues found*, or *N issues found* --
+  always computed from the same state the sidebar shows, never a second copy of it. It highlights in your
+  theme's warning color when something is flagged. Click it to reopen the report.
 * **Editor title bar**: a sail button next to the split-editor button, and **SAIL: Check a dataset** in the
   Command Palette (Ctrl+Shift+P).
 * **Get Started walkthrough** (Command Palette: *SAIL: Get Started*): choose data, confirm columns, read
@@ -26,20 +28,23 @@ runs on your computer: your patient data is never uploaded.
   Parquet file from the workspace or browse for one, confirm SAIL's auto-detected columns
   ([screenshot](docs/screenshots/wizard-map-dark.png)), choose which of the five checks to run, and it calls
   the installed `sail-leakage` package in a local Python subprocess. *Try with example data* runs the exact,
-  independently verified worked example from `SAIL_PACKAGE_README.md`'s Quickstart
-  ([screenshot](docs/screenshots/wizard-flagged-dark.png)) -- nothing here is a mock.
+  independently verified worked example from `SAIL_PACKAGE_README.md`'s Quickstart.
+* **The results view**: five cards (name, verdict badge, a one-line preview) plus a detail panel with
+  *What this checks*, *What SAIL found* and *What to do*, a headline ("N of 5 checks found leakage"), and
+  an **Export report** button that writes one self-contained HTML file -- no script, no external request,
+  safe to open or share on its own
+  ([dark](docs/screenshots/wizard-results-dark.png) /
+  [light](docs/screenshots/wizard-results-light.png)).
 
-### Two honest limits of the wizard right now
+### An honest limit of the wizard right now
 
-* **A real file gets a real "not run".** The wizard's four generic fields (patient ID, time step,
-  treatment, outcome) are enough to read a file's columns, but not enough for most of what
-  `sail.check()` needs -- a scoring function, which columns were removed versus retained, treatment
-  intervals, or a fitted AUROC are not derivable from column *names* alone. So checking your own file
-  will usually report all five categories as "not run", each with the exact reason
-  ([screenshot](docs/screenshots/wizard-not-run-dark.png)) -- `sail.check()`'s own honest behavior, not a
-  bug. Picking richer specs from a real file arrives in a later phase.
-* **The result screen is a placeholder.** It prints `report.summary()` as plain preformatted text. The
-  five result cards, per-check sidebar icons, a status bar issue count and the HTML export are Phase 4.
+The wizard's four generic fields (patient ID, time step, treatment, outcome) are enough to read a file's
+columns, but not enough for most of what `sail.check()` needs -- a scoring function, which columns were
+removed versus retained, treatment intervals, or a fitted AUROC are not derivable from column *names*
+alone. So checking your own file will usually report all five categories as "not run", each with the exact
+reason, in the same results view
+([screenshot](docs/screenshots/wizard-results-notrun-dark.png)) -- `sail.check()`'s own honest behavior,
+not a bug. Picking richer specs from a real file arrives in a later phase.
 
 ## Try it (development)
 

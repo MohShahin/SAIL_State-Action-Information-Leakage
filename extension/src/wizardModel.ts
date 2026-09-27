@@ -24,7 +24,9 @@ export interface WizardState {
   readonly map: FieldMap;
   readonly enabled: Readonly<Record<string, boolean>>;
   readonly isExample: boolean;
-  readonly resultSummary: string | null;
+  readonly datasetLabel: string | null;
+  readonly results: readonly ResultCard[] | null;
+  readonly selectedResultId: string | null;
 }
 
 export function initialWizardState(): WizardState {
@@ -41,7 +43,9 @@ export function initialWizardState(): WizardState {
     map: { stay: null, time: null, action: null, reward: null },
     enabled,
     isExample: false,
-    resultSummary: null,
+    datasetLabel: null,
+    results: null,
+    selectedResultId: null,
   };
 }
 
@@ -71,6 +75,10 @@ export interface ViewCheck {
   readonly question: string;
   readonly on: boolean;
 }
+export interface ViewResultCard extends ResultCard {
+  readonly selected: boolean;
+  readonly verdictLabel: string;
+}
 export interface ViewModel {
   readonly step: WizardStep;
   readonly error: string | null;
@@ -87,12 +95,31 @@ export interface ViewModel {
   readonly nextDisabled: boolean;
   readonly nextLabel: string;
   readonly isExample: boolean;
-  readonly resultSummary: string | null;
+  readonly datasetLabel: string | null;
+  readonly results: readonly ViewResultCard[];
+  readonly selectedResult: ViewResultCard | null;
+  readonly flaggedCount: number;
+  readonly headline: string;
 }
+
+const VERDICT_LABEL: Record<CheckStatus, string> = {
+  pending: 'Pending',
+  running: 'Running',
+  flagged: 'Flagged',
+  passed: 'Passed',
+  'not-run': 'Not run',
+  off: 'Off',
+};
 
 export function computeViewModel(state: WizardState): ViewModel {
   const anyEnabled = Object.values(state.enabled).some(Boolean);
   const showNav = state.step === 'data' || state.step === 'map' || state.step === 'checks';
+  const results = (state.results ?? []).map((r) => ({
+    ...r,
+    selected: r.id === state.selectedResultId,
+    verdictLabel: VERDICT_LABEL[r.status],
+  }));
+  const flaggedCount = results.filter((r) => r.status === 'flagged').length;
   return {
     step: state.step,
     error: state.error,
@@ -110,7 +137,11 @@ export function computeViewModel(state: WizardState): ViewModel {
       state.step === 'data' ? !state.selectedFileId : state.step === 'checks' ? !anyEnabled : false,
     nextLabel: state.step === 'checks' ? 'Run checks' : 'Continue',
     isExample: state.isExample,
-    resultSummary: state.resultSummary,
+    datasetLabel: state.datasetLabel,
+    results,
+    selectedResult: results.find((r) => r.selected) ?? null,
+    flaggedCount,
+    headline: `${flaggedCount} of ${CHECKS.length} checks found leakage`,
   };
 }
 
@@ -157,4 +188,85 @@ export function mapReportToStatuses(
     }
   }
   return statuses;
+}
+
+export interface ReportLikeWithText extends ReportLike {
+  readonly findings: readonly { category: string; flagged: boolean; explanation: string }[];
+}
+
+export interface ResultCard {
+  readonly id: string;
+  readonly name: string;
+  readonly question: string;
+  readonly status: CheckStatus;
+  readonly explanation: string;
+  readonly fix: string;
+}
+
+const OFF_EXPLANATION = 'You turned this check off before running.';
+const OFF_FIX = 'Turn it back on and run again to see a result.';
+const NOT_RUN_FIX = "SAIL didn't have enough information about this file to run this check.";
+
+/**
+ * Generic, honest guidance grounded in each detector's own real mechanism (see the detectors'
+ * docstrings) -- never a dataset-specific claim, since the four generic wizard fields never tell SAIL
+ * enough about the data to say anything more specific than this.
+ */
+const FIX_TEXT: Record<string, { flagged: string; notFlagged: string }> = {
+  c1: {
+    flagged: 'Remove or replace the state feature(s) that are computed from treatment doses, or use a version of the score that excludes treatment inputs.',
+    notFlagged: 'Nothing to do -- the signal still determines the score independent of treatment status.',
+  },
+  c2: {
+    flagged: "Remove the retained total (or the other retained components) as well, so the missing feature can't be reconstructed from what's left.",
+    notFlagged: 'Nothing to do -- the removed feature is not recoverable from what was kept.',
+  },
+  c3: {
+    flagged: 'Shorten the lookback window, or measure the state strictly before the treatment window starts.',
+    notFlagged: "Nothing to do -- no decision point's window was mostly treatment.",
+  },
+  c4: {
+    flagged: "Fix the alignment: the action window must start at or after the state window's end.",
+    notFlagged: 'Nothing to do -- every action window already starts at or after its state window ends.',
+  },
+  c5: {
+    flagged: "Compare your model against a simple 'repeat the last action' baseline before trusting its apparent skill.",
+    notFlagged: "Nothing to do -- the state's predictive power isn't explained by ordinary treatment persistence alone.",
+  },
+};
+
+function fixText(id: string, status: CheckStatus): string {
+  if (status === 'off') return OFF_FIX;
+  if (status === 'not-run') return NOT_RUN_FIX;
+  const entry = FIX_TEXT[id];
+  if (!entry) return '';
+  return status === 'flagged' ? entry.flagged : entry.notFlagged;
+}
+
+/** Turns one finished report into the five-card results view's data. Pure; no vscode, no I/O. */
+export function buildResultCards(
+  report: ReportLikeWithText,
+  enabled: Readonly<Record<string, boolean>>
+): readonly ResultCard[] {
+  const statuses = mapReportToStatuses(report, enabled);
+  const explanationByCheck = new Map<string, string>();
+  for (const finding of report.findings) {
+    const id = categoryToCheckId(finding.category);
+    if (id) {
+      explanationByCheck.set(id, finding.explanation);
+    }
+  }
+  const skippedByCheck = new Map<string, string>();
+  for (const [category, reason] of Object.entries(report.skipped)) {
+    const id = categoryToCheckId(category);
+    if (id) {
+      skippedByCheck.set(id, reason);
+    }
+  }
+  return CHECKS.map((c) => {
+    const status = statuses[c.id];
+    const explanation =
+      status === 'off' ? OFF_EXPLANATION : explanationByCheck.get(c.id) ?? skippedByCheck.get(c.id) ?? '';
+    return { id: c.id, name: c.name, question: c.question, status, explanation, fix: fixText(c.id, status) };
+  });
 }

@@ -26,7 +26,6 @@ export function activate(context: vscode.ExtensionContext): SailTestApi {
   const log = vscode.window.createOutputChannel('SAIL', { log: true });
   const store = new AppStateStore();
   const sidebar = new SidebarProvider(context.extensionUri, log, store);
-  const status = new SailStatusBar(FOCUS);
   let wizard: WizardPanel | undefined;
 
   const openSidebar = () => vscode.commands.executeCommand('workbench.view.extension.sail');
@@ -34,6 +33,14 @@ export function activate(context: vscode.ExtensionContext): SailTestApi {
     wizard = WizardPanel.createOrShow(context.extensionUri, store, log);
     return wizard;
   };
+  // The status bar's own command: reopen the wizard if a run's results are still open in a tab,
+  // otherwise fall back to the sidebar (which always shows the current per-check status).
+  const openReport = () => {
+    if (!WizardPanel.revealIfOpen()) {
+      void openSidebar();
+    }
+  };
+  const status = new SailStatusBar(store, 'sail.openReport');
 
   context.subscriptions.push(
     log,
@@ -41,6 +48,7 @@ export function activate(context: vscode.ExtensionContext): SailTestApi {
     vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, sidebar),
     vscode.commands.registerCommand(FOCUS, openSidebar),
     vscode.commands.registerCommand(CHECK_DATASET, openWizard),
+    vscode.commands.registerCommand('sail.openReport', openReport),
     vscode.commands.registerCommand('sail.openWalkthrough', () =>
       vscode.commands.executeCommand('workbench.action.openWalkthrough', `${EXTENSION_ID}#sail.gettingStarted`, false)
     ),

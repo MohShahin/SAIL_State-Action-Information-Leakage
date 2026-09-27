@@ -116,5 +116,8 @@ suite('Python bridge (real sail-leakage, skips if none is configured)', function
     // The real, verified quickstart result (matches SAIL_PACKAGE_README.md's own output exactly):
     // construction, reconstruction and persistence-dominance flagged; temporal-overlap and timing not.
     assert.deepStrictEqual(byId, { c1: 'flagged', c2: 'flagged', c3: 'passed', c4: 'passed', c5: 'flagged' });
+
+    // The status bar (Phase 4) is derived from this same real state, not a second computation of it.
+    assert.strictEqual(api.statusText(), '$(sail-logo) SAIL: 3 issues found');
   });
 });

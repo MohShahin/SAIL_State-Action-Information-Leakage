@@ -58,6 +58,10 @@
       {
         "command": "sail.moveToSecondarySideBar",
         "title": "SAIL: Move to Secondary Side Bar"
+      },
+      {
+        "command": "sail.openReport",
+        "title": "SAIL: Open Report"
       }
     ],
     "menus": {
