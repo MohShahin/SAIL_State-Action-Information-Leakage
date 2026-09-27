@@ -1,26 +1,7 @@
 /*
- * SAIL sidebar. Surfaces, text and borders come from the user's VS Code theme (--vscode-*), so the panel
- * follows any light, dark or high-contrast theme, and the font is the user's own. Only the three SAIL
- * accents are ours: teal (brand / active), amber (flagged) and blue (passed). Each has a light-theme tone,
- * because the dark-theme tones from the design do not have enough contrast on a light background.
+ * SAIL sidebar. See theme.css (loaded before this file) for the shared color tokens and base rules
+ * every SAIL page uses -- this file holds only what is specific to the sidebar's own layout.
  */
-:root {
-  --sail-accent: #7fd8ca;
-  --sail-flagged: #f5a15a;
-  --sail-passed: #8fbde8;
-}
-body.vscode-light,
-body.vscode-high-contrast-light {
-  --sail-accent: #0b6b5e;
-  --sail-flagged: #9a5200;
-  --sail-passed: #2f5f8f;
-}
-
-/* Our own "display: flex" rules would otherwise beat the browser's built-in hidden behaviour. */
-[hidden] {
-  display: none !important;
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -132,11 +113,6 @@ section + section {
   border-top-color: transparent;
   animation: sail-spin 900ms linear infinite;
 }
-.glyph-done {
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--sail-accent) 28%, transparent);
-  color: var(--sail-accent);
-}
 .glyph-flagged {
   border-radius: 4px;
   background: var(--sail-flagged);
@@ -247,9 +223,4 @@ body.vscode-high-contrast-light .privacy {
   .glyph-running {
     animation: none;
   }
-}
-
-:focus-visible {
-  outline: 1px solid var(--vscode-focusBorder);
-  outline-offset: 2px;
 }

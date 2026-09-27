@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { initialState, isWebviewMessage, SidebarState } from './state';
+import { AppStateStore } from './appState';
+import { isWebviewMessage } from './state';
 
 const PRIVACY_NOTE = 'Runs on this computer. Your patient data is never uploaded.';
 
@@ -41,11 +42,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private view: vscode.WebviewView | undefined;
   private ready = false;
-  private state: SidebarState = initialState();
 
   constructor(
     private readonly extensionUri: vscode.Uri,
-    private readonly log: vscode.LogOutputChannel
+    private readonly log: vscode.LogOutputChannel,
+    private readonly store: AppStateStore
   ) {}
 
   /** True while the sidebar is on screen. */
@@ -56,12 +57,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   /** True once the page has loaded its script and received its content. */
   get isReady(): boolean {
     return this.ready;
-  }
-
-  /** Replace what the sidebar shows (used by later phases). */
-  update(state: SidebarState): void {
-    this.state = state;
-    this.push();
   }
 
   resolveWebviewView(view: vscode.WebviewView): void {
@@ -80,28 +75,34 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       this.log.info(`sidebar ready ${Date.now() - started} ms after it was opened`);
       this.push();
     });
+    // The store outlives any one view: a wizard run started while the sidebar is hidden must still be
+    // reflected the moment it is shown again.
+    const subscription = this.store.onDidChange(() => this.push());
     view.onDidDispose(() => {
       this.view = undefined;
       this.ready = false;
+      subscription.dispose();
     });
     this.log.info('sidebar opened');
   }
 
   private push(): void {
     if (this.view && this.ready) {
-      void this.view.webview.postMessage({ type: 'state', state: this.state });
+      void this.view.webview.postMessage({ type: 'state', state: this.store.get() });
     }
   }
 
   private render(webview: vscode.Webview, media: vscode.Uri): string {
+    const theme = webview.asWebviewUri(vscode.Uri.joinPath(media, 'theme.css'));
     const stylesheet = webview.asWebviewUri(vscode.Uri.joinPath(media, 'sidebar.css'));
     const script = webview.asWebviewUri(vscode.Uri.joinPath(media, 'sidebar.js'));
     const token = nonce();
     const csp = `default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${token}';`;
 
     // Five placeholder rows, matching the five checks, so nothing jumps when the content arrives.
-    const skeletonRows = this.state.checks
-      .map(() => '<div class="skeleton-row"><span class="skeleton skeleton-dot"></span><span class="skeleton skeleton-line"></span></div>')
+    const skeletonRows = this.store
+      .get()
+      .checks.map(() => '<div class="skeleton-row"><span class="skeleton skeleton-dot"></span><span class="skeleton skeleton-line"></span></div>')
       .join('\n        ');
 
     return `<!DOCTYPE html>
@@ -110,6 +111,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="${csp}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="${theme}">
   <link rel="stylesheet" href="${stylesheet}">
   <title>SAIL</title>
 </head>

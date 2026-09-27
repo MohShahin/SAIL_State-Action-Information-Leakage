@@ -80,7 +80,8 @@ suite('SAIL extension', () => {
     test('the loading skeleton and the content never show at the same time', () => {
       // Regression: our own "display: flex" on the content once beat the browser's built-in `hidden`
       // behaviour, so the skeleton and the (empty) content were both on screen until the state arrived.
-      const css = fs.readFileSync(path.join(root, 'media', 'sidebar.css'), 'utf8');
+      // The rule now lives in theme.css, shared with the wizard page, which needs the same guarantee.
+      const css = fs.readFileSync(path.join(root, 'media', 'theme.css'), 'utf8');
       assert.match(css, /\[hidden\]\s*\{\s*display:\s*none\s*!important/);
       const js = fs.readFileSync(path.join(root, 'media', 'sidebar.js'), 'utf8');
       assert.ok(js.includes('app.hidden = false') && js.includes('skeleton.remove()'));

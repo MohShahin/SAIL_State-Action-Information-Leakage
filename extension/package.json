@@ -68,6 +68,16 @@
         }
       ]
     },
+    "configuration": {
+      "title": "SAIL",
+      "properties": {
+        "sail.pythonPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to the Python interpreter that has `sail-leakage` installed. Leave empty to use the Python extension's selected interpreter, or `python3`/`python` on PATH."
+        }
+      }
+    },
     "icons": {
       "sail-logo": {
         "description": "The SAIL sail mark",

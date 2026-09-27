@@ -1,7 +1,12 @@
 import { CHECKS } from './checks';
 
-/** How one check row is drawn in the sidebar. Later phases move checks through these as they run. */
-export type CheckStatus = 'pending' | 'running' | 'done' | 'flagged' | 'passed' | 'off';
+/**
+ * How one check row is drawn in the sidebar.
+ * pending: waiting to run. running: the wizard is running it right now. flagged/passed: it ran and
+ * found (or didn't find) leakage. not-run: it was enabled, but sail.check() didn't have enough input
+ * to run it -- distinct from off, which means the user disabled it themselves.
+ */
+export type CheckStatus = 'pending' | 'running' | 'flagged' | 'passed' | 'not-run' | 'off';
 
 export interface CheckRow {
   readonly id: string;

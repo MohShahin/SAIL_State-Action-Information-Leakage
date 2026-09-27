@@ -3,8 +3,9 @@
 Check a treatment dataset for state-action information leakage, with plain-language results. Everything
 runs on your computer: your patient data is never uploaded.
 
-> **Status: in development (Phase 2 of 6).** The panel, status bar, menus and Get Started page exist but
-> are static. Choosing a dataset and running the checks arrives in Phase 3.
+> **Status: in development (Phase 3 of 6).** The setup wizard picks a real dataset, reads its real columns
+> and runs the real, installed `sail-leakage` package through a local Python process. What it shows when a
+> check finishes is a plain-text placeholder, not the five-card results view -- that arrives in Phase 4.
 
 ![The SAIL panel in a dark and a light theme](docs/screenshots/panel-dark-and-light.png)
 
@@ -21,6 +22,24 @@ runs on your computer: your patient data is never uploaded.
 * **Move it to the right**: drag the sail icon to the right-hand side of the window, or run *SAIL: Move to
   Secondary Side Bar* and choose *Leakage Checks*, then *New Secondary Side Bar Entry*
   ([screenshot](docs/screenshots/secondary-sidebar-light.png)).
+* **The setup wizard** (*SAIL: Check a dataset*, or the welcome screen's *Start a check*): pick a CSV or
+  Parquet file from the workspace or browse for one, confirm SAIL's auto-detected columns
+  ([screenshot](docs/screenshots/wizard-map-dark.png)), choose which of the five checks to run, and it calls
+  the installed `sail-leakage` package in a local Python subprocess. *Try with example data* runs the exact,
+  independently verified worked example from `SAIL_PACKAGE_README.md`'s Quickstart
+  ([screenshot](docs/screenshots/wizard-flagged-dark.png)) -- nothing here is a mock.
+
+### Two honest limits of the wizard right now
+
+* **A real file gets a real "not run".** The wizard's four generic fields (patient ID, time step,
+  treatment, outcome) are enough to read a file's columns, but not enough for most of what
+  `sail.check()` needs -- a scoring function, which columns were removed versus retained, treatment
+  intervals, or a fitted AUROC are not derivable from column *names* alone. So checking your own file
+  will usually report all five categories as "not run", each with the exact reason
+  ([screenshot](docs/screenshots/wizard-not-run-dark.png)) -- `sail.check()`'s own honest behavior, not a
+  bug. Picking richer specs from a real file arrives in a later phase.
+* **The result screen is a placeholder.** It prints `report.summary()` as plain preformatted text. The
+  five result cards, per-check sidebar icons, a status bar issue count and the HTML export are Phase 4.
 
 ## Try it (development)
 
@@ -71,6 +90,20 @@ Code creating a new window, which is slower when many extensions are loaded in t
 | `npm run build` | Type-check, then bundle. |
 | `npm run build:icons` | Rebuild the icon font `media/sail-icons.woff` from `media/icons/*.svg`. |
 | `npm test` | Start a real VS Code with a throwaway profile and run the integration tests. Set `VSCODE_EXE` to an installed `Code.exe` to avoid a download. |
+
+### Testing the Python integration
+
+The four tests in `pythonIntegration.test.ts` call the real `sail_bridge.py` and, through it, a real
+installed `sail-leakage` -- nothing about them is mocked. A bare checkout has no such interpreter, so they
+look for one exactly the way the extension itself does (`sail.pythonPath`, the Python extension's selected
+interpreter, then `python3`/`python` on PATH) and **skip with a clear message** if none is found, rather
+than failing:
+
+```
+SAIL_TEST_PYTHON=/path/to/python/with/sail-leakage npm test
+```
+
+`sail.pythonPath` is set only inside the test's own throwaway profile; your real settings are untouched.
 
 ## Repository rules
 
