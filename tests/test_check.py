@@ -184,3 +184,52 @@ def test_every_missing_column_is_reported_at_once():
     for name in ("missing_a", "missing_b", "missing_c"):
         assert name in str(excinfo.value)
     assert "'map'" not in str(excinfo.value)   # only the absent ones are named
+
+
+def test_action_col_none_means_not_provided_not_a_missing_column():
+    """A caller that couldn't determine an action column (e.g. a UI whose auto-detection found no
+    match) passes None, not a column name -- None must mean "not provided," the same as every other
+    optional parameter here, not raise a KeyError claiming a column literally named None is absent.
+
+    Reproduces the exact crash the SAIL VS Code extension's wizard hit for real: a file whose action-
+    like column ("next_insulin_units") didn't match the wizard's auto-detect pattern, so the wizard
+    sent action_col=None, and every real check crashed with `KeyError: columns not found in df:
+    [None]` instead of the five honest "not run" cards the docstring's own rule promises.
+    """
+    df = _build_df()
+    report = sail.check(df, STATE_COLS, None)
+    assert report.findings == []
+    assert len(report.skipped) == 5
+    assert set(report.skipped.keys()) == {
+        "construction_leakage",
+        "reconstruction_leakage",
+        "temporal_overlap_leakage",
+        "timing_violation_leakage",
+        "persistence_dominance",
+    }
+
+
+def test_state_cols_with_a_none_entry_is_ignored_not_treated_as_missing():
+    """Same principle as action_col=None, for the other half of the validated pair: a None sitting
+    inside state_cols (e.g. built from a field map with an unmapped slot) is not a column name to
+    look up -- it's the absence of one, and must not raise."""
+    df = _build_df()
+    report = sail.check(df, [*STATE_COLS, None], ACTION_COL)
+    assert report.findings == []
+    assert len(report.skipped) == 5
+
+
+def test_action_col_can_be_omitted_entirely_not_just_passed_as_none():
+    """action_col now defaults to None, so a caller (e.g. the bridge) can leave it out of the call
+    entirely -- not just pass None explicitly -- with the same "not provided" result."""
+    df = _build_df()
+    report = sail.check(df, STATE_COLS)
+    assert report.findings == []
+    assert len(report.skipped) == 5
+
+
+def test_a_real_wrong_column_name_still_raises_even_alongside_none():
+    """The fix for None must not swallow a genuine typo sitting next to it."""
+    df = _build_df()
+    with pytest.raises(KeyError, match="no_such_column"):
+        sail.check(df, [*STATE_COLS, None, "no_such_column"], ACTION_COL)

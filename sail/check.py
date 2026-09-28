@@ -27,7 +27,7 @@ orchestrator, not swept under the rug: see the Phase C1 report for the full
 reasoning.
 """
 
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
 from .detectors.construction import ConstructionLeakageDetector
 from .detectors.persistence import PersistenceDominanceDetector
@@ -39,8 +39,8 @@ from .report import LeakageReport
 
 def check(
     df,
-    state_cols,
-    action_col,
+    state_cols: Sequence[Optional[str]],
+    action_col: Optional[str] = None,
     timestamp_col: Optional[str] = None,
     treatment_col: Optional[str] = None,
     window_col: Optional[str] = None,
@@ -55,9 +55,11 @@ def check(
 ) -> LeakageReport:
     """Run every category the given inputs support enough of.
 
-    state_cols, action_col: validated against ``df`` (raises ``KeyError`` if
-        missing). Not currently consumed by any individual detector -- see
-        the module docstring.
+    state_cols, action_col: each entry validated against ``df`` (raises ``KeyError`` naming any
+        entry that is a real column name but absent from ``df``) -- except ``None``, which means
+        "not identified" (e.g. a caller's auto-detection found no match), not a literal column
+        named ``None``, and is therefore never treated as missing. Neither is consumed by any
+        individual detector -- see the module docstring.
     timestamp_col: decision-point time. Doubles as category 3's ``time_col``
         and category 4's ``state_end_col``.
     treatment_col: default for ``construction_spec["treatment_cols"]`` if
@@ -75,7 +77,7 @@ def check(
     persistence_auroc, full_state_auroc, margin: category 5, passed straight
         through to ``PersistenceDominanceDetector``.
     """
-    missing_cols = [c for c in (*state_cols, action_col) if c not in df.columns]
+    missing_cols = [c for c in (*state_cols, action_col) if c is not None and c not in df.columns]
     if missing_cols:
         raise KeyError(f"columns not found in df: {missing_cols}")
 
