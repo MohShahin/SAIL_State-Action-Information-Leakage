@@ -96,6 +96,32 @@ suite('Python bridge (real sail-leakage, skips if none is configured)', function
     }
   });
 
+  test('columns + check on a file with no action-like column name: honest "not run", not a crash', async () => {
+    // Reproduces a real bug found while preparing a live demo: a file whose action-like column
+    // ("next_dose") doesn't match the wizard's auto-detect pattern leaves map.action null, and the
+    // bridge used to pass action_col=None straight through, which sail.check() (before its own fix)
+    // treated as a literal missing column and raised KeyError instead of reporting "not run."
+    const csv = 'patient_id,decision_point,glucose,next_dose\n1,0,180,20\n1,1,160,20\n2,0,140,10\n';
+    const tmp = path.join(os.tmpdir(), `sail-wizard-noaction-test-${Date.now()}.csv`);
+    fs.writeFileSync(tmp, csv, 'utf8');
+    try {
+      const checked = await callBridge<CheckReportData>(pythonPath!, bridgeScript, {
+        cmd: 'check',
+        path: tmp,
+        // action left null on purpose, exactly as the wizard's real auto-detect would leave it for
+        // a column named "next_dose" (matches none of action|treatment|vaso|dose|drug).
+        map: { stay: 'patient_id', time: 'decision_point', action: null, reward: null },
+      });
+      assert.ok(checked.ok, !checked.ok ? checked.error : '');
+      if (checked.ok) {
+        assert.strictEqual(checked.data.findings.length, 0);
+        assert.strictEqual(Object.keys(checked.data.skipped).length, 5);
+      }
+    } finally {
+      fs.unlinkSync(tmp);
+    }
+  });
+
   test('end-to-end through the real extension: wizardDispatch("useDemo") updates the shared app state', async () => {
     const extension = vscode.extensions.getExtension<SailTestApi>(EXTENSION_ID)!;
     const api = await extension.activate();

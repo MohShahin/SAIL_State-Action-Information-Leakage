@@ -59,16 +59,22 @@ def cmd_check(req):
     reward). Those four fields do not carry enough information for most of sail.check()'s categories
     (a scoring function, retained/removed component columns, treatment intervals, and fitted AUROC
     numbers are not derivable from column *names* alone) -- sail.check() itself reports each such
-    category as "not run" rather than guessing, and this bridge relies on exactly that behaviour."""
+    category as "not run" rather than guessing, and this bridge relies on exactly that behaviour.
+
+    action_col is omitted entirely (not passed as None) when the wizard's auto-detection found no
+    action-like column -- sail.check() itself now also treats an explicit None as "not provided"
+    (a real fix, not just relied on here), but omitting it is still the honest way to say "we don't
+    have one" rather than passing a value and hoping the callee is forgiving about it."""
     import sail
 
     df = _load(req["path"])
     field_map = req["map"]
-    kwargs = {"state_cols": list(df.columns), "action_col": field_map["action"]}
+    kwargs = {"state_cols": list(df.columns)}
+    if field_map.get("action"):
+        kwargs["action_col"] = field_map["action"]
+        kwargs["treatment_col"] = field_map["action"]
     if field_map.get("time"):
         kwargs["timestamp_col"] = field_map["time"]
-    if field_map.get("action"):
-        kwargs["treatment_col"] = field_map["action"]
     report = sail.check(df, **kwargs)
     return _ok(_report_payload(report))
 
