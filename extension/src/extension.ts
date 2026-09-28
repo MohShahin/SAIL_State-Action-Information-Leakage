@@ -19,6 +19,8 @@ export interface SailTestApi {
   wizardDispatch(name: string, payload?: unknown): Promise<void>;
   /** The single shared state the sidebar and the wizard both read and write. */
   appState(): SidebarState;
+  /** The wizard's real results from its most recent run (null if it hasn't run, or isn't open). */
+  wizardResults(): ReturnType<WizardPanel['stateForTest']> | null;
 }
 
 export function activate(context: vscode.ExtensionContext): SailTestApi {
@@ -73,6 +75,7 @@ export function activate(context: vscode.ExtensionContext): SailTestApi {
       await w.dispatchForTest(name, payload);
     },
     appState: () => store.get(),
+    wizardResults: () => wizard?.stateForTest() ?? null,
   };
 }
 
