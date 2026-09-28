@@ -82,6 +82,20 @@ export class WizardPanel {
     return this.handle({ type: 'action', name, payload });
   }
 
+  /** Test-only: the real results of the most recent run, for verifying report generation against a
+   * real run's actual data without scripting the native save dialog. Never called by real UI code. */
+  stateForTest(): Pick<WizardState, 'results' | 'datasetLabel' | 'isExample' | 'error' | 'step' | 'files' | 'selectedFileId'> {
+    return {
+      results: this.state.results,
+      datasetLabel: this.state.datasetLabel,
+      isExample: this.state.isExample,
+      error: this.state.error,
+      step: this.state.step,
+      files: this.state.files,
+      selectedFileId: this.state.selectedFileId,
+    };
+  }
+
   private push(): void {
     if (!this.ready) {
       return;
