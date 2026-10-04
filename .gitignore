@@ -56,3 +56,7 @@ bigquery-credentials*
 !results/experiment6_mortality_vs_action_recoverability.json
 !results/experiment7_respiratory_sofa_summary.json
 !results/experiment8_variant_f_summary.json
+
+# Experiment 5b: H3 paired cluster bootstrap aggregates (FORMAL_ANALYSIS.md section 7)
+!results/experiment5_h3_paired_bootstrap_rows.json
+!results/experiment5_h3_paired_bootstrap_bins.json
