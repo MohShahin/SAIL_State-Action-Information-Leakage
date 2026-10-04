@@ -10,14 +10,14 @@ import exp8_validation as v  # noqa: E402
 DRUGS = ["norepi", "epi", "dopamine", "dobutamine"]
 
 
-def test_censored_intervals_ignore_future_starts_and_cut_ends():
+def test_known_at_tau_intervals_ignore_future_starts():
     vd = pd.DataFrame({"stay_id": [1, 1, 1], "drug": ["norepi", "norepi", "epi"],
                        "start_hours_from_admit": [2.0, 10.0, 3.0], "end_hours_from_admit": [6.0, 14.0, 20.0]})
-    assert v.censored_intervals(vd, DRUGS, tau=8.0, stay_id=1) == [(2.0, 8.0)]      # 10h start unknown, epi censored at 8
-    assert v.f1_at_tau_censored(vd, DRUGS, 1, 8.0) == 6.0                              # epi running since 2? no: merged 2..8 -> 6h
-    assert v.f1_at_tau_censored(vd, DRUGS, 1, 1.0) == 0.0
-    vd2 = pd.DataFrame({"stay_id": [1], "drug": ["norepi"], "start_hours_from_admit": [2.0], "end_hours_from_admit": [6.0]})
-    assert v.f1_at_tau_censored(vd2, DRUGS, 1, 8.0) == 0.0                             # ended before tau
+    assert v.known_at_tau_intervals(vd, DRUGS, tau=8.0, stay_id=1) == [(2.0, 20.0)]   # 10h start not yet known
+    assert v.f1_at_tau(vd, DRUGS, 1, 8.0) == 6.0                                        # merged 2..20 running at 8
+    assert v.f1_at_tau(vd, DRUGS, 1, 1.0) == 0.0
+    vd2 = pd.DataFrame({"stay_id": [1], "drug": ["norepi"], "start_hours_from_admit": [2.0], "end_hours_from_admit": [8.0]})
+    assert v.f1_at_tau(vd2, DRUGS, 1, 8.0) == 0.0                                       # ended exactly at tau: not running
 
 
 def test_strictly_before_matches_notebook_definition():

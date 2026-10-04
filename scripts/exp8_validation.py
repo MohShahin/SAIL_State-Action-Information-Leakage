@@ -4,9 +4,12 @@ Two checks, both aggregate-only in what they write:
 
 1. strictly_before: F1 (hours on vasopressor) and F2 (hours since the last dose-tier change) must
    depend only on information available at the decision time tau. They are recomputed here from
-   the raw dose intervals censored at tau (every interval end is replaced by min(end, tau), every
-   tier-change event after tau is dropped) and compared element-wise with the notebook's values.
-   Any difference would mean a feature looks past the decision boundary.
+   the raw dose intervals restricted to infusions that had started by tau (whether one is still
+   running at tau is known at tau; nothing else about its end is used) and tier changes at or
+   before tau, then compared element-wise with the notebook's values. Any difference would mean
+   a feature looks past the decision boundary. Note what this check does NOT claim: an infusion
+   running at tau is, by construction of action_next, active in the next bin, so F1 > 0 implies
+   the label; the ablation below quantifies that.
 
 2. indicator_ablation: how much of Variant F's action-recoverability AUROC is carried by the single
    binary "on a vasopressor at tau" (F1 > 0)? Variant D plus that indicator is evaluated with the
@@ -24,11 +27,12 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 
-def censored_intervals(vaso_dose_clean: pd.DataFrame, dose_scored_drugs, tau: float, stay_id) -> list[tuple[float, float]]:
-    """Merged dose-scored intervals of one stay using only what is known at tau: starts at or
-    before tau, ends censored at tau (an infusion still running at tau has no known end)."""
+def known_at_tau_intervals(vaso_dose_clean: pd.DataFrame, dose_scored_drugs, tau: float, stay_id) -> list[tuple[float, float]]:
+    """Merged dose-scored intervals of one stay using only what is known at tau: infusions that
+    started at or before tau. Whether an infusion is still running at tau (end > tau) is known at
+    tau; its eventual end time is not used beyond that test."""
     g = vaso_dose_clean[(vaso_dose_clean["stay_id"] == stay_id) & vaso_dose_clean["drug"].isin(dose_scored_drugs)]
-    pairs = sorted((float(s), min(float(e), tau)) for s, e in zip(g["start_hours_from_admit"], g["end_hours_from_admit"]) if float(s) <= tau)
+    pairs = sorted((float(s), float(e)) for s, e in zip(g["start_hours_from_admit"], g["end_hours_from_admit"]) if float(s) <= tau)
     merged: list[list[float]] = []
     for a, b in pairs:
         if merged and a <= merged[-1][1]:
@@ -38,11 +42,10 @@ def censored_intervals(vaso_dose_clean: pd.DataFrame, dose_scored_drugs, tau: fl
     return [(a, b) for a, b in merged]
 
 
-def f1_at_tau_censored(vaso_dose_clean, dose_scored_drugs, stay_id, tau: float) -> float:
-    """Hours on vasopressor at tau from censored intervals: covered if the last merged interval
-    reaches tau (its end was censored at tau, i.e. the infusion was still running)."""
-    for a, b in censored_intervals(vaso_dose_clean, dose_scored_drugs, tau, stay_id):
-        if a <= tau and b >= tau and (b == tau):          # still running at tau
+def f1_at_tau(vaso_dose_clean, dose_scored_drugs, stay_id, tau: float) -> float:
+    """Hours on vasopressor at tau: the merged interval that has started and is still running."""
+    for a, b in known_at_tau_intervals(vaso_dose_clean, dose_scored_drugs, tau, stay_id):
+        if a <= tau < b:
             return tau - a
     return 0.0
 
@@ -56,21 +59,25 @@ def check_strictly_before(vaso_dose_clean, dose_scored_drugs, decision_edges: pd
     idx = np.arange(len(decision_edges))
     if sample is not None and sample < len(idx):
         idx = np.sort(rng.choice(idx, size=sample, replace=False))
-    d1, d2 = [], []
+    d1, d2, examples = [], [], []
     for i in idx:
         row = decision_edges.iloc[i]
         sid, tau = row["stay_id"], float(row["decision_time"])
-        f1_c = f1_at_tau_censored(vaso_dose_clean, dose_scored_drugs, sid, tau)
+        f1_c = f1_at_tau(vaso_dose_clean, dose_scored_drugs, sid, tau)
         last = 0.0
         for ts, _tier in changes_by_stay.get(sid, []):
             if ts <= tau:
                 last = ts
         f2_c = tau - last
         d1.append(abs(f1_c - float(f1_notebook[i]))); d2.append(abs(f2_c - float(f2_notebook[i])))
+        if (d1[-1] > 1e-9 or d2[-1] > 1e-9) and len(examples) < 5:
+            examples.append({"row": int(i), "tau": tau, "f1_notebook": float(f1_notebook[i]), "f1_recomputed": f1_c,
+                             "f2_notebook": float(f2_notebook[i]), "f2_recomputed": f2_c})
     d1, d2 = np.asarray(d1), np.asarray(d2)
     return {"rows_checked": int(len(idx)), "f1_max_abs_diff": float(d1.max()), "f1_rows_differing": int((d1 > 1e-9).sum()),
             "f2_max_abs_diff": float(d2.max()), "f2_rows_differing": int((d2 > 1e-9).sum()),
-            "strictly_before_decision_time": bool((d1 <= 1e-9).all() and (d2 <= 1e-9).all())}
+            "strictly_before_decision_time": bool((d1 <= 1e-9).all() and (d2 <= 1e-9).all()),
+            "differing_examples_no_patient_ids": examples}
 
 
 def indicator_ablation(X_D: np.ndarray, f1: np.ndarray, f2: np.ndarray, y: np.ndarray, groups: np.ndarray,
