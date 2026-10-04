@@ -61,3 +61,4 @@ bigquery-credentials*
 !results/experiment5_h3_paired_bootstrap_rows.json
 !results/experiment5_h3_paired_bootstrap_bins.json
 !results/experiment8_validation.json
+!results/experiment0_cohort_duckdb_diagnostics.json

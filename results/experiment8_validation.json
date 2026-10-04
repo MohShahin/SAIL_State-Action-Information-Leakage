@@ -1,0 +1,34 @@
+{
+  "strictly_before": {
+    "rows_checked": 2000,
+    "f1_max_abs_diff": 0.0,
+    "f1_rows_differing": 0,
+    "f2_max_abs_diff": 0.0,
+    "f2_rows_differing": 0,
+    "strictly_before_decision_time": true,
+    "differing_examples_no_patient_ids": []
+  },
+  "indicator_ablation": {
+    "D": {
+      "auroc": 0.7321350650687735,
+      "ci_lo": 0.7270296659711384,
+      "ci_hi": 0.7361374344924801
+    },
+    "D_plus_on_vasopressor_indicator": {
+      "auroc": 0.8913432562167041,
+      "ci_lo": 0.8878473372976716,
+      "ci_hi": 0.8947171454434019
+    },
+    "D_plus_F1_F2": {
+      "auroc": 0.9006007515863501,
+      "ci_lo": 0.8969613218326363,
+      "ci_hi": 0.904270589400133
+    },
+    "indicator_share_of_F_gain": 0.9450481842266427,
+    "prevalence_on_vasopressor_at_tau": 0.3057755252877204,
+    "label_given_on": 1.0,
+    "label_given_off": 0.22407387289516567
+  },
+  "n_rows": 198891,
+  "probe": "logreg"
+}

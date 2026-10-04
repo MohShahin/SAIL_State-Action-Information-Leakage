@@ -17,6 +17,8 @@ confirmed aggregate-only:
 | `experiment3_summary.json` | Cohort-wide window-overlap statistics (Experiment 3) |
 | `experiment6_mortality_best_probe.csv` | 5 rows — one per state variant (A–E), best-probe mortality-prediction AUROC + CI at a fixed 24h decision point (Experiment 6) |
 | `experiment6_mortality_vs_action_recoverability.json` | Side-by-side comparison: action-recoverability AUROC gap (0.109) vs. mortality-predictive-validity AUROC gap (0.011) across the same five variants |
+| `experiment0_cohort_duckdb_diagnostics.json` | Cohort diagnostics of the DuckDB reproduction (ORCD, MIMIC-IV v3.1): stage counts, anchor_year_group counts, derived-table sizes, Experiment 2 best-probe AUROCs, all against the published figures. Counts only |
+| `experiment8_validation.json` | Independent validation of Experiment 8: F1 and F2 recomputed from information available at the decision time and compared with the notebook's values (2,000 sampled rows), plus the ablation D vs D + 1[on vasopressor at tau] vs D + F1 + F2 (logreg, clustered CI) with the label rate given the indicator |
 | `experiment7_respiratory_sofa_summary.json` | Cohort-wide statistics on the respiratory-SOFA ventilatory-support conditional (Experiment 7) — the current-vs-official disagreement rate, ambiguous-PF-zone prevalence, and the collision-zone counts |
 
 Both the current (verified 2026-08-16) figures and the manuscript draft's original figures are
