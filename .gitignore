@@ -60,3 +60,4 @@ bigquery-credentials*
 # Experiment 5b: H3 paired cluster bootstrap aggregates (FORMAL_ANALYSIS.md section 7)
 !results/experiment5_h3_paired_bootstrap_rows.json
 !results/experiment5_h3_paired_bootstrap_bins.json
+!results/experiment8_validation.json

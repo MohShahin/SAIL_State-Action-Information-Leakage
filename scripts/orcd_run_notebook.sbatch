@@ -33,6 +33,6 @@ echo "start $(date) host $(hostname) repo $(git -C "$REPO" rev-parse --short HEA
 python -m ipykernel install --user --name python3 >/dev/null 2>&1 || true
 python "$REPO/scripts/run_notebook_checkpointed.py" \
   --notebook "$RUN/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" \
-  --stop-index ${SAIL_STOP_INDEX:-45} --timeout ${SAIL_CELL_TIMEOUT:-10800}
+  --stop-index ${SAIL_STOP_INDEX:-47} --timeout ${SAIL_CELL_TIMEOUT:-10800}
 echo "end $(date)"
 ls -la "$RUN/results" | head -40
