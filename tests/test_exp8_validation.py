@@ -68,3 +68,10 @@ def test_indicator_and_off_rows_shapes():
     r = v.indicator_and_off_rows(f1, y, groups, {"A": X}, {"logreg": lambda: LogisticRegression(max_iter=500)}, cv_predict, lambda *a, **k: (0.0, 1.0), n_boot=5)
     assert r["n_rows_on"] + r["n_rows_off"] == n and r["label_rate_on"] == 1.0
     assert 0.5 < r["indicator_alone_auroc"] <= 1.0 and "A" in r["off_rows"]
+
+
+def test_on_at_tau_all_drugs_counts_every_label_drug():
+    vb = pd.DataFrame({"stay_id": [1, 2], "drug": ["phenylephrine", "norepi"],
+                       "time_bin_start": [2.0, 10.0], "time_bin_end": [9.0, 12.0]})
+    edges = pd.DataFrame({"stay_id": [1, 1, 2], "bin": [0, 1, 0], "decision_time": [4.0, 12.0, 4.0]})
+    assert v.on_at_tau_all_drugs(vb, edges).tolist() == [True, False, False]

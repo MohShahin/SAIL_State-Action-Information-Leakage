@@ -120,15 +120,39 @@ def indicator_and_off_rows(f1: np.ndarray, y: np.ndarray, groups: np.ndarray, va
     return out
 
 
+def on_at_tau_all_drugs(vaso_bins_df: pd.DataFrame, decision_edges: pd.DataFrame) -> np.ndarray:
+    """1 if ANY of the label's drugs (all six, as in vaso_bins_df: the action label's own drug set,
+    including phenylephrine and vasopressin) has an infusion running at the decision time tau
+    (start <= tau < end), aligned to decision_edges' rows."""
+    iv = vaso_bins_df[["stay_id", "time_bin_start", "time_bin_end"]]
+    by_stay = {sid: (g["time_bin_start"].values, g["time_bin_end"].values) for sid, g in iv.groupby("stay_id")}
+    out = np.zeros(len(decision_edges), dtype=bool)
+    for i, (sid, tau) in enumerate(zip(decision_edges["stay_id"].values, decision_edges["decision_time"].values)):
+        if sid in by_stay:
+            st, en = by_stay[sid]
+            out[i] = bool(((st <= tau) & (tau < en)).any())
+    return out
+
+
 def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay,
                         X_D, y, groups, probe_fn, cv_predict, bootstrap_ci, out_dir, n_boot: int = 300,
-                        sample: int | None = 2000, off_row_variants: dict | None = None, off_row_probes: dict | None = None) -> dict:
+                        sample: int | None = 2000, off_row_variants: dict | None = None, off_row_probes: dict | None = None,
+                        vaso_bins_df: pd.DataFrame | None = None) -> dict:
     res = {"strictly_before": check_strictly_before(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay, sample=sample),
            "indicator_ablation": indicator_ablation(X_D, f1, f2, y, groups, probe_fn, cv_predict, bootstrap_ci, n_boot=n_boot),
            "n_rows": int(len(y)), "probe": "logreg"}
     if off_row_variants:
+        # dose_scored_drugs only (norepi, epi, dopamine, dobutamine): the F1 definition
         res["indicator_and_off_rows"] = indicator_and_off_rows(f1, y, groups, off_row_variants, off_row_probes or {"logreg": probe_fn},
                                                                cv_predict, bootstrap_ci, n_boot=n_boot)
+        res["indicator_and_off_rows"]["drug_set"] = "dose_scored_4 (F1 > 0)"
+        if vaso_bins_df is not None:
+            # all six label drugs: the definition that matches the action label
+            on6 = on_at_tau_all_drugs(vaso_bins_df, decision_edges).astype(float)
+            r6 = indicator_and_off_rows(on6, y, groups, off_row_variants, off_row_probes or {"logreg": probe_fn},
+                                        cv_predict, bootstrap_ci, n_boot=n_boot)
+            r6["drug_set"] = "all_6_label_drugs"
+            res["indicator_and_off_rows_all_drugs"] = r6
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     with open(Path(out_dir) / "experiment8_validation.json", "w") as f:
         json.dump(res, f, indent=2)
@@ -137,7 +161,14 @@ def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, 
           f"F2 diff {sb['f2_max_abs_diff']:.2e} -> {'PASS' if sb['strictly_before_decision_time'] else 'FAIL'}")
     if "indicator_and_off_rows" in res:
         io = res["indicator_and_off_rows"]
-        print(f"Exp 8 indicator alone AUROC={io['indicator_alone_auroc']:.3f}; off-at-tau rows n={io['n_rows_off']:,} (label rate {io['label_rate_off']:.3f}): "
+        for _k in ("indicator_and_off_rows", "indicator_and_off_rows_all_drugs"):
+            if _k not in res:
+                continue
+            io = res[_k]
+            print(f"[{io['drug_set']}] indicator alone AUROC={io['indicator_alone_auroc']:.3f}; off rows n={io['n_rows_off']:,} (label rate {io['label_rate_off']:.3f}, on {io['label_rate_on']:.3f}): "
+                  + "  ".join(f"{v} {pn}={r['auroc']:.3f}" for v, d in io["off_rows"].items() for pn, r in d.items()))
+        io = res["indicator_and_off_rows"]
+        if False: print(f"Exp 8 indicator alone AUROC={io['indicator_alone_auroc']:.3f}; off-at-tau rows n={io['n_rows_off']:,} (label rate {io['label_rate_off']:.3f}): "
               + "  ".join(f"{v} {pn}={r['auroc']:.3f}" for v, d in io["off_rows"].items() for pn, r in d.items()))
     print(f"Exp 8 ablation (logreg): D={ia['D']['auroc']:.3f}  D+on_indicator={ia['D_plus_on_vasopressor_indicator']['auroc']:.3f}  "
           f"D+F1+F2={ia['D_plus_F1_F2']['auroc']:.3f}  indicator share of F gain={ia['indicator_share_of_F_gain']:.2f}  "
