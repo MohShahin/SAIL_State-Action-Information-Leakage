@@ -8,12 +8,17 @@ On 4 Oct the collaborator ran the H3 cell twice in a pipeline check, saw aggrega
 compared row-shift and bin-index variants. He reports no code or settings changed afterward. The
 choices below were made by the project lead after reading scripts/h3_paired_bootstrap.py (code
 only, no outputs).
+The collaborator's PR description (#2) states, without numbers, that the bin-index offset variant
+"gives the same picture" as row-shift. The project lead read this before choosing decision 3.
 
 ## Decisions
 1. Primary cohort: 13,192 stays, all of MIMIC-IV v3.1, with Sepsis-3 recomputed from the derived
    sofa and suspicion_of_infection tables (queries/01c_cohort_recomputed_sepsis3.sql). The
    published mimiciv_3_1_derived.sepsis3 is a strict subset (32,899 vs 41,295 stays).
    Sensitivity: published table, 11,354 stays (effectively 2008-2019).
+   The collaborator's final run builds this cohort with his DuckDB port (queries/duckdb/ on branch
+   h3-paired-bootstrap); the BigQuery query above reproduces it exactly (13,192; identical counts in
+   every anchor-year group).
 2. Rows: common rows primary (both AUROCs on rows present at offsets 0 and 8); each offset's own
    rows as sensitivity. Proposed in the initial H3 discussion, before the cohort discrepancy and
    before the disclosure.
