@@ -4,6 +4,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
+
+pytest.importorskip("sklearn")  # optional dependency: scripts/ are not part of the sail package
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import h3_paired_bootstrap as h3  # noqa: E402

@@ -2,8 +2,9 @@
 import sys
 from pathlib import Path
 
-import duckdb
 import pytest
+
+duckdb = pytest.importorskip("duckdb")  # optional dependency: the DuckDB backend is not part of the sail package
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import duckdb_backend as be  # noqa: E402
