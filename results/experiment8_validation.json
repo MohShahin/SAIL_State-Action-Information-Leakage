@@ -30,5 +30,75 @@
     "label_given_off": 0.22407387289516567
   },
   "n_rows": 198891,
-  "probe": "logreg"
+  "probe": "logreg",
+  "indicator_and_off_rows": {
+    "indicator_alone_auroc": 0.8314042831453327,
+    "n_rows_all": 198891,
+    "n_rows_off": 138075,
+    "n_rows_on": 60816,
+    "label_rate_off": 0.22407387289516567,
+    "label_rate_on": 1.0,
+    "off_rows": {
+      "A_full": {
+        "logreg": {
+          "auroc": 0.7039859886607045,
+          "ci_lo": 0.6990970531760058,
+          "ci_hi": 0.7091660085804261
+        },
+        "gb": {
+          "auroc": 0.7629933300809417,
+          "ci_lo": 0.758014958733649,
+          "ci_hi": 0.7675814668388933
+        }
+      },
+      "E_physiology_only": {
+        "logreg": {
+          "auroc": 0.6849578295007928,
+          "ci_lo": 0.6799312613147027,
+          "ci_hi": 0.6900994380024024
+        },
+        "gb": {
+          "auroc": 0.7602850713369947,
+          "ci_lo": 0.7551419377476473,
+          "ci_hi": 0.7648715460829709
+        }
+      }
+    },
+    "drug_set": "dose_scored_4 (F1 > 0)"
+  },
+  "indicator_and_off_rows_all_drugs": {
+    "indicator_alone_auroc": 0.9444389951501281,
+    "n_rows_all": 198891,
+    "n_rows_off": 117332,
+    "n_rows_on": 81559,
+    "label_rate_off": 0.08689871475812225,
+    "label_rate_on": 1.0,
+    "off_rows": {
+      "A_full": {
+        "logreg": {
+          "auroc": 0.6930173582109647,
+          "ci_lo": 0.687227944934619,
+          "ci_hi": 0.698568549017831
+        },
+        "gb": {
+          "auroc": 0.7972153492964127,
+          "ci_lo": 0.7922951639087649,
+          "ci_hi": 0.8018536851226561
+        }
+      },
+      "E_physiology_only": {
+        "logreg": {
+          "auroc": 0.6704629102147197,
+          "ci_lo": 0.6642751363741517,
+          "ci_hi": 0.6759834866536168
+        },
+        "gb": {
+          "auroc": 0.7777377236254537,
+          "ci_lo": 0.7721781740631732,
+          "ci_hi": 0.7826642975800593
+        }
+      }
+    },
+    "drug_set": "all_6_label_drugs"
+  }
 }
