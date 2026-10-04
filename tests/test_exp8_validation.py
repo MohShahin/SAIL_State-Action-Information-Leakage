@@ -48,3 +48,20 @@ def test_indicator_ablation_runs():
     r = v.indicator_ablation(X_D, f1, f2, y, groups, lambda: LogisticRegression(max_iter=500), cv_predict, boot, n_boot=10)
     assert r["D_plus_on_vasopressor_indicator"]["auroc"] > r["D"]["auroc"]
     assert 0 <= r["prevalence_on_vasopressor_at_tau"] <= 1
+
+
+def test_indicator_and_off_rows_shapes():
+    rng = np.random.RandomState(3); n = 300
+    groups = np.repeat(np.arange(30), 10); y = rng.binomial(1, 0.4, n)
+    f1 = np.where(rng.rand(n) < 0.3, 5.0, 0.0); y[f1 > 0] = 1          # on-at-tau rows are label 1 by construction
+    X = rng.randn(n, 2)
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import GroupKFold
+    def cv_predict(Xm, yy, g, probe_fn, n_splits=5):
+        p = np.zeros(len(yy))
+        for tr, va in GroupKFold(n_splits).split(Xm, yy, g):
+            p[va] = LogisticRegression(max_iter=500).fit(Xm[tr], yy[tr]).predict_proba(Xm[va])[:, 1]
+        return p
+    r = v.indicator_and_off_rows(f1, y, groups, {"A": X}, {"logreg": lambda: LogisticRegression(max_iter=500)}, cv_predict, lambda *a, **k: (0.0, 1.0), n_boot=5)
+    assert r["n_rows_on"] + r["n_rows_off"] == n and r["label_rate_on"] == 1.0
+    assert 0.5 < r["indicator_alone_auroc"] <= 1.0 and "A" in r["off_rows"]

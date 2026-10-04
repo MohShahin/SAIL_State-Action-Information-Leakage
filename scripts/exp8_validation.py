@@ -99,18 +99,46 @@ def indicator_ablation(X_D: np.ndarray, f1: np.ndarray, f2: np.ndarray, y: np.nd
     return out
 
 
+def indicator_and_off_rows(f1: np.ndarray, y: np.ndarray, groups: np.ndarray, variants: dict, probes: dict,
+                           cv_predict, bootstrap_ci, n_boot: int = 300) -> dict:
+    """The on-at-tau indicator on its own, and variants A and E evaluated on the rows where the
+    patient is NOT on a vasopressor at tau (on-at-tau rows are all label 1, so only off rows carry
+    information). Each requested probe is refitted with grouped CV on the off rows alone."""
+    on = (f1 > 0)
+    out = {"indicator_alone_auroc": float(roc_auc_score(y, on.astype(float))),
+           "n_rows_all": int(len(y)), "n_rows_off": int((~on).sum()), "n_rows_on": int(on.sum()),
+           "label_rate_off": float(y[~on].mean()), "label_rate_on": float(y[on].mean()),
+           "off_rows": {}}
+    yo, go = y[~on], groups[~on]
+    for vname, X in variants.items():
+        Xo = X[~on]
+        out["off_rows"][vname] = {}
+        for pname, pfn in probes.items():
+            p = cv_predict(Xo, yo, go, pfn)
+            lo, hi = bootstrap_ci(yo, p, go, roc_auc_score, n_boot=n_boot)
+            out["off_rows"][vname][pname] = {"auroc": float(roc_auc_score(yo, p)), "ci_lo": float(lo), "ci_hi": float(hi)}
+    return out
+
+
 def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay,
                         X_D, y, groups, probe_fn, cv_predict, bootstrap_ci, out_dir, n_boot: int = 300,
-                        sample: int | None = 2000) -> dict:
+                        sample: int | None = 2000, off_row_variants: dict | None = None, off_row_probes: dict | None = None) -> dict:
     res = {"strictly_before": check_strictly_before(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay, sample=sample),
            "indicator_ablation": indicator_ablation(X_D, f1, f2, y, groups, probe_fn, cv_predict, bootstrap_ci, n_boot=n_boot),
            "n_rows": int(len(y)), "probe": "logreg"}
+    if off_row_variants:
+        res["indicator_and_off_rows"] = indicator_and_off_rows(f1, y, groups, off_row_variants, off_row_probes or {"logreg": probe_fn},
+                                                               cv_predict, bootstrap_ci, n_boot=n_boot)
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     with open(Path(out_dir) / "experiment8_validation.json", "w") as f:
         json.dump(res, f, indent=2)
     sb, ia = res["strictly_before"], res["indicator_ablation"]
     print(f"Exp 8 strictly-before check on {sb['rows_checked']:,} rows: F1 diff {sb['f1_max_abs_diff']:.2e}, "
           f"F2 diff {sb['f2_max_abs_diff']:.2e} -> {'PASS' if sb['strictly_before_decision_time'] else 'FAIL'}")
+    if "indicator_and_off_rows" in res:
+        io = res["indicator_and_off_rows"]
+        print(f"Exp 8 indicator alone AUROC={io['indicator_alone_auroc']:.3f}; off-at-tau rows n={io['n_rows_off']:,} (label rate {io['label_rate_off']:.3f}): "
+              + "  ".join(f"{v} {pn}={r['auroc']:.3f}" for v, d in io["off_rows"].items() for pn, r in d.items()))
     print(f"Exp 8 ablation (logreg): D={ia['D']['auroc']:.3f}  D+on_indicator={ia['D_plus_on_vasopressor_indicator']['auroc']:.3f}  "
           f"D+F1+F2={ia['D_plus_F1_F2']['auroc']:.3f}  indicator share of F gain={ia['indicator_share_of_F_gain']:.2f}  "
           f"P(action|on)={ia['label_given_on']:.3f} P(action|off)={ia['label_given_off']:.3f}")
