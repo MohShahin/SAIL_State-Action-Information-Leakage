@@ -19,6 +19,7 @@ the same notebook runs unchanged against a local DuckDB build of the same releas
 5. Experiment 3's three hard asserts on the published numbers are enforced only with
    `SAIL_STRICT_EXP3=1`; otherwise a deviation is printed and the run continues to Experiments 8
    and 5.
-6. Outputs land in `~/orcd/scratch/sail/run_<jobid>/results/`. Per-patient prediction files from
+6. Outputs land in `~/orcd/scratch/sail/run_<jobid>/notebook/results/` (the run folder mirrors the repo
+   layout so cells 24 and 33 find the committed `../results/` files). Per-patient prediction files from
    Experiment 5b stay there. Copy only the aggregate JSON files to `results/` in the repo; they are
    allowlisted at the bottom of `.gitignore`.

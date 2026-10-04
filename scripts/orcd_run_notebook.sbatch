@@ -26,13 +26,17 @@ export SAIL_MEM=${SAIL_MEM:-32GB}
 export SAIL_REPO=$REPO
 export MPLBACKEND=Agg
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-8} OPENBLAS_NUM_THREADS=${SLURM_CPUS_PER_TASK:-8}
-mkdir -p "$RUN/results" "$HOME/orcd/scratch/sail/logs"
-cp "$REPO/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" "$RUN/"
-cd "$RUN"
+# Same layout as the repo: the notebook runs from $RUN/notebook (its OUT_DIR is notebook/results) and
+# cells 24 and 33 read the committed curated files through ../results, so a COPY of the repo's
+# results/ sits beside it. Nothing is written back into the repo.
+mkdir -p "$RUN/notebook/results" "$HOME/orcd/scratch/sail/logs"
+cp -r "$REPO/results" "$RUN/results"
+cp "$REPO/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" "$RUN/notebook/"
+cd "$RUN/notebook"
 echo "start $(date) host $(hostname) repo $(git -C "$REPO" rev-parse --short HEAD) db $SAIL_DUCKDB"
 python -m ipykernel install --user --name python3 >/dev/null 2>&1 || true
 python "$REPO/scripts/run_notebook_checkpointed.py" \
-  --notebook "$RUN/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" \
+  --notebook "$RUN/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" \
   --stop-index ${SAIL_STOP_INDEX:-47} --timeout ${SAIL_CELL_TIMEOUT:-10800}
 echo "end $(date)"
-ls -la "$RUN/results" | head -40
+ls -la "$RUN/notebook/results" | head -40
