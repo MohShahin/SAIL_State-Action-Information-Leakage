@@ -106,6 +106,7 @@ class SimParams:
     n_stays: int = 12000
     branch: str = "on"
     # severity
+    sev_mean: float = 0.0
     sev_patient_sd: float = 0.8
     sev_init_sd: float = 0.6
     phi: float = 0.80                 # AR(1) persistence of the deviation from the patient level
@@ -117,7 +118,8 @@ class SimParams:
     map_slope: float = 7.0
     map_noise: float = 6.0
     drug_map: tuple = (8.0, 10.0, 12.0)   # MAP raise by dose tier 1..3
-    drug_hr: float = 4.0                   # heart-rate raise while any infusion runs
+    drug_gain: float = 1.0                 # multiplier on drug_map (calibrated)
+    drug_hr: float = 0.0                   # heart-rate raise while any infusion runs (real: none on vs off)
     tier_cut: tuple = (0.6, 1.4)           # severity cut points for tiers 2 and 3
     # policy
     start_intercept: float = -2.6
@@ -138,7 +140,7 @@ def simulate(p: SimParams, seed: int):
         raise ValueError(f"branch must be one of {BRANCHES}, got {p.branch!r}")
     rng = np.random.default_rng(seed)
     n, T = p.n_stays, N_BINS
-    level = rng.normal(0.0, p.sev_patient_sd, n)
+    level = rng.normal(p.sev_mean, p.sev_patient_sd, n)
     drift = rng.normal(p.drift_mean, p.drift_sd, n)
     sev = np.empty((n, T))
     dev = rng.normal(0.0, p.sev_init_sd, n)
@@ -147,8 +149,8 @@ def simulate(p: SimParams, seed: int):
             dev = p.phi * dev + p.sev_noise * rng.normal(size=n)
         sev[:, t] = level + drift * t + dev
     # patient-level lab offsets and per-bin noise, drawn up front so the policy does not change them
-    u_cr, u_pl, u_pf = (rng.normal(0, s, n) for s in (0.30, 0.30, 0.25))
-    e_map, e_hr = rng.normal(0, p.map_noise, (n, T)), rng.normal(0, 10.0, (n, T))
+    u_cr, u_pl, u_pf, u_hr = (rng.normal(0, s, n) for s in (0.30, 0.30, 0.25, 12.0))
+    e_map, e_hr = rng.normal(0, p.map_noise, (n, T)), rng.normal(0, 8.0, (n, T))
     e_lac, e_cr, e_pl, e_pf = (rng.normal(0, s, (n, T)) for s in (0.30, 0.12, 0.12, 0.20))
     u_start, u_scored = rng.random((n, T + 1)), rng.random((n, T + 1))
     mean_extra = p.run_extra * p.persistence
@@ -164,7 +166,7 @@ def simulate(p: SimParams, seed: int):
     tier = np.zeros((n, T), dtype=int)
     mbp = np.zeros((n, T))
     drug_on_obs = p.branch != "off_pure"
-    drug_map = np.asarray((0.0,) + tuple(p.drug_map))
+    drug_map = p.drug_gain * np.asarray((0.0,) + tuple(p.drug_map))
 
     # admission: some stays arrive on a vasopressor (decided on an untreated MAP draw)
     map_pre = p.map0 - p.map_slope * sev[:, 0] + e_map[:, 0]
@@ -189,7 +191,7 @@ def simulate(p: SimParams, seed: int):
     nxt[:, :-1] = occ[:, 1:]
     nxt[:, -1] = np.nan
 
-    hr = 90 + 8 * sev + e_hr + (p.drug_hr * occ if drug_on_obs else 0.0)
+    hr = 87 + 3 * sev + u_hr[:, None] + e_hr + (p.drug_hr * occ if drug_on_obs else 0.0)
     lactate = np.exp(0.4 + 0.35 * sev + e_lac)
     creat = np.exp(0.05 + 0.25 * sev + u_cr[:, None] + e_cr)
     plt_ = 200 * np.exp(-0.30 * sev + u_pl[:, None] + e_pl)
@@ -233,7 +235,13 @@ def marginals(df: pd.DataFrame, occ: np.ndarray) -> dict:
     for k in (1, 8):
         m = a.merge(a.assign(bin=a["bin"] - k), on=["stay_id", "bin"], suffixes=("", "_k"))
         lag[str(k)] = float(np.corrcoef(m["mbp"], m["mbp_k"])[0, 1])
-    return {"n_stays": int(df["stay_id"].nunique()), "n_rows": int(len(df)),
+    lab = df[["stay_id", "bin", "action_next"]]
+    pers = {}
+    for k in (1, 2, 4, 8):
+        m = lab.merge(lab.assign(bin=lab["bin"] - k), on=["stay_id", "bin"], suffixes=("", "_k"))
+        pers[str(k)] = {"p_yk_given_y1": float(m.loc[m.action_next == 1, "action_next_k"].mean()),
+                        "p_yk_given_y0": float(m.loc[m.action_next == 0, "action_next_k"].mean())}
+    return {"n_stays": int(df["stay_id"].nunique()), "n_rows": int(len(df)), "label_persistence": pers,
             "frac_on_at_tau": float(on.mean()), "next_action_prevalence": float(y.mean()),
             "label_rate_given_on": float(y[on].mean()) if on.any() else float("nan"),
             "label_rate_given_off": float(y[~on].mean()),
@@ -248,53 +256,67 @@ def marginals(df: pd.DataFrame, occ: np.ndarray) -> dict:
 
 # ---- calibration to the real aggregates ----------------------------------------------------------
 def calibration_loss(m: dict, tg: dict) -> float:
+    """Squared standardized distance between simulated and real aggregates (lower is better)."""
     occ = tg["occupancy"]
     th = np.array([occ["run_length_hist_all"][str(k)] for k in range(1, N_BINS + 1)], float)
     sh = np.array([m["run_length_hist_all"][str(k)] for k in range(1, N_BINS + 1)], float)
     th, sh = th / th.sum(), sh / max(sh.sum(), 1)
-    # compare the run-length shape on 1..7 and the tail mass >= 8
-    rl = np.sum((np.r_[th[:7], th[7:].sum()] - np.r_[sh[:7], sh[7:].sum()]) ** 2) * 20
+    # run-length shape on 1..7, 8..17 and full-grid (18) mass
+    shape = np.sum((np.r_[th[:7], th[7:17].sum(), th[17]] - np.r_[sh[:7], sh[7:17].sum(), sh[17]]) ** 2)
     mo = tg["moments"]["mbp"]
-    return float(
-        ((m["frac_on_at_tau"] - tg["frac_on_at_tau"]) / 0.01) ** 2
-        + ((m["label_rate_given_off"] - tg["label_rate_given_off"]) / 0.01) ** 2
-        + ((m["frac_occupied_at_bin0"] - occ["frac_occupied_at_bin0"]) / 0.02) ** 2
-        + ((m["run_length_mean_all"] - occ["run_length_mean_all"]) / 0.2) ** 2
-        + rl / 0.001
-        + ((m["mbp_mean_off"] - mo["mean_off"]) / 1.0) ** 2
-        + ((m["mbp_mean_on"] - mo["mean_on"]) / 1.0) ** 2
-        + ((m["mbp_sd"] - mo["sd"]) / 1.0) ** 2
-        + ((m["mbp_lag_corr"]["1"] - mo["lag_corr"]["1"]) / 0.03) ** 2
-        + ((m["mbp_lag_corr"]["8"] - mo["lag_corr"]["8"]) / 0.03) ** 2
-        + ((m["frac_on_with_dose_scored_cardio"] - tg["frac_on_with_dose_scored_cardio"]) / 0.02) ** 2)
+    terms = [
+        (m["frac_on_at_tau"], tg["frac_on_at_tau"], 0.01),
+        (m["label_rate_given_off"], tg["label_rate_given_off"], 0.01),
+        (m["frac_occupied_at_bin0"], occ["frac_occupied_at_bin0"], 0.02),
+        (m["frac_stays_ever_on"], occ["frac_stays_ever_on"], 0.02),
+        (m["run_length_mean_all"], occ["run_length_mean_all"], 0.25),
+        (m["mbp_mean_off"], mo["mean_off"], 1.0),
+        (m["mbp_mean_on"], mo["mean_on"], 1.0),
+        (m["mbp_sd"], mo["sd"], 1.0),
+        (m["mbp_lag_corr"]["1"], mo["lag_corr"]["1"], 0.03),
+        (m["mbp_lag_corr"]["8"], mo["lag_corr"]["8"], 0.03),
+        (m["frac_mbp_below_70"], tg["frac_mbp_below_70"], 0.02),
+        (m["frac_on_with_dose_scored_cardio"], tg["frac_on_with_dose_scored_cardio"], 0.02),
+    ]
+    for k in ("1", "4", "8"):
+        terms.append((m["label_persistence"][k]["p_yk_given_y1"], tg["label_persistence"][k]["p_yk_given_y1"], 0.02))
+        terms.append((m["label_persistence"][k]["p_yk_given_y0"], tg["label_persistence"][k]["p_yk_given_y0"], 0.02))
+    return float(sum(((a - b) / sc) ** 2 for a, b, sc in terms) + shape / 0.0005)
 
 
-CALIB_KEYS = ("start_intercept", "start_slope", "admit_intercept", "run_extra", "run_shape",
-              "map0", "map_slope", "map_noise", "phi", "scored_fraction")
+CALIB_BOUNDS = {"start_intercept": (-6.0, 0.0), "start_slope": (0.0, 4.0), "admit_intercept": (-3.0, 4.0),
+                "run_extra": (0.5, 15.0), "run_shape": (0.1, 5.0), "map0": (55.0, 100.0), "map_slope": (1.0, 15.0),
+                "map_noise": (1.0, 12.0), "phi": (0.3, 0.99), "sev_noise": (0.05, 1.0), "sev_mean": (-1.5, 1.5),
+                "sev_patient_sd": (0.1, 1.5), "drift_mean": (-0.2, 0.1), "drug_gain": (0.0, 2.0),
+                "scored_fraction": (0.5, 1.0)}
+CALIB_KEYS = tuple(CALIB_BOUNDS)
 
 
-def calibrate(targets: dict, n_stays: int = 6000, seed: int = 123, maxiter: int = 600) -> SimParams:
-    """Nelder-Mead on the aggregate loss with common random numbers (fixed seed), branch "on"."""
-    from scipy.optimize import minimize
+class _CalibObjective:
+    """Picklable objective for differential evolution (common random numbers: one fixed seed)."""
+
+    def __init__(self, base: SimParams, targets: dict, seed: int):
+        self.base, self.targets, self.seed = base, targets, seed
+
+    def params(self, x) -> SimParams:
+        return replace(self.base, **dict(zip(CALIB_KEYS, map(float, x))))
+
+    def __call__(self, x) -> float:
+        df, occ, _, _ = simulate(self.params(x), self.seed)
+        return calibration_loss(marginals(df, occ), self.targets)
+
+
+def calibrate(targets: dict, n_stays: int = 6000, seed: int = 123, maxiter: int = 80, workers: int = 1):
+    """Differential evolution over CALIB_BOUNDS on the aggregate loss, branch "on". The fitted
+    parameters are then used unchanged for every branch; only `persistence` varies in the grid."""
+    from scipy.optimize import differential_evolution
     rps = {k: v for k, v in targets["rows_per_stay_hist"].items() if int(k) <= N_BINS - 1}
     base = SimParams(n_stays=n_stays, branch="on", rows_per_stay=rps)
-    x0 = np.array([getattr(base, k) for k in CALIB_KEYS], float)
-
-    def unpack(x):
-        kw = dict(zip(CALIB_KEYS, x))
-        kw["run_extra"] = max(kw["run_extra"], 0.05)
-        kw["run_shape"] = max(kw["run_shape"], 0.05)
-        kw["map_noise"] = max(kw["map_noise"], 0.5)
-        kw["phi"] = float(np.clip(kw["phi"], 0.0, 0.99))
-        kw["scored_fraction"] = float(np.clip(kw["scored_fraction"], 0.0, 1.0))
-        return replace(base, **kw)
-
-    def f(x):
-        df, occ, _, _ = simulate(unpack(x), seed)
-        return calibration_loss(marginals(df, occ), targets)
-
-    res = minimize(f, x0, method="Nelder-Mead", options={"maxiter": maxiter, "xatol": 1e-3, "fatol": 1e-3})
-    return replace(unpack(res.x), n_stays=12000), float(res.fun)
+    obj = _CalibObjective(base, targets, seed)
+    res = differential_evolution(obj, [CALIB_BOUNDS[k] for k in CALIB_KEYS], maxiter=maxiter, popsize=10,
+                                 seed=seed, polish=False, workers=workers, updating="deferred" if workers != 1 else "immediate",
+                                 tol=1e-6)
+    return replace(obj.params(res.x), n_stays=12000), float(res.fun)
 
 
 # ---- one setting through the frozen H3 functions -------------------------------------------------
@@ -418,7 +440,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("calib"); c.add_argument("--targets", required=True); c.add_argument("--dest", required=True)
-    c.add_argument("--maxiter", type=int, default=600)
+    c.add_argument("--maxiter", type=int, default=80); c.add_argument("--workers", type=int, default=1)
     g = sub.add_parser("grid"); g.add_argument("--params", required=True); g.add_argument("--out", required=True)
     g.add_argument("--workers", type=int, default=1); g.add_argument("--n-stays", type=int, default=12000)
     g.add_argument("--n-boot", type=int, default=2000)
@@ -427,7 +449,7 @@ def main(argv=None):
 
     if a.cmd == "calib":
         tg = json.load(open(a.targets))
-        p, loss = calibrate(tg, maxiter=a.maxiter)
+        p, loss = calibrate(tg, maxiter=a.maxiter, workers=a.workers)
         check = SimParams(**{**asdict(p), "n_stays": 12000})
         df, occ, _, _ = simulate(check, 7)
         m = marginals(df, occ)

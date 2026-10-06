@@ -30,7 +30,8 @@ case "${SAIL_SIM_STAGE:-grid}" in
       --h3-json "$RUN/experiment5_h3_paired_bootstrap_bins.json" \
       --db "${SAIL_DUCKDB:-$HOME/orcd/scratch/sail/mimic4.db}" --out "$DEST/calibration_aggregates.json" ;;
   calib)
-    python "$REPO/scripts/simulate_sail.py" calib --targets "$DEST/calibration_aggregates.json" --dest "$DEST" ;;
+    python "$REPO/scripts/simulate_sail.py" calib --targets "$DEST/calibration_aggregates.json" --dest "$DEST" \
+      --workers ${SLURM_CPUS_PER_TASK:-8} ;;
   grid)
     python "$REPO/scripts/simulate_sail.py" grid --params "$DEST/sim_params.json" --out "$OUT/grid" \
       --workers ${SLURM_CPUS_PER_TASK:-8} --n-stays ${SAIL_SIM_NSTAYS:-12000} --n-boot ${SAIL_SIM_NBOOT:-2000}
