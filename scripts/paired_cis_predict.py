@@ -70,12 +70,14 @@ def open_readonly_backend(db_path: str, threads: int, mem: str, tmp: str):
     import duckdb
     import duckdb_backend as sail_db
     Path(tmp).mkdir(parents=True, exist_ok=True)
-    con = duckdb.connect(db_path, read_only=True)
+    assert "'" not in db_path
+    con = duckdb.connect(":memory:")
     con.execute(f"SET threads = {threads}")
     con.execute(f"SET memory_limit = '{mem}'")
     con.execute(f"SET temp_directory = '{tmp}'")
-    con.execute("ATTACH ':memory:' AS pcscratch")
-    sail_db.SCRATCH_SCHEMA = "pcscratch"
+    con.execute(f"ATTACH '{db_path}' AS mimic (READ_ONLY)")
+    con.execute("USE mimic")
+    sail_db.SCRATCH_SCHEMA = "memory"  # the writable in-memory catalog; the database stays untouched
     sail_db._con = con
     return sail_db
 
