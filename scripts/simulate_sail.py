@@ -403,11 +403,14 @@ def summarize(out_dir, dest) -> pd.DataFrame:
     for v in ("A", "E", "indicator"):
         mean[f"{v}_predA"] = g[f"{v}_predA"].sum().astype(int).astype(str) + "/" + g.size().astype(str)
     mean.reset_index().round(3).to_csv(dest / "grid_results_mean.csv", index=False)
-    figure(t, dest / "delta_vs_persistence.png")
+    real_path = dest / "calibration_aggregates.json"
+    figure(t, dest / "delta_vs_persistence.png", json.load(open(real_path)) if real_path.exists() else None)
     return t
 
 
-def figure(t: pd.DataFrame, path):
+def figure(t: pd.DataFrame, path, real: dict | None = None):
+    """Mean Delta over seeds per (branch, persistence); bars span the lowest to highest 95% CI
+    bound across seeds. Black stars: the real 13,192 cohort (same functions, same settings)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -427,6 +430,13 @@ def figure(t: pd.DataFrame, path):
             xs = x.values + (k - 1) * 0.04
             ax.errorbar(xs, mean.values, yerr=[mean.values - lo.values, hi.values - mean.values], color=colors[br],
                         marker="o", ms=8, lw=2, capsize=3, label=labels[br])
+        if real is not None:
+            xr = real["occupancy"]["run_length_mean_all"]
+            refs = [("real_A_h3_bins", "real cohort, variant A"), ("real_E_h3_bins", "real cohort, variant E")] \
+                if v == "A" else [("real_indicator_h3_bins", "real cohort, indicator")]
+            for j, (key, lab) in enumerate(refs):
+                ax.plot([xr], [real[key]["delta"]], marker="*" if j == 0 else "P", ms=13, color="#0b0b0b",
+                        ls="none", label=lab)
         ax.axhline(h3.DELTA_THRESHOLD, color="#52514e", ls="--", lw=1)
         ax.text(ax.get_xlim()[0], h3.DELTA_THRESHOLD, " Prediction A threshold 0.10", va="bottom", fontsize=8, color="#52514e")
         ax.axhline(0, color="#c3c2b7", lw=0.8)
@@ -436,7 +446,8 @@ def figure(t: pd.DataFrame, path):
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
         ax.grid(axis="y", color="#e6e5e0", lw=0.6)
-    axes[0].legend(frameon=False, fontsize=8, loc="best")
+    axes[0].legend(frameon=False, fontsize=8, loc="upper right")
+    axes[1].legend(frameon=False, fontsize=8, loc="lower right")
     fig.suptitle("Synthetic ground truth: H3 Delta vs treatment persistence (exploratory, not pre-registered)", fontsize=10)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
