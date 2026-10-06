@@ -77,3 +77,8 @@ results/sensitivity_v22_11354/*
 !results/sensitivity_v22_11354/experiment8_variant_f_summary.json
 !results/sensitivity_v22_11354/experiment8_validation.json
 !results/sensitivity_v22_11354/comparison_vs_published.md
+# H3 rerun after the post-pin change ff530e0 (TIMESTAMP_DIFF boundary counting); pending the project lead's approval under Decision 4
+!results/h3_post_pin_ff530e0/
+results/h3_post_pin_ff530e0/*
+!results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json
+!results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json
