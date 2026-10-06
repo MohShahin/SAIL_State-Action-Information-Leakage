@@ -134,6 +134,54 @@ def on_at_tau_all_drugs(vaso_bins_df: pd.DataFrame, decision_edges: pd.DataFrame
     return out
 
 
+def strict_boundary_audit(dose_scored_drugs, vaso_dose_clean: pd.DataFrame, decision_edges: pd.DataFrame,
+                          f2: np.ndarray, changes_by_stay: dict, y: np.ndarray,
+                          vaso_bins_df: pd.DataFrame | None = None) -> dict:
+    """All rows: how much the at-or-before-tau definitions differ from strictly-before-tau ones.
+    An event exactly at tau (an infusion starting, a tier change) is the decision bin's own action,
+    so a strictly-before state would exclude it. Counts only, no patient ids."""
+    sids = decision_edges["stay_id"].values
+    taus = decision_edges["decision_time"].values.astype(float)
+    g = vaso_dose_clean[vaso_dose_clean["drug"].isin(dose_scored_drugs)]
+    starts4 = {sid: d["start_hours_from_admit"].values.astype(float) for sid, d in g.groupby("stay_id")}
+    start_at_tau_4 = np.zeros(len(taus), dtype=bool)
+    change_at_tau = np.zeros(len(taus), dtype=bool)
+    f2_strict = np.asarray(f2, dtype=float).copy()
+    for i, (sid, tau) in enumerate(zip(sids, taus)):
+        st = starts4.get(sid)
+        if st is not None:
+            start_at_tau_4[i] = bool((st == tau).any())
+        ch = changes_by_stay.get(sid, [])
+        if any(ts == tau for ts, _t in ch):
+            change_at_tau[i] = True
+            prev = [ts for ts, _t in ch if ts < tau]
+            f2_strict[i] = tau - (max(prev) if prev else 0.0)
+    out = {"rows": int(len(taus)),
+           "rows_dose_scored_infusion_starting_at_tau": int(start_at_tau_4.sum()),
+           "rows_tier_change_at_tau": int(change_at_tau.sum()),
+           "f2_max_abs_change_if_strict": float(np.abs(f2_strict - np.asarray(f2, dtype=float)).max()) if len(taus) else 0.0,
+           "note": "F1 is unchanged under a strict definition: an infusion starting at tau gives F1 = tau - start = 0 either way"}
+    if vaso_bins_df is not None:
+        iv = vaso_bins_df[["stay_id", "time_bin_start", "time_bin_end"]]
+        by_stay = {sid: (d["time_bin_start"].values.astype(float), d["time_bin_end"].values.astype(float)) for sid, d in iv.groupby("stay_id")}
+        on_le = np.zeros(len(taus), dtype=bool)
+        on_lt = np.zeros(len(taus), dtype=bool)
+        for i, (sid, tau) in enumerate(zip(sids, taus)):
+            if sid in by_stay:
+                st, en = by_stay[sid]
+                on_le[i] = bool(((st <= tau) & (tau < en)).any())
+                on_lt[i] = bool(((st < tau) & (tau < en)).any())
+        yv = np.asarray(y)
+        out["six_drug_indicator"] = {
+            "rows_on_at_or_before_tau": int(on_le.sum()), "rows_on_strictly_before_tau": int(on_lt.sum()),
+            "rows_on_only_because_an_infusion_starts_at_tau": int((on_le & ~on_lt).sum()),
+            "auroc_at_or_before_tau": float(roc_auc_score(yv, on_le.astype(float))),
+            "auroc_strictly_before_tau": float(roc_auc_score(yv, on_lt.astype(float))),
+            "label_rate_given_on_strict": float(yv[on_lt].mean()) if on_lt.any() else None,
+            "label_rate_given_off_strict": float(yv[~on_lt].mean()) if (~on_lt).any() else None}
+    return out
+
+
 def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay,
                         X_D, y, groups, probe_fn, cv_predict, bootstrap_ci, out_dir, n_boot: int = 300,
                         sample: int | None = 2000, off_row_variants: dict | None = None, off_row_probes: dict | None = None,
@@ -141,6 +189,8 @@ def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, 
     res = {"strictly_before": check_strictly_before(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, f2, changes_by_stay, sample=sample),
            "indicator_ablation": indicator_ablation(X_D, f1, f2, y, groups, probe_fn, cv_predict, bootstrap_ci, n_boot=n_boot),
            "n_rows": int(len(y)), "probe": "logreg"}
+    res["strict_boundary_audit"] = strict_boundary_audit(dose_scored_drugs, vaso_dose_clean, decision_edges, f2,
+                                                         changes_by_stay, y, vaso_bins_df)
     if off_row_variants:
         # dose_scored_drugs only (norepi, epi, dopamine, dobutamine): the F1 definition
         res["indicator_and_off_rows"] = indicator_and_off_rows(f1, y, groups, off_row_variants, off_row_probes or {"logreg": probe_fn},
@@ -156,6 +206,11 @@ def run_exp8_validation(vaso_dose_clean, dose_scored_drugs, decision_edges, f1, 
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     with open(Path(out_dir) / "experiment8_validation.json", "w") as f:
         json.dump(res, f, indent=2)
+    sa = res["strict_boundary_audit"]
+    print(f"Exp 8 strict boundary audit on {sa['rows']:,} rows: infusion starting at tau {sa['rows_dose_scored_infusion_starting_at_tau']:,}, "
+          f"tier change at tau {sa['rows_tier_change_at_tau']:,} (F2 max change {sa['f2_max_abs_change_if_strict']:.3g} h)"
+          + (f"; six-drug indicator AUROC {sa['six_drug_indicator']['auroc_at_or_before_tau']:.3f} (<= tau) vs "
+             f"{sa['six_drug_indicator']['auroc_strictly_before_tau']:.3f} (< tau)" if "six_drug_indicator" in sa else ""))
     sb, ia = res["strictly_before"], res["indicator_ablation"]
     print(f"Exp 8 strictly-before check on {sb['rows_checked']:,} rows: F1 diff {sb['f1_max_abs_diff']:.2e}, "
           f"F2 diff {sb['f2_max_abs_diff']:.2e} -> {'PASS' if sb['strictly_before_decision_time'] else 'FAIL'}")

@@ -75,3 +75,22 @@ def test_on_at_tau_all_drugs_counts_every_label_drug():
                        "time_bin_start": [2.0, 10.0], "time_bin_end": [9.0, 12.0]})
     edges = pd.DataFrame({"stay_id": [1, 1, 2], "bin": [0, 1, 0], "decision_time": [4.0, 12.0, 4.0]})
     assert v.on_at_tau_all_drugs(vb, edges).tolist() == [True, False, False]
+
+
+def test_strict_boundary_audit_counts_events_at_tau():
+    # stay 1: norepi starts exactly at tau=4 (an action at tau); stay 2: tier change exactly at tau=8
+    vd = pd.DataFrame({"stay_id": [1, 2], "drug": ["norepi", "epi"],
+                       "start_hours_from_admit": [4.0, 2.0], "end_hours_from_admit": [9.0, 12.0]})
+    edges = pd.DataFrame({"stay_id": [1, 1, 2, 2], "bin": [0, 1, 0, 1], "decision_time": [4.0, 8.0, 4.0, 8.0]})
+    f2_nb = np.array([0.0, 4.0, 2.0, 0.0])
+    changes = {1: [(4.0, 3)], 2: [(2.0, 2), (8.0, 3)]}
+    y = np.array([1, 1, 1, 0])
+    bins = pd.DataFrame({"stay_id": [1, 2], "time_bin_start": [4.0, 2.0], "time_bin_end": [9.0, 12.0]})
+    r = v.strict_boundary_audit(DRUGS, vd, edges, f2_nb, changes, y, bins)
+    assert r["rows"] == 4
+    assert r["rows_dose_scored_infusion_starting_at_tau"] == 1
+    assert r["rows_tier_change_at_tau"] == 2            # stay 1 at 4h, stay 2 at 8h
+    assert r["f2_max_abs_change_if_strict"] == 6.0      # stay 2 at 8h: previous change at 2h
+    s = r["six_drug_indicator"]
+    assert s["rows_on_at_or_before_tau"] == 4 and s["rows_on_strictly_before_tau"] == 3
+    assert s["rows_on_only_because_an_infusion_starts_at_tau"] == 1
