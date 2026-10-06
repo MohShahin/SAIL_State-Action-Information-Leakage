@@ -82,3 +82,12 @@ results/sensitivity_v22_11354/*
 results/h3_post_pin_ff530e0/*
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json
+# Exploratory persistence control (not pre-registered; does not change the H3 decision)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/persistence/
+results/exploratory/persistence/*
+!results/exploratory/persistence/README.md
+!results/exploratory/persistence/persistence_13192.json
+!results/exploratory/persistence/persistence_11354.json
+!results/exploratory/persistence/persistence_decay_curves.png
