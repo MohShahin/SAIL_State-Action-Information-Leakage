@@ -62,3 +62,17 @@ bigquery-credentials*
 !results/experiment5_h3_paired_bootstrap_bins.json
 !results/experiment8_validation.json
 !results/experiment0_cohort_duckdb_diagnostics.json
+
+# Sensitivity analysis: the published 11,354-stay cohort reproduced on DuckDB (docs/DECISIONS_H3.md)
+!results/sensitivity_v22_11354/
+!results/sensitivity_v22_11354/experiment1_summary.json
+!results/sensitivity_v22_11354/experiment2_action_recoverability_full.csv
+!results/sensitivity_v22_11354/experiment3_summary.json
+!results/sensitivity_v22_11354/experiment5_negative_controls.json
+!results/sensitivity_v22_11354/experiment5_h3_paired_bootstrap_bins.json
+!results/sensitivity_v22_11354/experiment5_h3_paired_bootstrap_rows.json
+!results/sensitivity_v22_11354/experiment6_mortality_full.csv
+!results/sensitivity_v22_11354/experiment7_respiratory_sofa_summary.json
+!results/sensitivity_v22_11354/experiment8_variant_f_summary.json
+!results/sensitivity_v22_11354/experiment8_validation.json
+!results/sensitivity_v22_11354/comparison_vs_published.md
