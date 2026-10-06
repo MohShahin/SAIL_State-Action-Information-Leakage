@@ -23,13 +23,13 @@
 --   221749 -> phenylephrine   (action label only, not part of the 1996 dose rule)
 --   222315 -> vasopressin     (action label only, not part of the 1996 dose rule)
 
--- [duckdb] TIMESTAMP_DIFF(a, b, MINUTE) / 60.0 -> trunc((epoch_us(a) - epoch_us(b)) / 60000000.0) / 60.0
--- [duckdb] (truncation toward zero, exactly BigQuery's semantics; see the note in 02_vitals_labs_fio2.sql
--- [duckdb] on why date_diff('minute', ...) is not an exact substitute). Result is DOUBLE hours, as before.
+-- [duckdb] TIMESTAMP_DIFF(a, b, MINUTE) / 60.0 -> date_diff('minute', b, a) / 60.0 (boundary counting)
+-- [duckdb] (as the published BigQuery run behaved; see the time-arithmetic note in 02_vitals_labs_fio2.sql).
+-- [duckdb] Result is DOUBLE hours, as before.
 SELECT
   ie.stay_id, ie.itemid, ie.starttime, ie.endtime, ie.rate, ie.rateuom, ie.amount,
-  trunc((epoch_us(ie.starttime) - epoch_us(c.intime)) / 60000000.0) / 60.0 AS start_hours_from_admit,  -- [duckdb] was TIMESTAMP_DIFF(ie.starttime, c.intime, MINUTE) / 60.0
-  trunc((epoch_us(ie.endtime) - epoch_us(c.intime)) / 60000000.0) / 60.0 AS end_hours_from_admit       -- [duckdb] was TIMESTAMP_DIFF(ie.endtime, c.intime, MINUTE) / 60.0
+  date_diff('minute', c.intime, ie.starttime) / 60.0 AS start_hours_from_admit,  -- [duckdb] was TIMESTAMP_DIFF(ie.starttime, c.intime, MINUTE) / 60.0
+  date_diff('minute', c.intime, ie.endtime) / 60.0 AS end_hours_from_admit       -- [duckdb] was TIMESTAMP_DIFF(ie.endtime, c.intime, MINUTE) / 60.0
 FROM mimiciv_icu.inputevents ie                                        -- [duckdb]
 JOIN sail.sepsis_cohort c USING(stay_id)                               -- [duckdb]
 WHERE ie.itemid IN (221906, 221289, 221662, 221653, 221749, 222315)

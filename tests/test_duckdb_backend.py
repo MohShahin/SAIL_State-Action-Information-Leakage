@@ -16,12 +16,33 @@ def test_table_and_scratch_rewrite():
     assert out == "SELECT * FROM mimiciv_icu.icustays JOIN sail.sepsis_cohort USING(stay_id)"
 
 
-def test_timestamp_diff_truncates_toward_zero_like_bigquery():
+def test_timestamp_diff_counts_unit_boundaries():
     con = duckdb.connect()
     sql = be.bq_to_duckdb("SELECT TIMESTAMP_DIFF(TIMESTAMP '2020-01-02 01:58:00', TIMESTAMP '2020-01-01 23:59:59', HOUR) AS h")
-    assert con.execute(sql).fetchone()[0] == 1          # date_diff('hour') would give 2
+    assert "date_diff('hour', TIMESTAMP '2020-01-01 23:59:59', TIMESTAMP '2020-01-02 01:58:00')" in sql
+    assert con.execute(sql).fetchone()[0] == 2          # two hour boundaries crossed (truncation gives 1)
     sql = be.bq_to_duckdb("SELECT TIMESTAMP_DIFF(TIMESTAMP '2020-01-01 23:30:00', TIMESTAMP '2020-01-02 00:00:00', HOUR) AS h")
-    assert con.execute(sql).fetchone()[0] == 0          # 30 min before: truncates to 0, as BigQuery
+    assert con.execute(sql).fetchone()[0] == -1         # 30 min before, across midnight: one boundary
+
+
+def test_timestamp_diff_regression_bigquery_datetime_semantics():
+    """Regression: the published BigQuery run behaved as boundary counting on MIMIC's DATETIME
+    columns. Truncating instead moved the 11,354-stay physiology extraction from the published
+    4,850,246 rows to 4,894,707 and broke the Experiment 3 asserts. The difference appears only
+    when intime carries seconds, as MIMIC icustays.intime does; this pins that case."""
+    con = duckdb.connect()
+    intime = "TIMESTAMP '2150-03-01 10:14:37'"
+    for charttime, minutes, hours in [
+        ("2150-03-01 10:15:00", 1, 0),     # 23 s later: one minute boundary (truncation gives 0 min)
+        ("2150-03-01 11:00:00", 46, 1),    # 45 m 23 s later: 46 minute boundaries, 1 hour boundary
+        ("2150-03-04 10:00:00", 4306, 72), # just inside the 72 h horizon under boundary counting
+        ("2150-03-04 11:00:00", 4366, 73), # 72 h 45 m later: 73 hour boundaries, outside the horizon
+    ]:
+        sql = be.bq_to_duckdb(
+            f"SELECT TIMESTAMP_DIFF(TIMESTAMP '{charttime}', {intime}, MINUTE) AS m, "
+            f"TIMESTAMP_DIFF(TIMESTAMP '{charttime}', {intime}, HOUR) AS h"
+        )
+        assert con.execute(sql).fetchone() == (minutes, hours), charttime
 
 
 def test_unnest_struct_literal():

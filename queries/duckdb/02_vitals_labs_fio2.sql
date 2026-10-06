@@ -19,17 +19,14 @@
 -- =============================================================================
 
 -- [duckdb] TIME ARITHMETIC NOTE (applies to every TIMESTAMP_DIFF below).
--- [duckdb] BigQuery TIMESTAMP_DIFF(a, b, PART) = whole number of PART units in (a - b), i.e.
--- [duckdb] the microsecond difference truncated toward zero. DuckDB's date_diff('hour', b, a)
--- [duckdb] instead counts hour BOUNDARIES crossed (date_diff('hour', '23:59:59', '01:58:00') = 2,
--- [duckdb] BigQuery gives 1), so it is NOT a faithful map at minute/hour resolution.
--- [duckdb] Faithful map used here:
--- [duckdb]   TIMESTAMP_DIFF(a, b, MINUTE) -> trunc((epoch_us(a) - epoch_us(b)) / 60000000.0)
--- [duckdb]   TIMESTAMP_DIFF(a, b, HOUR)   -> trunc((epoch_us(a) - epoch_us(b)) / 3600000000.0)
--- [duckdb] epoch_us() returns BIGINT microseconds; trunc() rounds toward zero like BigQuery.
--- [duckdb?] Edge case preserved on purpose: an event up to 59m59s BEFORE intime has HOUR diff 0
--- [duckdb?] under truncation, so it passes "BETWEEN 0 AND 72" (as it did in BigQuery) and gets
--- [duckdb?] hours_from_admit = -1 or 0 downstream. floor() would silently drop those rows.
+-- [duckdb] MIMIC-IV's BigQuery columns are DATETIME, and the published BigQuery run behaved as
+-- [duckdb] unit-boundary counting on them (DATETIME_DIFF semantics), not as the truncated
+-- [duckdb] microsecond difference: on the published 11,354-stay cohort boundary counting gives
+-- [duckdb] exactly the published 4,850,246 physiology rows, truncation gives 4,894,707.
+-- [duckdb] DuckDB's date_diff counts boundaries the same way, so the map used here is:
+-- [duckdb]   TIMESTAMP_DIFF(a, b, MINUTE) -> date_diff('minute', b, a)
+-- [duckdb]   TIMESTAMP_DIFF(a, b, HOUR)   -> date_diff('hour', b, a)
+-- [duckdb] Example: from 23:59:59 to 01:58:00 next day is 2 hours (two boundaries), not 1.
 
 -- ---------- 2a. Vitals (incl. MAP, GCS components) ----------
 WITH vital_items AS (
@@ -50,13 +47,13 @@ WITH vital_items AS (
 SELECT
   ce.stay_id,
   vi.label AS feature,
-  FLOOR(trunc((epoch_us(ce.charttime) - epoch_us(c.intime)) / 60000000.0) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(ce.charttime, c.intime, MINUTE) / 60.0)
+  FLOOR(date_diff('minute', c.intime, ce.charttime) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(ce.charttime, c.intime, MINUTE) / 60.0)
   AVG(ce.valuenum) AS value
 FROM mimiciv_icu.chartevents ce                                        -- [duckdb]
 JOIN sail.sepsis_cohort c USING(stay_id)                               -- [duckdb]
 JOIN vital_items vi ON ce.itemid = vi.itemid
 WHERE ce.valuenum IS NOT NULL AND ce.valuenum > 0
-  AND trunc((epoch_us(ce.charttime) - epoch_us(c.intime)) / 3600000000.0) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(ce.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
+  AND date_diff('hour', c.intime, ce.charttime) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(ce.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
   AND ce.warning = 0
 GROUP BY 1, 2, 3;
 
@@ -84,25 +81,25 @@ WITH lab_items AS (
 SELECT
   c.stay_id,
   li.label AS feature,
-  FLOOR(trunc((epoch_us(le.charttime) - epoch_us(c.intime)) / 60000000.0) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(le.charttime, c.intime, MINUTE) / 60.0)
+  FLOOR(date_diff('minute', c.intime, le.charttime) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(le.charttime, c.intime, MINUTE) / 60.0)
   AVG(le.valuenum) AS value
 FROM mimiciv_hosp.labevents le                                         -- [duckdb]
 JOIN sail.sepsis_cohort c ON le.hadm_id = c.hadm_id                    -- [duckdb]
 JOIN lab_items li ON le.itemid = li.itemid
 WHERE le.valuenum IS NOT NULL
-  AND trunc((epoch_us(le.charttime) - epoch_us(c.intime)) / 3600000000.0) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(le.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
+  AND date_diff('hour', c.intime, le.charttime) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(le.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
 GROUP BY 1, 2, 3;
 
 -- ---------- 2c. FiO2 ----------
 SELECT
   c.stay_id,
   'fio2' AS feature,
-  FLOOR(trunc((epoch_us(ce.charttime) - epoch_us(c.intime)) / 60000000.0) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(ce.charttime, c.intime, MINUTE) / 60.0)
+  FLOOR(date_diff('minute', c.intime, ce.charttime) / 60.0) AS hours_from_admit,  -- [duckdb] was FLOOR(TIMESTAMP_DIFF(ce.charttime, c.intime, MINUTE) / 60.0)
   AVG(ce.valuenum / 100.0) AS value          -- stored as a percentage (21-100); normalized to a fraction
 FROM mimiciv_icu.chartevents ce                                        -- [duckdb]
 JOIN sail.sepsis_cohort c USING(stay_id)                               -- [duckdb]
 WHERE ce.itemid = 223835 AND ce.valuenum BETWEEN 21 AND 100
-  AND trunc((epoch_us(ce.charttime) - epoch_us(c.intime)) / 3600000000.0) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(ce.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
+  AND date_diff('hour', c.intime, ce.charttime) BETWEEN 0 AND 72  -- [duckdb] was TIMESTAMP_DIFF(ce.charttime, c.intime, HOUR) BETWEEN 0 AND __HORIZON_HOURS__
 GROUP BY 1, 2, 3;
 
 -- pao2/fio2 (P/F ratio, needed for the SOFA respiratory subscore) is computed

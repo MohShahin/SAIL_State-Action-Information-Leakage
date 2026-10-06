@@ -30,12 +30,12 @@
 -- [duckdb] numbers; a comparison against mimiciv_derived.ventilation is a separate,
 -- [duckdb] optional check.
 
--- [duckdb] TIMESTAMP_DIFF(a, b, MINUTE) / 60.0 -> trunc((epoch_us(a) - epoch_us(b)) / 60000000.0) / 60.0
+-- [duckdb] TIMESTAMP_DIFF(a, b, MINUTE) / 60.0 -> date_diff('minute', b, a) / 60.0 (boundary counting)
 -- [duckdb] (see the time-arithmetic note in 02_vitals_labs_fio2.sql).
 SELECT
   pe.stay_id, pe.itemid, pe.starttime, pe.endtime,
-  trunc((epoch_us(pe.starttime) - epoch_us(c.intime)) / 60000000.0) / 60.0 AS start_hours_from_admit,  -- [duckdb] was TIMESTAMP_DIFF(pe.starttime, c.intime, MINUTE) / 60.0
-  trunc((epoch_us(pe.endtime) - epoch_us(c.intime)) / 60000000.0) / 60.0 AS end_hours_from_admit       -- [duckdb] was TIMESTAMP_DIFF(pe.endtime, c.intime, MINUTE) / 60.0
+  date_diff('minute', c.intime, pe.starttime) / 60.0 AS start_hours_from_admit,  -- [duckdb] was TIMESTAMP_DIFF(pe.starttime, c.intime, MINUTE) / 60.0
+  date_diff('minute', c.intime, pe.endtime) / 60.0 AS end_hours_from_admit       -- [duckdb] was TIMESTAMP_DIFF(pe.endtime, c.intime, MINUTE) / 60.0
 FROM mimiciv_icu.procedureevents pe                                    -- [duckdb]
 JOIN sail.sepsis_cohort c USING(stay_id)                               -- [duckdb]
 WHERE pe.itemid IN (225792, 225794)

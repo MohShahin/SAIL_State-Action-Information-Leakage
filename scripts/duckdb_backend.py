@@ -5,7 +5,7 @@ mimiciv_icu, mimiciv_derived).
 Select it with the environment variable SAIL_BACKEND=duckdb before starting the kernel. The
 notebook's SQL strings are rewritten on the fly by bq_to_duckdb(), which covers exactly the
 BigQuery constructs the notebook uses (table ids, backticks, UNNEST([STRUCT ...]) literals,
-TIMESTAMP_DIFF). The same rewrite, applied by hand, is committed under queries/duckdb/ for review.
+TIMESTAMP_DIFF as unit-boundary counting). The same rewrite, applied by hand, is committed under queries/duckdb/ for review.
 
 Environment:
     SAIL_DUCKDB   path to the database file   (default ~/orcd/scratch/sail/mimic4.db)
@@ -37,7 +37,6 @@ _TABLE_MAP = [
     ("`physionet-data.mimiciv_3_1_hosp.", "mimiciv_hosp."),
     ("`physionet-data.mimiciv_3_1_derived.", "mimiciv_derived."),
 ]
-_UNIT_US = {"MINUTE": "60000000.0", "HOUR": "3600000000.0"}
 _SCRATCH_RE = re.compile(r"`[^`]*\.sepsis_cohort`")
 _TSDIFF_RE = re.compile(r"TIMESTAMP_DIFF\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*(MINUTE|HOUR)\s*\)")
 _UNNEST_RE = re.compile(r"UNNEST\(\[.*?\]\)", re.S)
@@ -52,16 +51,20 @@ _con: duckdb.DuckDBPyConnection | None = None
 def bq_to_duckdb(sql: str) -> str:
     """Rewrite the notebook's BigQuery SQL to DuckDB.
 
-    TIMESTAMP_DIFF(a, b, UNIT) is BigQuery's microsecond difference truncated toward zero.
-    DuckDB's date_diff counts unit boundaries crossed, which differs at minute and hour
-    resolution, so the faithful map is trunc((epoch_us(a) - epoch_us(b)) / unit).
+    TIMESTAMP_DIFF(a, b, UNIT) maps to date_diff('unit', b, a), which counts unit boundaries
+    crossed. MIMIC-IV's BigQuery columns are DATETIME, and on them the published BigQuery run
+    behaved as boundary counting (DATETIME_DIFF semantics), not as the microsecond difference
+    truncated toward zero that the TIMESTAMP documentation describes. Evidence on the published
+    11,354-stay cohort: boundary counting reproduces the 4,850,246 physiology rows, all three
+    Experiment 3 asserts to full precision and every Experiment 7 count; truncation gives
+    4,894,707 rows and misses all of those. The two differ only when intime has seconds.
     """
     for a, b in _TABLE_MAP:
         sql = sql.replace(a, b)
     sql = _SCRATCH_RE.sub(f"{SCRATCH_SCHEMA}.sepsis_cohort", sql)
     sql = sql.replace("`", "")
     sql = _TSDIFF_RE.sub(
-        lambda m: f"trunc((epoch_us({m.group(1)}) - epoch_us({m.group(2)})) / {_UNIT_US[m.group(3)]})",
+        lambda m: f"date_diff('{m.group(3).lower()}', {m.group(2)}, {m.group(1)})",
         sql,
     )
 

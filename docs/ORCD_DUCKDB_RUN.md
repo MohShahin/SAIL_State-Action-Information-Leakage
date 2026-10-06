@@ -11,11 +11,13 @@ the same notebook runs unchanged against a local DuckDB build of the same releas
    nbformat, nbclient, ipykernel, pyarrow. Install the repo hooks: `pre-commit install`.
 3. Run: `sbatch scripts/orcd_run_notebook.sbatch`. The job sets `SAIL_BACKEND=duckdb` and
    `SAIL_DUCKDB`; cell 3 then imports `scripts/duckdb_backend.py`, which rewrites the notebook's
-   BigQuery SQL on the fly (table ids, backticks, `UNNEST([STRUCT ...])`, `TIMESTAMP_DIFF` with
-   BigQuery's truncation semantics). The hand-ported equivalents are in `queries/duckdb/` for review.
-4. Checksums to confirm before trusting anything downstream: cohort 11,354 stays; Experiment 2
-   AUROC 0.900 (variant A) and 0.791 (variant E). A different mimic-code version can shift the
-   cohort by a few stays; report the count and the commit.
+   BigQuery SQL on the fly (table ids, backticks, `UNNEST([STRUCT ...])`, `TIMESTAMP_DIFF` as
+   unit-boundary counting, which is how the published BigQuery run behaved on MIMIC's DATETIME columns). The hand-ported equivalents are in `queries/duckdb/` for review.
+4. Checksums to confirm before trusting anything downstream: the default run on a v3.1 build gives
+   13,192 stays (mimic-code's v3.1 sepsis3). The published 11,354 comes from BigQuery's sepsis3,
+   which was built from MIMIC-IV v2.2; reproduce it with step 7 (`SAIL_COHORT_STAYS`), where it
+   gives 351,720 dose rows, 4,850,246 physiology rows, 170,299 modeling rows and passes the
+   Experiment 3 asserts with `SAIL_STRICT_EXP3=1`. Report the count and the mimic-code commit.
 5. Experiment 3's three hard asserts on the published numbers are enforced only with
    `SAIL_STRICT_EXP3=1`; otherwise a deviation is printed and the run continues to Experiments 8
    and 5.
