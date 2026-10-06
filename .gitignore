@@ -82,3 +82,11 @@ results/sensitivity_v22_11354/*
 results/h3_post_pin_ff530e0/*
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/label_alignment/
+results/exploratory/label_alignment/*
+!results/exploratory/label_alignment/README.md
+!results/exploratory/label_alignment/label_alignment_primary_13192.json
+!results/exploratory/label_alignment/label_alignment_sensitivity_11354.json
