@@ -16,7 +16,8 @@ What it measures (all on the modeling rows unless stated):
     the action label's own definition before the one-bin shift): run lengths in bins (with left /
     right censoring flags), runs per stay, fraction of stays ever on, occupancy at bin 0
   the cardiovascular subscore distribution given on / off at tau
-  MAP, heart rate and lactate moments, and their pooled within-stay lag-k correlation (bins mode)
+  MAP, heart rate and lactate moments (clipped to a physiologic range), and their pooled
+    within-stay lag-k correlation (bins mode)
   real references, by the frozen H3 functions (bins mode, common rows, logreg, 5-fold grouped CV,
     2,000 resamples, seed 42): variant E (no sofa_cardio, no sofa_total) and the on-at-tau
     indicator alone; variant A is read from the run's own H3 JSON, not recomputed.
@@ -167,12 +168,18 @@ def main(argv=None):
     out["sofa_cardio_hist_off"] = hist(cardio[~on_t], 0, 4)
     out["frac_on_with_dose_scored_cardio"] = float((cardio[on_t] >= 2).mean())
 
+    # moments on values clipped to a physiologic range (the state table carries a few charting
+    # outliers, e.g. MAP in the thousands, that dominate raw means, SDs and correlations)
     mom = {}
-    for col in ("mbp", "heart_rate", "lactate", "sofa_total"):
-        v = st[col].values
-        mom[col] = {"mean": float(v.mean()), "sd": float(v.std()),
+    clip = {"mbp": (20, 200), "heart_rate": (20, 250), "lactate": (0, 30), "sofa_total": (0, 24)}
+    for col, (lo, hi) in clip.items():
+        cl = st[["stay_id", "bin"]].assign(**{col: st[col].clip(lo, hi).values})
+        v = cl[col].values
+        q1, q2, q3 = np.percentile(v, [25, 50, 75])
+        mom[col] = {"clip_range": [lo, hi], "n_clipped": int(((st[col] < lo) | (st[col] > hi)).sum()),
+                    "mean": float(v.mean()), "sd": float(v.std()), "median": float(q2), "iqr": float(q3 - q1),
                     "mean_on": float(v[on_t].mean()), "mean_off": float(v[~on_t].mean()),
-                    "lag_corr": {str(k): lag_corr(st, col, k) for k in (1, 2, 4, 8)}}
+                    "lag_corr": {str(k): lag_corr(cl, col, k) for k in (1, 2, 4, 8)}}
     out["moments"] = mom
     out["frac_mbp_below_70"] = float((st["mbp"].values < 70).mean())
 
