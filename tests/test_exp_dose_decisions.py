@@ -61,3 +61,14 @@ def test_labels():
     assert lab.loc[(2, 0), ["DOWN_tierW", "DOWN_tierP", "STOP"]].tolist() == [0, 1, 0]
     # stay 2, bin 1: window tier 4 -> 0 (vasopressin only), NEE 0.4 -> 0.1
     assert lab.loc[(2, 1), ["DOWN_tierW", "DOWN_NEE", "STOP"]].tolist() == [1, 1, 0]
+
+
+def test_at_risk_drops_impossible_moves():
+    rows = pd.DataFrame({"stay_id": [1, 1, 2, 2], "bin": [0, 1, 0, 1]})
+    lab, _ = dd.build_labels(DOSE, rows, nee_cuts=np.array([0.05, 0.2, 0.35]))
+    r = dd.apply_at_risk(lab, ["UP_tierW", "DOWN_tierW"]).set_index(["stay_id", "bin"])
+    assert np.isnan(r.loc[(2, 0), "UP_tierW"])          # already at tier 4: cannot go up
+    assert r.loc[(2, 1), "DOWN_tierW"] == 1
+    lab["row"] = np.arange(len(lab))
+    fr = dd.offset_frame(dd.apply_at_risk(lab, ["UP_tierW"]), "UP_tierW", 0)
+    assert len(fr) == 2                                  # stay 2's two tier-4 rows dropped

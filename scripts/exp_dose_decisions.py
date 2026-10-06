@@ -285,6 +285,10 @@ def build_labels(vaso_dose_clean: pd.DataFrame, rows: pd.DataFrame, nee_cuts=Non
     for k, v in lab.items():
         out[k] = np.where(out["on_tau"], v.astype(float), np.nan)
     out["tierW_t"] = tw0; out["tierP_tau"] = tp0; out["neeL_t"] = nl0
+    # at risk: the move is possible from the current tier or level (tiers are 0/2/3/4, levels 0..4)
+    out["risk_UP_tierW"] = tw0 < 4; out["risk_DOWN_tierW"] = tw0 > 0
+    out["risk_UP_tierP"] = tp0 < 4; out["risk_DOWN_tierP"] = tp0 > 0
+    out["risk_UP_NEE"] = nl0 < 4; out["risk_DOWN_NEE"] = nl0 > 0
     diag = {"nee_quartile_cuts_ne_mcg_kg_min": [float(c) for c in nee_cuts],
             "nee_nonzero_bins": int(len(nz)),
             "phenylephrine_rows_unconvertible_mcg_min": int(((dose["drug"] == "phenylephrine") & (dose["rateuom"] != "mcg/kg/min")).sum()),
@@ -302,6 +306,7 @@ def offset_frame(lab: pd.DataFrame, label: str, k: int) -> pd.DataFrame:
     tgt = on[["stay_id", "bin", label]].copy()
     tgt["bin"] = tgt["bin"] - k
     m = src.merge(tgt, on=["stay_id", "bin"], how="inner").rename(columns={label: "y"})
+    m = m.dropna(subset=["y"])
     m["y"] = m["y"].astype(int)
     return m
 
@@ -319,8 +324,18 @@ def _boot_task(pa, pb, n_boot, seed):
     return {k: r[k] for k in keep}
 
 
+def apply_at_risk(lab: pd.DataFrame, labels) -> pd.DataFrame:
+    """Sensitivity: an UP or DOWN label is kept only on rows where that move is possible from the
+    current tier or level (UP below the top, DOWN above zero); other rows are dropped for it."""
+    lab = lab.copy()
+    for lb in labels:
+        if f"risk_{lb}" in lab.columns:
+            lab.loc[~lab[f"risk_{lb}"].astype(bool), lb] = np.nan
+    return lab
+
+
 def run(checkpoint, db, out_path, cohort_tag, offsets=(0, 2, 4), probes=("logreg", "gb"), n_boot=2000,
-        n_jobs=32, expected_dose_rows=None, expected_on_rows=None, labels=LABELS):
+        n_jobs=32, expected_dose_rows=None, expected_on_rows=None, labels=LABELS, at_risk=False):
     from joblib import Parallel, delayed
     t0 = time.time()
     with open(checkpoint, "rb") as f:
@@ -343,6 +358,8 @@ def run(checkpoint, db, out_path, cohort_tag, offsets=(0, 2, 4), probes=("logreg
               "rows_tierW_0_sofa_cardio_gt1": int(((tw == 0) & (sc > 1)).sum())}
     print(f"checks {checks}", flush=True)
 
+    if at_risk:
+        lab = apply_at_risk(lab, labels)
     taus = (st["bin"].values + 1) * INTERVAL
     f1, f2 = f1_f2(vdc, st["stay_id"].values, taus)
     X = {"A_full": variants["A_full"], "D_treatment_decomposed": variants["D_treatment_decomposed"],
@@ -396,6 +413,7 @@ def run(checkpoint, db, out_path, cohort_tag, offsets=(0, 2, 4), probes=("logreg
                             "offsets": list(offsets), "offset_mode": "bins (features at t, label of the on-at-tau row at t + k)",
                             "row_set": "rows with any of the six label drugs running at tau (start <= tau < end)",
                             "labels": "one-vs-rest on the on-at-tau rows; see the script docstring",
+                            "at_risk_restriction": bool(at_risk),
                             "nee": "Goradia 2021: NE + epi + phenylephrine/10 + dopamine/100 + vasopressin(U/min)*2.5; dobutamine excluded; 5 levels (0, quartiles of nonzero)"},
                "results": results, "runtime_s": round(time.time() - t0, 1)}
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
@@ -418,8 +436,9 @@ if __name__ == "__main__":
     ap.add_argument("--labels", default=",".join(LABELS))
     ap.add_argument("--expected-dose-rows", type=int, default=None)
     ap.add_argument("--expected-on-rows", type=int, default=None)
+    ap.add_argument("--at-risk", action="store_true")
     a = ap.parse_args()
     run(a.checkpoint, a.db, a.out, a.cohort_tag, offsets=tuple(int(x) for x in a.offsets.split(",")),
         probes=tuple(a.probes.split(",")), n_boot=a.n_boot, n_jobs=a.n_jobs,
         expected_dose_rows=a.expected_dose_rows, expected_on_rows=a.expected_on_rows,
-        labels=tuple(a.labels.split(",")))
+        labels=tuple(a.labels.split(",")), at_risk=a.at_risk)
