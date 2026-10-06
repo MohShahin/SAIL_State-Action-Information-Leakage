@@ -1,6 +1,6 @@
 {
   "strictly_before": {
-    "rows_checked": 2000,
+    "rows_checked": 198890,
     "f1_max_abs_diff": 0.0,
     "f1_rows_differing": 0,
     "f2_max_abs_diff": 0.0,
@@ -15,22 +15,38 @@
       "ci_hi": 0.7363462821055987
     },
     "D_plus_on_vasopressor_indicator": {
-      "auroc": 0.8914756384932018,
-      "ci_lo": 0.8880280112816308,
+      "auroc": 0.8914756382897475,
+      "ci_lo": 0.8880280112816307,
       "ci_hi": 0.8948647297393575
     },
     "D_plus_F1_F2": {
-      "auroc": 0.9006702294966873,
-      "ci_lo": 0.896998093611098,
-      "ci_hi": 0.9043692260160476
+      "auroc": 0.9006703302065593,
+      "ci_lo": 0.8969984163718927,
+      "ci_hi": 0.9043687414910941
     },
-    "indicator_share_of_F_gain": 0.9454087643847396,
+    "indicator_share_of_F_gain": 0.9454081978729514,
     "prevalence_on_vasopressor_at_tau": 0.30567650460053297,
     "label_given_on": 1.0,
     "label_given_off": 0.2242095963618984
   },
   "n_rows": 198890,
   "probe": "logreg",
+  "strict_boundary_audit": {
+    "rows": 198890,
+    "rows_dose_scored_infusion_starting_at_tau": 666,
+    "rows_tier_change_at_tau": 184,
+    "f2_max_abs_change_if_strict": 64.0,
+    "note": "F1 is unchanged under a strict definition: an infusion starting at tau gives F1 = tau - start = 0 either way",
+    "six_drug_indicator": {
+      "rows_on_at_or_before_tau": 81557,
+      "rows_on_strictly_before_tau": 80934,
+      "rows_on_only_because_an_infusion_starts_at_tau": 623,
+      "auroc_at_or_before_tau": 0.9444135661195754,
+      "auroc_strictly_before_tau": 0.9410187667560321,
+      "label_rate_given_on_strict": 1.0,
+      "label_rate_given_off_strict": 0.09176303028247822
+    }
+  },
   "indicator_and_off_rows": {
     "indicator_alone_auroc": 0.8312844656596701,
     "n_rows_all": 198890,
@@ -46,16 +62,16 @@
           "ci_hi": 0.7092559677061288
         },
         "gb": {
-          "auroc": 0.7636658410419028,
-          "ci_lo": 0.7581216796407158,
-          "ci_hi": 0.7686947960481556
+          "auroc": 0.7636670831202677,
+          "ci_lo": 0.7581223305411148,
+          "ci_hi": 0.7686965092850068
         }
       },
       "E_physiology_only": {
         "logreg": {
-          "auroc": 0.684973838410906,
-          "ci_lo": 0.678837939226537,
-          "ci_hi": 0.6901737111909096
+          "auroc": 0.6849755896811052,
+          "ci_lo": 0.678839096829248,
+          "ci_hi": 0.6901755327936944
         },
         "gb": {
           "auroc": 0.7607671074956335,
@@ -77,20 +93,20 @@
       "A_full": {
         "logreg": {
           "auroc": 0.6930161827028802,
-          "ci_lo": 0.6868542937629734,
-          "ci_hi": 0.6978034824292839
+          "ci_lo": 0.6868542918493173,
+          "ci_hi": 0.6978034804728177
         },
         "gb": {
-          "auroc": 0.7964863657502459,
-          "ci_lo": 0.7911567044500658,
-          "ci_hi": 0.8013595989675223
+          "auroc": 0.7964865011755299,
+          "ci_lo": 0.791157062206003,
+          "ci_hi": 0.8013599352333027
         }
       },
       "E_physiology_only": {
         "logreg": {
-          "auroc": 0.6708959156294331,
-          "ci_lo": 0.6647929047518,
-          "ci_hi": 0.6766018110732628
+          "auroc": 0.670895906479076,
+          "ci_lo": 0.6647928942153799,
+          "ci_hi": 0.6766018040258862
         },
         "gb": {
           "auroc": 0.7778026648679943,
