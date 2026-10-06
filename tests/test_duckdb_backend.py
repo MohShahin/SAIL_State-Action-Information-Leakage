@@ -34,3 +34,48 @@ def test_unnest_struct_literal():
 def test_unsupported_unnest_raises():
     with pytest.raises(ValueError):
         be.bq_to_duckdb("SELECT * FROM UNNEST([1, 2, 3])")
+
+
+_COHORT_SQL = """
+WITH vasopressor_stays AS (SELECT DISTINCT stay_id FROM `physionet-data.mimiciv_3_1_icu.inputevents`),
+sepsis3_stays AS (
+  SELECT DISTINCT stay_id
+  FROM `physionet-data.mimiciv_3_1_derived.sepsis3`
+  WHERE sepsis3 IS TRUE
+)
+SELECT v.stay_id FROM vasopressor_stays v INNER JOIN sepsis3_stays s USING(stay_id) ORDER BY 1
+"""
+
+
+def _stub_db():
+    con = duckdb.connect()
+    con.execute("CREATE SCHEMA mimiciv_icu; CREATE SCHEMA mimiciv_derived")
+    con.execute("CREATE TABLE mimiciv_icu.inputevents AS SELECT * FROM (VALUES (1), (2), (3), (4)) t(stay_id)")
+    con.execute("CREATE TABLE mimiciv_derived.sepsis3 AS SELECT * FROM (VALUES (1, TRUE), (2, FALSE)) t(stay_id, sepsis3)")
+    return con
+
+
+@pytest.mark.parametrize("suffix", [".parquet", ".csv"])
+def test_cohort_override_replaces_only_the_sepsis3_source(tmp_path, suffix):
+    con = _stub_db()
+    assert con.execute(be.bq_to_duckdb(_COHORT_SQL)).fetchall() == [(1,)]
+    stays = tmp_path / f"stays{suffix}"
+    fmt = "PARQUET" if suffix == ".parquet" else "CSV, HEADER"
+    con.execute(f"COPY (SELECT * FROM (VALUES (2), (3), (9)) t(stay_id)) TO '{stays}' (FORMAT {fmt})")
+    sql = be.override_sepsis3_stays(_COHORT_SQL, str(stays))
+    assert "sepsis3`" not in sql and sql.replace(sql[sql.index("FROM read_"):sql.index("\n)\nSELECT")], "") == \
+        _COHORT_SQL.replace(_COHORT_SQL[_COHORT_SQL.index("FROM `physionet-data.mimiciv_3_1_derived"):_COHORT_SQL.index("\n)\nSELECT")], "")
+    assert con.execute(be.bq_to_duckdb(sql)).fetchall() == [(2,), (3,)]   # vasopressor stays in the list
+
+
+def test_cohort_override_rejects_bad_input(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        be.override_sepsis3_stays(_COHORT_SQL, str(tmp_path / "missing.parquet"))
+    other = tmp_path / "stays.txt"
+    other.write_text("stay_id\n1\n")
+    with pytest.raises(ValueError):
+        be.override_sepsis3_stays(_COHORT_SQL, str(other))
+    ok = tmp_path / "stays.csv"
+    ok.write_text("stay_id\n1\n")
+    with pytest.raises(ValueError):
+        be.override_sepsis3_stays("SELECT 1", str(ok))

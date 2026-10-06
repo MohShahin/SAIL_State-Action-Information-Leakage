@@ -12,6 +12,9 @@ Environment:
     SAIL_THREADS  DuckDB threads              (default 8)
     SAIL_MEM      DuckDB memory limit         (default 24GB)
     SAIL_TMP      DuckDB spill directory      (default <db dir>/duckdb_tmp)
+    SAIL_COHORT_STAYS  optional parquet or csv with a stay_id column; when set, notebook cell 5
+                  replaces the Sepsis-3 condition of the cohort query with membership of that
+                  list (sensitivity cohorts only, see override_sepsis3_stays). Unset = unchanged.
 
 No patient-level data is written by this module except the cohort scratch table inside the
 database file itself, which stays on the cluster.
@@ -40,6 +43,9 @@ _TSDIFF_RE = re.compile(r"TIMESTAMP_DIFF\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*(MINU
 _UNNEST_RE = re.compile(r"UNNEST\(\[.*?\]\)", re.S)
 _STRUCT_RE = re.compile(r"STRUCT\(\s*(\d+)\s+AS\s+itemid\s*,\s*('[^']*')\s+AS\s+label\s*\)")
 
+# The Sepsis-3 source inside notebook cell 5's cohort query, exactly as written there.
+_SEPSIS3_SRC = "`physionet-data.mimiciv_3_1_derived.sepsis3`\n  WHERE sepsis3 IS TRUE"
+
 _con: duckdb.DuckDBPyConnection | None = None
 
 
@@ -66,6 +72,28 @@ def bq_to_duckdb(sql: str) -> str:
         return "(VALUES " + ", ".join(f"({i}, {l})" for i, l in rows) + ") AS t(itemid, label)"
 
     return _UNNEST_RE.sub(_unnest, sql)
+
+
+def override_sepsis3_stays(sql: str, stays_path: str) -> str:
+    """Replace the cohort query's Sepsis-3 source with an external stay_id list.
+
+    Every other cohort condition (adult, first ICU stay, LOS >= 1 day, vasopressor) is kept, so
+    the result is the published cohort query with Sepsis-3 membership taken from the file. This is
+    how the BigQuery cohort (whose derived sepsis3 table was built from MIMIC-IV v2.2) is
+    reproduced on a v3.1 database: pass the v2.2 sepsis3 stay_ids. The file must be .parquet or
+    .csv with a stay_id column; every listed stay counts as Sepsis-3 positive.
+    """
+    path = Path(os.path.expanduser(stays_path)).resolve()
+    if not path.is_file():
+        raise FileNotFoundError(f"SAIL_COHORT_STAYS file not found: {path}")
+    if "'" in str(path):
+        raise ValueError(f"SAIL_COHORT_STAYS path must not contain a quote: {path}")
+    readers = {".parquet": "read_parquet", ".csv": "read_csv_auto"}
+    if path.suffix.lower() not in readers:
+        raise ValueError(f"SAIL_COHORT_STAYS must be .parquet or .csv, got {path.suffix}")
+    if sql.count(_SEPSIS3_SRC) != 1:
+        raise ValueError("cohort query does not contain exactly one Sepsis-3 source to override")
+    return sql.replace(_SEPSIS3_SRC, f"{readers[path.suffix.lower()]}('{path}')")
 
 
 def connect(db_path: str | None = None, read_only: bool = False) -> duckdb.DuckDBPyConnection:

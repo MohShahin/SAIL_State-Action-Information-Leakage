@@ -23,3 +23,8 @@ the same notebook runs unchanged against a local DuckDB build of the same releas
    layout so cells 24 and 33 find the committed `../results/` files). Per-patient prediction files from
    Experiment 5b stay there. Copy only the aggregate JSON files to `results/` in the repo; they are
    allowlisted at the bottom of `.gitignore`.
+7. Sensitivity cohort: `SAIL_COHORT_STAYS=<parquet or csv with a stay_id column> sbatch scripts/orcd_run_notebook.sbatch`
+   keeps every cell 5 condition (adult, first ICU stay, LOS >= 1 day, vasopressor) and takes Sepsis-3
+   membership from that list instead of `mimiciv_derived.sepsis3`. With the Sepsis-3 stay_ids of a
+   mimic-code DuckDB build of MIMIC-IV v2.2 it gives the 11,354-stay BigQuery cohort on the v3.1
+   database. Keep the stay list on scratch, never in the repo. Unset, nothing changes.

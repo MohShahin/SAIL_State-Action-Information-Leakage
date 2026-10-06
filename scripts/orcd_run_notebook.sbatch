@@ -34,6 +34,7 @@ cp -r "$REPO/results" "$RUN/results"
 cp "$REPO/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" "$RUN/notebook/"
 cd "$RUN/notebook"
 echo "start $(date) host $(hostname) repo $(git -C "$REPO" rev-parse --short HEAD) db $SAIL_DUCKDB"
+if [ -n "${SAIL_COHORT_STAYS:-}" ]; then echo "cohort override SAIL_COHORT_STAYS=$SAIL_COHORT_STAYS"; fi
 python -m ipykernel install --user --name python3 >/dev/null 2>&1 || true
 python "$REPO/scripts/run_notebook_checkpointed.py" \
   --notebook "$RUN/notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb" \
