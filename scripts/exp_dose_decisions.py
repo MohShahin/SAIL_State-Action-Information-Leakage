@@ -438,7 +438,9 @@ if __name__ == "__main__":
     ap.add_argument("--expected-on-rows", type=int, default=None)
     ap.add_argument("--at-risk", action="store_true")
     a = ap.parse_args()
-    run(a.checkpoint, a.db, a.out, a.cohort_tag, offsets=tuple(int(x) for x in a.offsets.split(",")),
-        probes=tuple(a.probes.split(",")), n_boot=a.n_boot, n_jobs=a.n_jobs,
+    def _list(x):  # "," or "+" separated ("+" survives sbatch --export, which splits on commas)
+        return [t for t in x.replace("+", ",").split(",") if t]
+    run(a.checkpoint, a.db, a.out, a.cohort_tag, offsets=tuple(int(x) for x in _list(a.offsets)),
+        probes=tuple(_list(a.probes)), n_boot=a.n_boot, n_jobs=a.n_jobs,
         expected_dose_rows=a.expected_dose_rows, expected_on_rows=a.expected_on_rows,
-        labels=tuple(a.labels.split(",")), at_risk=a.at_risk)
+        labels=tuple(_list(a.labels)), at_risk=a.at_risk)
