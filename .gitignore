@@ -65,6 +65,7 @@ bigquery-credentials*
 
 # Sensitivity analysis: the published 11,354-stay cohort reproduced on DuckDB (docs/DECISIONS_H3.md)
 !results/sensitivity_v22_11354/
+results/sensitivity_v22_11354/*
 !results/sensitivity_v22_11354/experiment1_summary.json
 !results/sensitivity_v22_11354/experiment2_action_recoverability_full.csv
 !results/sensitivity_v22_11354/experiment3_summary.json
