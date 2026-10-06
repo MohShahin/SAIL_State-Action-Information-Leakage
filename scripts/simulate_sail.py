@@ -60,7 +60,8 @@ import h3_paired_bootstrap as h3  # noqa: E402
 N_BINS = 18
 OFFSETS = (0, 1, 2, 4, 8)
 BRANCHES = ("on", "off", "off_pure")
-PERSISTENCE = {"short": 0.5, "realistic": 1.0, "long": 2.0}   # multiplier on the calibrated run_extra
+# multiplier on the calibrated run_extra (mean of R - 1); "none" = every infusion lasts one bin
+PERSISTENCE = {"none": 0.0, "short": 0.5, "realistic": 1.0, "long": 2.0, "very_long": 4.0}
 SEEDS = (0, 1, 2)
 FEATURES_A = ["mbp", "heart_rate", "lactate", "creatinine", "platelets", "pf_ratio",
               "sofa_resp", "sofa_coag", "sofa_renal", "sofa_cardio", "sofa_total"]
@@ -396,6 +397,12 @@ def summarize(out_dir, dest) -> pd.DataFrame:
                       else (s.map(border) if s.name == "branch" else s)).reset_index(drop=True)
     dest = Path(dest); dest.mkdir(parents=True, exist_ok=True)
     t.round(4).to_csv(dest / "grid_results.csv", index=False)
+    num = [c for c in t.columns if c not in ("branch", "persistence", "seed")]
+    g = t.groupby(["branch", "persistence"], sort=False)
+    mean = g[num].mean()
+    for v in ("A", "E", "indicator"):
+        mean[f"{v}_predA"] = g[f"{v}_predA"].sum().astype(int).astype(str) + "/" + g.size().astype(str)
+    mean.reset_index().round(3).to_csv(dest / "grid_results_mean.csv", index=False)
     figure(t, dest / "delta_vs_persistence.png")
     return t
 

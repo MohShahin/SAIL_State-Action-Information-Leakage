@@ -82,3 +82,14 @@ results/sensitivity_v22_11354/*
 results/h3_post_pin_ff530e0/*
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision): one topic folder each
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/simulation/
+results/exploratory/simulation/*
+!results/exploratory/simulation/README.md
+!results/exploratory/simulation/calibration_aggregates.json
+!results/exploratory/simulation/sim_params.json
+!results/exploratory/simulation/grid_results.csv
+!results/exploratory/simulation/grid_results_mean.csv
+!results/exploratory/simulation/delta_vs_persistence.png
