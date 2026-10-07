@@ -122,3 +122,11 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory, not pre-registered: within-fold StandardScaler sensitivity (scripts/exp_scaler_within_fold.py)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/scaler_within_fold/
+results/exploratory/scaler_within_fold/*
+!results/exploratory/scaler_within_fold/README.md
+!results/exploratory/scaler_within_fold/scaler_within_fold_13192.json
+!results/exploratory/scaler_within_fold/scaler_within_fold_11354.json
