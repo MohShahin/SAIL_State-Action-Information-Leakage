@@ -106,3 +106,12 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory persistence control (not pre-registered; does not change the H3 decision)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/persistence/
+results/exploratory/persistence/*
+!results/exploratory/persistence/README.md
+!results/exploratory/persistence/persistence_13192.json
+!results/exploratory/persistence/persistence_11354.json
+!results/exploratory/persistence/persistence_decay_curves.png
