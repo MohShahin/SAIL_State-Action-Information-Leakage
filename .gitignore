@@ -82,6 +82,30 @@ results/sensitivity_v22_11354/*
 results/h3_post_pin_ff530e0/*
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json
 !results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json
+# Primary cohort (13,192 stays): notebook aggregates from the run of 1d3f170, whose extraction includes the post-pin change ff530e0 (pending the project lead's approval for H3 under Decision 4)
+!results/primary_13192/
+results/primary_13192/*
+!results/primary_13192/experiment1_summary.json
+!results/primary_13192/experiment2_action_recoverability_full.csv
+!results/primary_13192/experiment2_action_recoverability_best_probe.csv
+!results/primary_13192/experiment3_summary.json
+!results/primary_13192/experiment5_negative_controls.json
+!results/primary_13192/experiment6_mortality_full.csv
+!results/primary_13192/experiment6_mortality_best_probe.csv
+!results/primary_13192/experiment6_vs_experiment2_comparison.csv
+!results/primary_13192/experiment7_respiratory_sofa_summary.json
+!results/primary_13192/experiment8_variant_f_summary.json
+!results/primary_13192/experiment8_variant_f_comparison.csv
+!results/primary_13192/table3_all_metrics.json
+# Figures: aggregate plots only (scripts/make_figures.py and the notebook's own figures), see results/README.md
+!results/figures/
+results/figures/*
+!results/figures/figure3_sofa_decomposition_13192.png
+!results/figures/figure4_action_recoverability_13192.png
+!results/figures/figure5_window_contamination_13192.png
+!results/figures/figure6_temporal_offset_decay_13192.png
+!results/figures/h3_pinned_29fb4ec_bins.png
+!results/figures/cohort_flow.png
 # Exploratory analyses (not pre-registered; do not change the H3 decision), aggregates only
 !results/exploratory/
 results/exploratory/*
