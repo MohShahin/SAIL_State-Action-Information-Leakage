@@ -250,7 +250,7 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 .landing-dark .demo-frame{
   border:1px solid #2a2f35; border-radius:8px; overflow:hidden; margin:var(--space-4) 0; line-height:0;
 }
-.landing-dark .demo-frame img{ width:100%; height:auto; display:block; }
+.landing-dark .demo-frame img, .landing-dark .demo-frame video{ width:100%; height:auto; display:block; }
 .landing-dark h2{ color:#f3f6f9; }
 .landing-dark h3.section{ color:#f3f6f9; }
 .landing-dark .plain{ color:#a9b7c4; }

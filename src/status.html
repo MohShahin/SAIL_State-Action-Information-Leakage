@@ -73,7 +73,8 @@ templateEngineOverride: false
     <h4>Reviewer response — Mortality-predictive validity per variant (Experiment 6, 2026-09-03)</h4>
     <p>Operationalizes the clinical reviewer's task-specificity point: does a variant's lower
     action-recoverability also mean lower mortality-predictive validity? Action-recoverability gap
-    (A minus E) = 0.109 — large. Mortality-AUROC gap (A minus E) = 0.011 — roughly a tenth the size.
+    (A minus E) = 0.109 — large. Mortality-AUROC gap (A minus E) = 0.011 — about 3% to 10% of the
+    action gap (paired ratio 0.065, 95% CI [0.036, 0.095]), not "roughly a tenth."
     Reported as the actual result: sanitizing the state costs almost nothing in mortality-prediction
     accuracy despite costing a lot in next-action predictability. Full write-up:
     <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">evidence page</a>.</p>
@@ -123,7 +124,7 @@ templateEngineOverride: false
     gives Delta = AUROC(0) minus AUROC(8) = 0.147, 95% CI [0.140, 0.154] (bin-index offsets, common
     rows, logreg) — Prediction A, per
     <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
-    An exploratory synthetic ground-truth check (PR #8, exp-simulation) finds this rule cannot, on
+    An exploratory synthetic ground-truth check (exploratory work in review, exp-simulation) finds this rule cannot, on
     its own, separate the SOFA-construction mechanism from ordinary treatment persistence — see
     <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence</a> for the exploratory
     analyses and <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">the exact test and

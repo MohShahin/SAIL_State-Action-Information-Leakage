@@ -145,22 +145,23 @@ templateEngineOverride: false
 </div>
 
 <!-- ============ ACT 3 ============ -->
-<div class="act-eyebrow">Act 3 — What we don't know yet</div>
+<div class="act-eyebrow">Act 3 — What the pre-registered test found, and what it can't tell us</div>
 <div class="card">
-  <div class="flag pending" style="margin-bottom:14px;"><span class="dot"></span>H3 — open question</div>
-  <p class="plain">Everything in Act 2 is proven or directly measured. One question isn't settled:
-  <b>does the AUROC gap in Experiment 2 actually reflect the mechanisms proven here (Theorems 1–2),
-  or is it substantially explained by ordinary treatment persistence</b> — vasopressor courses just
-  don't change from one decision point to the next very often, independent of any SOFA-construction
-  quirk? Full negative-control results and the exact reason H3 remains open: see
-  <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a>.</p>
-  <p class="plain">Act 2's Variant F result (Experiment 8) is <b>corroborating evidence for the
-  persistence explanation, not a resolution of H3</b>: it shows that purely temporal treatment-history
-  features are highly predictive on their own, consistent with persistence being a large effect in
-  this cohort — but it wasn't designed as a test of the offset-decay curve specifically, and doesn't
-  substitute for that pre-registered instrument. We proved two mechanisms. We don't yet know how
-  much of the practical predictability gap they explain versus ordinary persistence. That's the
-  actual open question this project is built to answer next.</p>
+  <div class="flag pending" style="margin-bottom:14px;"><span class="dot"></span>H3 — run, Prediction A, mechanism not separated</div>
+  <p class="plain">Everything in Act 2 is proven or directly measured. H3 asked: <b>does the AUROC
+  gap in Experiment 2 actually reflect the mechanisms proven here (Theorems 1–2), or is it
+  substantially explained by ordinary treatment persistence</b> — vasopressor courses just don't
+  change from one decision point to the next very often, independent of any SOFA-construction
+  quirk? The pre-registered paired-bootstrap test has now run: Delta = 0.147, 95% CI [0.140, 0.154]
+  — <b>Prediction A</b>. Full results: see <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a>.</p>
+  <p class="plain">That result doesn't settle which mechanism produces Delta. Act 2's Variant F
+  result (Experiment 8) was already <b>corroborating evidence for the persistence explanation</b>,
+  and exploratory work in review (a synthetic ground-truth simulation, not pre-registered) goes
+  further: the same decision rule fires whenever a state encodes a currently-running treatment under
+  realistic persistence, whether or not a SOFA-specific construction effect is present. So Prediction
+  A, on its own, <b>cannot separate the SOFA-construction mechanism from ordinary treatment
+  persistence</b> — that's what the exploratory work points to, and it's the actual open question
+  this project is built to answer next.</p>
 
   <div class="not-built" style="margin-top:16px;">
     <p class="plain" style="margin:0; font-size:13.5px;"><b>Deliberately not built:</b> dual RL

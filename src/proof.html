@@ -14,6 +14,7 @@ needsMathJax: true
   .thm-tag{ font-family:var(--sans); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:3px; white-space:nowrap; }
   .tag-proven{ background:var(--physio-soft); color:var(--physio); }
   .tag-open{ background:var(--treat-soft); color:var(--treat); }
+  .tag-run{ background:#f7f0df; color:var(--gold); }
   .thm-body{ padding:18px 20px; }
   .intuition{ font-size:14px; color:var(--ink-soft); font-style:italic; margin:0 0 12px; padding-left:12px; border-left:2px solid var(--line); }
   .derive-btn{ font-family:var(--sans); font-size:12.5px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:1px solid transparent; padding:7px 14px; border-radius:4px; cursor:pointer; margin-top:10px; }
@@ -325,13 +326,28 @@ containing treatment information does not, by itself, prove predictive leakage o
 action.</b></p>
 
 <!-- ============ H3 ============ -->
-<h3 class="section" id="h3">H3 — an open, empirical question, with a proper statistical test</h3>
+<h3 class="section" id="h3">H3 — run, with the proper statistical test</h3>
 <div class="thm-card">
   <div class="thm-head">
     <h4 class="thm-name">H3 — does the definitional pathway materially explain next-action predictability?</h4>
-    <span class="thm-tag tag-open">Open</span>
+    <span class="thm-tag tag-run">Run — Prediction A</span>
   </div>
   <div class="thm-body">
+    <div class="warn-block">
+      <div class="label">Result</div>
+      The test below has been run: $\Delta = 0.147$, 95% CI $[0.140, 0.154]$ (bin-index offsets,
+      common rows, logreg) — <b>Prediction A</b>, per
+      <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
+      This does not settle which mechanism produces $\Delta$: exploratory work in review (a
+      synthetic ground-truth simulation) finds the same rule fires whenever a state encodes a
+      currently-running treatment under realistic persistence, with or without a SOFA-specific
+      construction effect present — so Prediction A on its own cannot separate the SOFA-construction
+      mechanism (Theorems 1-2) from ordinary treatment persistence. See
+      <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a> and
+      <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence</a> for the full
+      run and the exploratory analyses.
+    </div>
+
     <p class="plain">Let $\text{AUROC}(k)$ be the offset-decay AUROC at offset $k\in\{0,1,2,4,8\}$
     decision bins, and $\Delta=\text{AUROC}(0)-\text{AUROC}(8)$.</p>
 

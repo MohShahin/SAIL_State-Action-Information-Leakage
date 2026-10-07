@@ -343,7 +343,8 @@ function renderIntro(){
     </div>
 
     <div class="facts">
-      <div class="fact"><div class="n">11,354</div><div class="l">ICU stays studied (MIMIC-IV, a public research database)</div></div>
+      <div class="fact"><div class="n">13,192</div><div class="l">ICU stays studied, primary cohort (MIMIC-IV v3.1, a public research database)</div></div>
+      <div class="fact"><div class="n">11,354</div><div class="l">stays under the published Sepsis-3 table, used as a sensitivity cohort</div></div>
       <div class="fact"><div class="n">2</div><div class="l">separate mechanisms that could cause this</div></div>
       <div class="fact"><div class="n">6</div><div class="l">steps in this walkthrough</div></div>
     </div>
@@ -385,9 +386,11 @@ function renderScore(){
 
     <div class="card">
       <h3>Why it matters</h3>
-      <p class="plain" style="margin-bottom:0;">In the 11,354 ICU stays studied, for patients <b>already receiving</b>
+      <p class="plain" style="margin-bottom:0;">For patients <b>already receiving</b>
       this medication, the cardiovascular piece of the score was <b>always</b> determined by the medication —
-      not by blood pressure — 100% of the time. Overall, across every patient-moment measured, that was true for
+      not by blood pressure — 100% of the time, in both the 13,192-stay primary cohort and the
+      11,354-stay sensitivity cohort. The following moment-level figures are from the 11,354-stay
+      sensitivity cohort specifically: across every patient-moment measured, that was true for
       roughly <b>3 in 10 moments</b> (32.3% using a tightly-aligned time window; 28.6% using the more common,
       wider window).</p>
     </div>

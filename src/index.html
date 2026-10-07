@@ -57,6 +57,34 @@ extraHead: |
     <img src="__PATHPREFIX__/assets/img/extension/demo.gif" alt="The SAIL VS Code extension running a real check against the example dataset, from the setup wizard through to the results view and sidebar — a real recording, not a mockup.">
   </div>
 
+  <div class="demo-frame">
+    <video controls preload="metadata" poster="__PATHPREFIX__/assets/img/extension/sail-explainer-poster.png" playsinline>
+      <source src="__PATHPREFIX__/assets/img/extension/sail-explainer-web.mp4" type="video/mp4">
+    </video>
+  </div>
+  <p class="plain" style="text-align:center; font-size:13px; margin-top:8px;">A two-minute annotated
+  tour of SAIL on synthetic data.</p>
+
+  <details class="expand" style="max-width:700px; margin:14px auto 0;"><summary>Read the video as text</summary>
+    <div class="expand-body">
+      <ul style="margin:0; padding-left:18px;">
+        <li>Two synthetic patient windows can have very different blood pressure — 78 and 52 mmHg —
+        but the identical SOFA cardiovascular score, 3. Once a vasopressor dose is running, the dose
+        sets the score, not blood pressure.</li>
+        <li>That's why validation can look excellent: the input already carries the dose, so the
+        model reads it off and scores well. On a new patient, no dose has been chosen yet, the
+        shortcut is gone, and performance drops below what was reported.</li>
+        <li>The extension's three steps: choose your data, run the checks — everything runs locally,
+        on your own computer — and read the report.</li>
+        <li>SAIL runs five checks, each asking a plain question about how the data was built:
+        construction, reconstruction, temporal overlap, timing violation, persistence dominance.</li>
+        <li>A flag means your validation numbers may overstate what the model will do on new
+        patients, with a specific fix per card. When a check lacks what it needs, SAIL says which
+        specification is missing — "not run" is an honest answer too, not a guess.</li>
+      </ul>
+    </div>
+  </details>
+
   <h2 style="text-align:center; margin-top:var(--space-6);">How it works</h2>
   <div class="grid-12">
     <div class="col-span-4">
@@ -124,6 +152,10 @@ extraHead: |
   <div style="text-align:center; margin-top:var(--space-3);">
     <a href="__PATHPREFIX__/detectors/" class="navbtn primary" style="text-decoration:none;">See the checks in depth →</a>
   </div>
+
+  <p class="plain" style="text-align:center; font-size:12.5px; margin-top:var(--space-4);">SAIL is
+  open source (MIT licence) and built in the open: code, results and decisions are reviewed in
+  public pull requests.</p>
 
   <div class="footer-nav">
     <a href="__PATHPREFIX__/about/">About</a>
