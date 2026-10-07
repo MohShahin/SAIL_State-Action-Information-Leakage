@@ -1,0 +1,6 @@
+variant,exp2_probe,exp2_action_auroc,exp6_probe,exp6_mortality_auroc
+A_full,gb,0.9,gb,0.7880320727838466
+B_no_total_sofa,gb,0.9,gb,0.7873072189493239
+C_no_cardio_sofa,gb,0.885,gb,0.7837278907830627
+D_treatment_decomposed,gb,0.792,gb,0.7798114364569334
+E_physiology_only,gb,0.791,gb,0.7797940947174591
