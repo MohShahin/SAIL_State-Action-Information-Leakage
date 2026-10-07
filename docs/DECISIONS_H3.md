@@ -40,3 +40,19 @@ The collaborator's PR description (#2) states, without numbers, that the bin-ind
 7. Run: fresh, from the commit above, by the collaborator. All variants (both cohorts, both row
    sets, both offset constructions) are reported whatever the outcome. Per-patient predictions
    stay on the cluster.
+
+## 2026-10-07 amendment
+
+- **H3 primary result: Prediction A.** Delta = AUROC(0) - AUROC(8) = 0.147, 95% CI [0.140, 0.154]
+  (bin-index offsets, common rows, logreg, n = 93,629 rows / 12,940 patients), from the committed
+  `results/experiment5_h3_paired_bootstrap_bins.json`, run hash 29fb4ec.
+- ff530e0 was approved after the final run. Primary H3 stays the pinned run. Pinned vs fixed differ
+  by 1 row (198,891 vs 198,890) and in the fourth decimal (exp-persistence README, "Reproduction
+  check").
+- Decision 6 outputs were seen before the definitions were approved. The definitions approved are
+  those run in #5 (L2 = 6a, L3 = 6b). The 6(a) test across offsets 0 and 8 is outstanding.
+- The scaler is fit on the full matrix before the split (accepted for primary; a within-fold
+  sensitivity is requested).
+- The 11,354 cohort is the Sepsis-3 stays of the MIMIC-IV v2.2 build (exp-paired-cis README,
+  "Cohorts").
+- #4 to #8 are exploratory, and none of them changes the H3 decision.
