@@ -106,3 +106,11 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory, not pre-registered: paired patient-level CIs for the Exp 2/6/8 AUROC gaps
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/paired_cis/
+results/exploratory/paired_cis/*
+!results/exploratory/paired_cis/README.md
+!results/exploratory/paired_cis/paired_cis_13192.json
+!results/exploratory/paired_cis/paired_cis_11354.json
