@@ -1,0 +1,133 @@
+{
+  "note": "exploratory, outside the H3 decision rule; Decision 6 outputs were seen before the definitions were approved, so this analysis is not blind",
+  "cohort": "13192",
+  "inputs": "saved per-row predictions of the H3 run (bins mode, offsets 0 and 8, logreg), the run's checkpoint state rows, infusions re-extracted read-only from the DuckDB build",
+  "definitions": {
+    "tau": "4 * (bin + 1) hours after ICU admission, end of the state window [tau-4, tau)",
+    "off_at_tau": "no label drug (six drugs) with start <= tau < end; Decision 6(a), L2 row set of PR #5",
+    "row_identity": "bins mode: a row is the state (stay_id, bin) at every offset; offset 8 relabels it with action_next of bin + 8. The indicator is taken at the state's tau (offset-0 decision time) and applied to that same row at both offsets",
+    "common_rows": "rows present at offsets 0 and 8, then restricted to off at tau (primary for 6a)",
+    "own_rows": "each offset's own rows, restricted to off at tau (sensitivity)",
+    "scoring_only": "predictions as fitted in the H3 run, no refit",
+    "decision_rule": "Prediction A iff delta CI lower bound > 0 and delta >= 0.10 (Decision 5)",
+    "guard": "Decision 6: if Prediction A holds on all rows but the decay disappears on these rows, report as decay attributable to continuation structure"
+  },
+  "checks": {
+    "L1_rebuilt_equals_action_next": {
+      "rows_matching": 198890,
+      "rows": 198890
+    },
+    "offset0_y_equals_action_next": {
+      "rows_matching": 198890,
+      "rows": 198890
+    },
+    "offset0_rows_equal_state_rows": true,
+    "offset8_rows_subset_of_offset0": true,
+    "state_rows_off_at_tau": 117333
+  },
+  "sanity_unrestricted_H3_common_rows": {
+    "recomputed": {
+      "n_rows_a": 93630,
+      "n_rows_b": 93630,
+      "n_patients": 12940,
+      "auroc_a": 0.8609596129418506,
+      "auroc_b": 0.7135026404702204,
+      "delta": 0.14745697247163025,
+      "delta_ci_lo": 0.14071905313681501,
+      "delta_ci_hi": 0.1542356480311389,
+      "auroc_a_ci": [
+        0.857039977620173,
+        0.8649441731771709
+      ],
+      "auroc_b_ci": [
+        0.7063638464384191,
+        0.7204640496630188
+      ],
+      "p_delta_ge_threshold": 1.0,
+      "p_delta_le_zero": 0.0,
+      "threshold": 0.1,
+      "n_boot": 2000,
+      "n_boot_used": 2000,
+      "n_boot_skipped_single_class": 0,
+      "seed": 42,
+      "prediction_A_supported": true,
+      "restricted_rows": true
+    },
+    "saved_delta": 0.14745697247163025,
+    "saved_ci": [
+      0.14071905313681501,
+      0.1542356480311389
+    ],
+    "matches_to_4_decimals": {
+      "delta": true,
+      "delta_ci_lo": true,
+      "delta_ci_hi": true,
+      "auroc_a": true,
+      "auroc_b": true,
+      "n_rows": true
+    }
+  },
+  "common_rows_off_at_tau": {
+    "n_rows_a": 46476,
+    "n_rows_b": 46476,
+    "n_patients": 10245,
+    "auroc_a": 0.614292006440835,
+    "auroc_b": 0.5755989020645276,
+    "delta": 0.03869310437630746,
+    "delta_ci_lo": 0.02699126453199754,
+    "delta_ci_hi": 0.0502295343932719,
+    "auroc_a_ci": [
+      0.6064692832459226,
+      0.6219291489784144
+    ],
+    "auroc_b_ci": [
+      0.5658068742235186,
+      0.5855885270504199
+    ],
+    "p_delta_ge_threshold": 0.0,
+    "p_delta_le_zero": 0.0,
+    "threshold": 0.1,
+    "n_boot": 2000,
+    "n_boot_used": 2000,
+    "n_boot_skipped_single_class": 0,
+    "seed": 42,
+    "prediction_A_supported": false,
+    "restricted_rows": true,
+    "prevalence_offset0": 0.14439710818486962,
+    "prevalence_offset8": 0.22017815646785438,
+    "n_patients_offset0": 10245,
+    "n_patients_offset8": 10245
+  },
+  "own_rows_off_at_tau": {
+    "n_rows_a": 117333,
+    "n_rows_b": 46476,
+    "n_patients": 12159,
+    "auroc_a": 0.6651331571118535,
+    "auroc_b": 0.5755989020645276,
+    "delta": 0.08953425504732593,
+    "delta_ci_lo": 0.0788516528684897,
+    "delta_ci_hi": 0.0995567953031505,
+    "auroc_a_ci": [
+      0.6590661227708383,
+      0.6713855934849182
+    ],
+    "auroc_b_ci": [
+      0.5658608684763592,
+      0.5853701442311585
+    ],
+    "p_delta_ge_threshold": 0.0215,
+    "p_delta_le_zero": 0.0,
+    "threshold": 0.1,
+    "n_boot": 2000,
+    "n_boot_used": 2000,
+    "n_boot_skipped_single_class": 0,
+    "seed": 42,
+    "prediction_A_supported": false,
+    "restricted_rows": false,
+    "prevalence_offset0": 0.08694058789939745,
+    "prevalence_offset8": 0.22017815646785438,
+    "n_patients_offset0": 12159,
+    "n_patients_offset8": 10245
+  },
+  "runtime_s": 264.7
+}
