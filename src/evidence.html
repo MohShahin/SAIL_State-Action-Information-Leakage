@@ -34,13 +34,17 @@ templateEngineOverride: false
   hidden, just clearly marked as historical.</p>
 </div>
 
-<h3 class="section">Why Experiment 2's gap is the strongest single result</h3>
+<h3 class="section">What Experiment 2's gap reflects</h3>
 <div class="card">
   <p class="plain">The AUROC gap (0.900 → 0.791) survived a <b>15× difference</b> in underlying
   vasopressor-dose row counts almost untouched — 0.109 verified vs. ≈0.108 in the original,
-  inflated-data run. A result that's this stable despite a large upstream data bug is strong
-  evidence it reflects something structural (Theorems 1–2), not an artifact of how the data was
-  extracted.</p>
+  inflated-data run, so the gap itself is not an artifact of the data bug. An exploratory follow-up
+  (PR #4, exp-persistence, not pre-registered) finds what the gap is actually made of: SOFA's
+  dose-coded cardiovascular and total terms carry the currently running treatment's dose tier into
+  the state, and that effect runs largely through treatment persistence rather than a SOFA-specific
+  mechanism. Once an "infusion running right now" indicator is included, SOFA's own terms add
+  almost nothing on top of it — (A+I) minus (E+I) is 0.000 [-0.000, +0.001] at the decision point,
+  and under 0.01 at every offset tested.</p>
   <div class="facts">
     <div class="fact"><div class="n">351,720</div><div class="l">verified vasopressor-dose rows (clean cohort)</div></div>
     <div class="fact"><div class="n">5,428,937</div><div class="l">original (bugged) row count — 15.44× inflated</div></div>
@@ -119,7 +123,7 @@ templateEngineOverride: false
   </div>
   <div class="facts" style="margin-top:14px;">
     <div class="fact"><div class="n">0.109</div><div class="l">action-recoverability gap, A minus E — large</div></div>
-    <div class="fact"><div class="n">0.011</div><div class="l">mortality-AUROC gap, A minus E — roughly a tenth the size</div></div>
+    <div class="fact"><div class="n">0.011</div><div class="l">mortality-AUROC gap, A minus E — about 3% to 10% of the action gap (paired ratio 0.065, 95% CI [0.036, 0.095], gb; PR #6, exp-paired-cis, exploratory), not "roughly a tenth"</div></div>
   </div>
   <p class="plain" style="margin-top:14px;">Reported as the actual result, not adjusted toward the
   anticipated one: sanitizing the state costs almost nothing in mortality-prediction accuracy,
@@ -223,10 +227,21 @@ templateEngineOverride: false
   discussion: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §7.5</a>.</p>
 </div>
 
-<h3 class="section">What's still open</h3>
+<h3 class="section">H3, run</h3>
 <div class="card">
-  <p class="plain"><b>H3 remains open</b> — full negative-control results and the exact reason:
-  see <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a>.</p>
+  <p class="plain">The pre-registered paired-bootstrap test has been run: Delta = AUROC(0) minus
+  AUROC(8) = <b>0.147</b>, 95% CI <b>[0.140, 0.154]</b> (bin-index offsets, common rows, logreg) —
+  <b>Prediction A</b>, per <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
+  A synthetic ground-truth check (PR #8, exp-simulation, exploratory) finds this same rule fires
+  whenever a state encodes a currently-running treatment under realistic persistence, whether or
+  not a SOFA-specific mechanism is present — so Prediction A on its own does not separate the
+  SOFA-construction mechanism from ordinary treatment persistence. Exploratory analyses, none of
+  which change the decision: <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/exp-persistence/results/exploratory/persistence/README.md" style="color:var(--accent);">persistence (#4)</a>,
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/exp-label-alignment/results/exploratory/label_alignment/README.md" style="color:var(--accent);">label alignment (#5)</a>,
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/exp-paired-cis/results/exploratory/paired_cis/README.md" style="color:var(--accent);">paired CIs (#6)</a>,
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/exp-dose-decisions/results/exploratory/dose_decisions/README.md" style="color:var(--accent);">dose decisions (#7)</a>,
+  <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/exp-simulation/results/exploratory/simulation/README.md" style="color:var(--accent);">simulation (#8)</a>.
+  See <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a> for the full run.</p>
 </div>
 
 </main>

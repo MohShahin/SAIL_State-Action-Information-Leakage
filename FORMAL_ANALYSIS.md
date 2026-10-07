@@ -75,8 +75,12 @@ re-indexing anything.
 
 The analysis notebook's Section 7 ("Build State Variants A–E and Action Labels") verifies directly
 that this project's own action label (`action_next`) is built exclusively from treatment events
-strictly *after* the state's own observation window closes, with zero overlap — i.e., the second
-(true-leakage) pattern does not occur anywhere in this pipeline. H1 and H2 are retained under their new names because the underlying
+strictly *after* the state's own observation window closes — the two time windows are disjoint,
+i.e. the second (true-leakage) pattern does not occur anywhere in this pipeline. This is about
+indexing, not about information content: an exploratory follow-up (PR #5, exp-label-alignment,
+not pre-registered) finds that for about 89% of label-positive rows, the infusion that makes the
+label positive started before the window closed and is still running, so the label mostly records
+an infusion already present in the state window. H1 and H2 are retained under their new names because the underlying
 mathematics (Theorems 1–2, Proposition 1) is unaffected by what the mechanisms are called; only the
 word "leakage" — reserved from here on exclusively for the second pattern above, which this project
 does not currently claim to have found — has been retracted from H1/H2's names.

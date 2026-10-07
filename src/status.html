@@ -111,17 +111,22 @@ templateEngineOverride: false
 </div>
 
 <div class="phase">
-  <div class="phase-badge next">Ran — H3 still open</div>
+  <div class="phase-badge next">Ran — Prediction A</div>
   <div class="phase-body">
-    <h4>Phase 4 — Experiment 5 (negative controls)</h4>
-    <p>All four controls have run: shuffled labels (AUROC ≈0.5, as expected), a 5-offset temporal
-    decay curve (0.874 at 0h down to 0.703 at 32h), a cross-reference against the variant with no
-    explicit treatment features, and prevalence-matched placebo features (matches variant E's own
-    number, confirming the placebo adds nothing). Results:
+    <h4>Phase 4 — Experiment 5 (negative controls) and H3</h4>
+    <p>All four negative controls have run: shuffled labels (AUROC ≈0.5, as expected), a 5-offset
+    temporal decay curve (0.874 at 0h down to 0.703 at 32h), a cross-reference against the variant
+    with no explicit treatment features, and prevalence-matched placebo features (matches variant
+    E's own number, confirming the placebo adds nothing). Results:
     <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">notebook/results/experiment5_negative_controls.json</code>.
-    <b>H3 itself is not yet resolved by this data</b> — the run saved only each offset's own
-    aggregate AUROC, not the per-patient predictions the pre-registered paired-bootstrap test
-    needs. See <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">the exact test and
+    <b>H3 has been run.</b> The pre-registered paired-bootstrap test on per-patient predictions
+    gives Delta = AUROC(0) minus AUROC(8) = 0.147, 95% CI [0.140, 0.154] (bin-index offsets, common
+    rows, logreg) — Prediction A, per
+    <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
+    An exploratory synthetic ground-truth check (PR #8, exp-simulation) finds this rule cannot, on
+    its own, separate the SOFA-construction mechanism from ordinary treatment persistence — see
+    <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence</a> for the exploratory
+    analyses and <a href="__PATHPREFIX__/proof/#h3" style="color:var(--accent);">the exact test and
     why</a>.</p>
   </div>
 </div>
