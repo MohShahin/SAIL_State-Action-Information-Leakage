@@ -122,3 +122,14 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory analyses (not pre-registered; do not change the H3 decision): one topic folder each
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/simulation/
+results/exploratory/simulation/*
+!results/exploratory/simulation/README.md
+!results/exploratory/simulation/calibration_aggregates.json
+!results/exploratory/simulation/sim_params.json
+!results/exploratory/simulation/grid_results.csv
+!results/exploratory/simulation/grid_results_mean.csv
+!results/exploratory/simulation/delta_vs_persistence.png
