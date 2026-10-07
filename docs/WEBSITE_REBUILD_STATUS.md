@@ -62,6 +62,20 @@ detailed employment history is gated behind a LinkedIn login. Published anyway o
 other matches, but that one specific detail is not independently confirmed — worth a manual check by
 someone with LinkedIn access if full certainty matters.
 
+## Note: H3 result and cohort-headline update (branch `site-h3-update`, 2026-10-07)
+
+`evidence.html`, `status.html`, `research.html`, `queries/README.md`, `reproducibility.html`, and
+`src/llms.txt` updated to report H3 as run (Prediction A: Delta 0.147, 95% CI [0.140, 0.154], per
+`docs/DECISIONS_H3.md`) instead of open/not-yet-run, to change the headline cohort from 11,354 to
+13,192 (11,354 relabeled as the published-table sensitivity cohort), and to correct the "roughly a
+tenth" mortality-gap ratio to the paired-CI figure (0.065 [0.036, 0.095], about 3% to 10%). Sourced
+from the committed exploratory READMEs on PRs #4-#8, not yet merged (PR #2). `results/*.json` files
+the site links were left unchanged pending PR #2; the ones most likely to need replacing once it
+merges are `results/experiment5_negative_controls.json` and
+`results/experiment6_mortality_vs_action_recoverability.json`. Not audited: `demo.html` and
+`evidence.html`'s historical verification table still state 11,354 as a cohort figure in contexts
+this pass didn't touch; `proof.html#h3` still says H3 is open.
+
 ## Open item: none of the three `?template=` submission links' exact rendering was visually verified
 
 The Detectors, Papers and Datasets & Models pages' submission buttons all point to

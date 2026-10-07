@@ -5,8 +5,9 @@
 
 SAIL produced two real, separate artifacts from that audit: an open-source Python package,
 `sail-leakage`, that checks a treatment dataset for five categories of state-action leakage, and
-the research (proofs plus an empirical audit on 11,354 real ICU stays) that package generalizes
-from. Everything below is real and currently shipped; nothing here is a roadmap item.
+the research (proofs plus an empirical audit on 13,192 real ICU stays, with 11,354 under the
+published Sepsis-3 table as a sensitivity cohort) that package generalizes from. Everything below
+is real and currently shipped; nothing here is a roadmap item.
 
 ## Package
 

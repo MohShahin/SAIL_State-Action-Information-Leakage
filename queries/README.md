@@ -1,6 +1,6 @@
 # BigQuery extraction queries (MIMIC-IV v3.1)
 
-These are the five SQL queries behind every result in this project — they're extracted verbatim
+These are the six SQL queries behind every result in this project — they're extracted verbatim
 (logic unchanged) from `notebook/Sepsis_RL_SOFA_Leakage_Experiments.ipynb`, as standalone `.sql`
 files so the extraction logic is reviewable without running the notebook.
 
@@ -8,10 +8,14 @@ files so the extraction logic is reviewable without running the notebook.
 
 ## Run order
 
-1. **`01_cohort.sql`** — builds the analytic cohort (11,354 stays). Writes a scratch table
+1. **`01_cohort.sql`** — builds the sensitivity cohort (11,354 stays), filtered against the
+   published `mimiciv_derived.sepsis3` table. Writes a scratch table
    (`__SCRATCH_DATASET__.sepsis_cohort`) that every later query joins against.
    Use **`01b_cohort_fallback.sql`** instead if your BigQuery grant doesn't include
    `mimiciv_derived.sepsis3` (see the file for what that changes about the cohort claim).
+   **`01c_cohort_recomputed_sepsis3.sql`** builds the primary cohort instead (13,192 stays), with
+   Sepsis-3 recomputed from the derived `sofa` and `suspicion_of_infection` tables rather than read
+   from the published table — see [`../docs/DECISIONS_H3.md`](../docs/DECISIONS_H3.md) for why.
 2. **`02_vitals_labs_fio2.sql`** — three extractions (vitals, labs, FiO2) at native hourly
    resolution. Re-aggregated into 4h/24h decision windows downstream in pandas, not in SQL.
 3. **`03_vasopressor_doses.sql`** — per-drug infusion events, used both for the Experiment 1
