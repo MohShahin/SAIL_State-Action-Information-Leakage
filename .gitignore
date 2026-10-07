@@ -106,3 +106,13 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory analyses (not pre-registered; do not change the H3 decision), aggregates only
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/dose_decisions/
+results/exploratory/dose_decisions/*
+!results/exploratory/dose_decisions/README.md
+!results/exploratory/dose_decisions/dose_decisions_13192.json
+!results/exploratory/dose_decisions/dose_decisions_11354.json
+!results/exploratory/dose_decisions/dose_decisions_13192_at_risk.json
+!results/exploratory/dose_decisions/dose_decisions_11354_at_risk.json
