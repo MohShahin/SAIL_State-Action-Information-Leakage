@@ -35,7 +35,7 @@ Homepage = "https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/"
 Repository = "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage"
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "duckdb>=1.0", "scikit-learn>=1.3"]  # duckdb and scikit-learn only for the scripts/ tests
 
 [tool.hatch.build.targets.wheel]
 packages = ["sail"]

@@ -1,0 +1,85 @@
+{
+  "note": "Cohort diagnostics of the DuckDB reproduction on MIT ORCD (MIMIC-IV v3.1, PhysioNet checksums verified; mimic-code 303d26c, identical counts at 55d3f95). Counts only.",
+  "source_files_match_physionet_sha256": true,
+  "icustays_total": 94458,
+  "mimic_code_commit": "303d26c",
+  "cohort_query": "notebook cell 5 inline query (same text as queries/01_cohort.sql), run through scripts/duckdb_backend.py",
+  "stages_notebook_ranking": {
+    "adult_first_icu_stay_los_ge_1d": 54551,
+    "plus_vasopressor": 18399,
+    "plus_sepsis3_cohort": 13192
+  },
+  "stages_ranking_before_filter_for_reference": {
+    "adult_first_icu_stay_los_ge_1d": 51838,
+    "plus_vasopressor": 17545,
+    "plus_sepsis3": 12568
+  },
+  "derived_tables": {
+    "sepsis3_stays_true": 41296,
+    "suspicion_of_infection_stays": 59404
+  },
+  "by_anchor_year_group": {
+    "2008 - 2010": [
+      14694,
+      4818,
+      3698
+    ],
+    "2011 - 2013": [
+      11145,
+      4156,
+      3086
+    ],
+    "2014 - 2016": [
+      11066,
+      4563,
+      3302
+    ],
+    "2017 - 2019": [
+      10254,
+      3597,
+      2255
+    ],
+    "2020 - 2022": [
+      7392,
+      1265,
+      851
+    ],
+    "columns": [
+      "first_icu_stay",
+      "plus_vasopressor",
+      "plus_sepsis3"
+    ]
+  },
+  "published_cohort_for_comparison": 11354,
+  "state_table_rows": 198890,
+  "action_next_positive_rate": 0.461,
+  "experiment2_best_probe_auroc_duckdb": {
+    "A_full": {
+      "probe": "gb",
+      "auroc": 0.9069
+    },
+    "B_no_total_sofa": {
+      "probe": "gb",
+      "auroc": 0.9068
+    },
+    "C_no_cardio_sofa": {
+      "probe": "gb",
+      "auroc": 0.8905
+    },
+    "D_treatment_decomposed": {
+      "probe": "gb",
+      "auroc": 0.7908
+    },
+    "E_physiology_only": {
+      "probe": "gb",
+      "auroc": 0.7908
+    }
+  },
+  "experiment2_published": {
+    "A_full": 0.9,
+    "E_physiology_only": 0.791,
+    "gap": 0.109
+  },
+  "experiment2_gap_duckdb": 0.1162,
+  "time_arithmetic": "TIMESTAMP_DIFF mapped to unit-boundary counting (date_diff), as the published BigQuery run behaved on MIMIC DATETIME columns; refreshed from the ORCD run of commit ff530e0"
+}

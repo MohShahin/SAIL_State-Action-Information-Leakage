@@ -1,0 +1,7 @@
+{
+  "cohort_ever_ventilated_pct": 0.820194057004245,
+  "eligible_timesteps": 61700,
+  "pct_timesteps_current_differs_from_official": 0.05123176661264182,
+  "pct_timesteps_in_ambiguous_pf_zone_100_300": 0.6187520259319287,
+  "pct_ambiguous_zone_ventilated": 0.9311627419650575
+}
