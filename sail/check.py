@@ -131,7 +131,11 @@ def check(
             "window_col": window_col,
         }))
     else:
-        report.skip("temporal_overlap_leakage", f"not run: {', '.join(missing_3)} not provided")
+        report.skip(
+            "temporal_overlap_leakage",
+            f"not run: {', '.join(missing_3)} not provided. To enable: window_col=..., "
+            "timestamp_col=..., treatment_intervals=[(start, end), ...]",
+        )
 
     # --- Category 4: timing-violation leakage ---
     missing_4 = [
@@ -155,7 +159,12 @@ def check(
             "action_start_col": action_start_col,
         }))
     else:
-        report.skip("timing_violation_leakage", f"not run: {', '.join(missing_4)} not provided")
+        report.skip(
+            "timing_violation_leakage",
+            f"not run: {', '.join(missing_4)} not provided. To enable: "
+            "timestamp_col=<state window end>, action_start_col=<action window start> "
+            "(two different columns)",
+        )
 
     # --- Category 5: persistence-dominance flag ---
     missing_5 = [
@@ -173,7 +182,11 @@ def check(
             spec["margin"] = margin
         report.add(PersistenceDominanceDetector().run(df, spec))
     else:
-        report.skip("persistence_dominance", f"not run: {', '.join(missing_5)} not provided")
+        report.skip(
+            "persistence_dominance",
+            f"not run: {', '.join(missing_5)} not provided. To enable: "
+            "persistence_auroc=..., full_state_auroc=... (optional margin=...)",
+        )
 
     return report
 

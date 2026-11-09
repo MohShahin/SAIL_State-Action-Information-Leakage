@@ -242,6 +242,12 @@ def test_plain_table_reports_all_not_run_with_how_to_enable():
     summary = report.summary()
     assert "TO RUN MORE CHECKS" in summary
     assert "construction_spec=" in report.skipped["construction_leakage"]
+    # The footer points at "To enable" hints, so every NOT RUN line must carry one.
+    for cat, reason in report.skipped.items():
+        assert "To enable:" in reason, cat
+    assert "treatment_intervals=" in report.skipped["temporal_overlap_leakage"]
+    assert "action_start_col=" in report.skipped["timing_violation_leakage"]
+    assert "persistence_auroc=" in report.skipped["persistence_dominance"]
 
 
 def test_requirements_lists_every_category():

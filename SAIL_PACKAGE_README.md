@@ -140,8 +140,13 @@ the kind of thing this project wants to hear about.
 ## The research behind this package
 
 The full formal proofs, the empirical audit on 11,354 real ICU stays, and the project's honest
-account of what's still open (including a pre-registered, not-yet-run statistical test) live at
+account of what's still open live at
 **[the project site](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/)**.
+
+The pre-registered statistical test (H3, offset decay) has been run. Committed result, from the
+pinned run on the 13,192-stay primary cohort: Delta = AUROC(0) - AUROC(8) = 0.147, 95% CI 0.140 to
+0.154, which meets **Prediction A**. Exploratory controls are in review and do not change the H3
+decision.
 
 ## Citing this work
 
