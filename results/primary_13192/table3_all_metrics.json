@@ -1,0 +1,201 @@
+{
+  "experiment1_4h": {
+    "window": "4h",
+    "n_timesteps": 208256,
+    "pct_dose_determined_all": 0.34860460202827287,
+    "pct_dose_determined_treated_only": 1.0,
+    "mean_dose_attributable_points": 1.2131607252612169,
+    "by_severity_band": {
+      "(-1, 5]": 0.1520196191575303,
+      "(5, 10]": 0.6852118604433636,
+      "(10, 15]": 0.9152401987852016,
+      "(15, 24]": 0.9772863120143455
+    },
+    "by_decision_bin": {
+      "0": 0.3952797868290826,
+      "1": 0.4416382252559727,
+      "2": 0.4331765776699029,
+      "3": 0.4206054168879448,
+      "4": 0.4009867172675522,
+      "5": 0.3800303720577069,
+      "6": 0.356221198156682,
+      "7": 0.3511555989583333,
+      "8": 0.35250173731758166,
+      "9": 0.33752452291778134,
+      "10": 0.3039140445126631,
+      "11": 0.30009041591320074,
+      "12": 0.2973235065942591,
+      "13": 0.29655102660058663,
+      "14": 0.2951388888888889,
+      "15": 0.2861895053117287,
+      "16": 0.25107317560147746,
+      "17": 0.25379030535981206
+    }
+  },
+  "experiment1_24h": {
+    "window": "24h",
+    "n_timesteps": 234568,
+    "pct_dose_determined_all": 0.3099911326353126,
+    "pct_dose_determined_treated_only": 1.0,
+    "mean_dose_attributable_points": 1.0788470720643908,
+    "by_severity_band": {
+      "(-1, 5]": 0.06059100080509696,
+      "(5, 10]": 0.29567476138697596,
+      "(10, 15]": 0.7942064404830362,
+      "(15, 24]": 0.951867132127367
+    },
+    "by_decision_bin": {
+      "0": 0.3952797868290826,
+      "1": 0.4416135881104034,
+      "2": 0.43294670608748387,
+      "3": 0.4207095209217708,
+      "4": 0.4006973923590055,
+      "5": 0.3795482110369921,
+      "6": 0.35241055184960585,
+      "7": 0.3281534263189812,
+      "8": 0.3082404669850656,
+      "9": 0.28798908098271153,
+      "10": 0.2709755727507207,
+      "11": 0.25394285714285714,
+      "12": 0.2362422288740502,
+      "13": 0.22706546100935157,
+      "14": 0.21859922178988328,
+      "15": 0.20990176817288803,
+      "16": 0.2032232070910556,
+      "17": 0.19100762745885186
+    }
+  },
+  "experiment2_action_recoverability": [
+    {
+      "variant": "A_full",
+      "probe": "gb",
+      "auroc": 0.9069221977795768,
+      "auroc_ci_lo": 0.903999922671076,
+      "auroc_ci_hi": 0.9099849637405008,
+      "macro_f1": 0.8398090630223645,
+      "balanced_acc": 0.837082235828686,
+      "ece": 0.011317623403153565,
+      "mutual_info": 0.03156294187218022
+    },
+    {
+      "variant": "B_no_total_sofa",
+      "probe": "gb",
+      "auroc": 0.9068018216604248,
+      "auroc_ci_lo": 0.9038888804008499,
+      "auroc_ci_hi": 0.9097975958439906,
+      "macro_f1": 0.8393509952344589,
+      "balanced_acc": 0.8366474345887084,
+      "ece": 0.011075484558278932,
+      "mutual_info": 0.025726614653833052
+    },
+    {
+      "variant": "C_no_cardio_sofa",
+      "probe": "gb",
+      "auroc": 0.890472651637383,
+      "auroc_ci_lo": 0.8869586892026184,
+      "auroc_ci_hi": 0.8938290403181687,
+      "macro_f1": 0.8192903097785864,
+      "balanced_acc": 0.8179613899909608,
+      "ece": 0.03595412468771238,
+      "mutual_info": 0.022693650206860583
+    },
+    {
+      "variant": "D_treatment_decomposed",
+      "probe": "gb",
+      "auroc": 0.7907786238531431,
+      "auroc_ci_lo": 0.7869199178713431,
+      "auroc_ci_hi": 0.7946027736842487,
+      "macro_f1": 0.7121501970708406,
+      "balanced_acc": 0.7113457322273666,
+      "ece": 0.013038031369538319,
+      "mutual_info": 0.0170736001062255
+    },
+    {
+      "variant": "E_physiology_only",
+      "probe": "gb",
+      "auroc": 0.79075343331326,
+      "auroc_ci_lo": 0.7870129097256345,
+      "auroc_ci_hi": 0.7946250902528023,
+      "macro_f1": 0.7119457892027103,
+      "balanced_acc": 0.7111249519773624,
+      "ece": 0.013002157765659082,
+      "mutual_info": 0.016217948254440947
+    }
+  ],
+  "experiment2_A_minus_E_gap": 0.11616876446631685,
+  "experiment3_window_audit": {
+    "pct_decision_points_gt50pct_contaminated_before": 0.30144110908968397,
+    "pct_decision_points_gt50pct_contaminated_after": 0.35653342092850887,
+    "residual_after_tang_correction": 0.35653342092850887
+  },
+  "experiment5_negative_controls": {
+    "shuffled_labels": {
+      "auroc": 0.5022729542592763,
+      "ci_lo": 0.49984414940611727,
+      "ci_hi": 0.504814533117613
+    },
+    "temporal_offset_decay_curve": [
+      {
+        "offset_bins": 0,
+        "offset_hours": 0,
+        "auroc": 0.8814930853655929,
+        "ci_lo": 0.8781735546454479,
+        "ci_hi": 0.8846555242605513,
+        "n": 198890
+      },
+      {
+        "offset_bins": 1,
+        "offset_hours": 4,
+        "auroc": 0.8529680911263458,
+        "ci_lo": 0.849444530360632,
+        "ci_hi": 0.8565844107836186,
+        "n": 185698
+      },
+      {
+        "offset_bins": 2,
+        "offset_hours": 8,
+        "auroc": 0.8291747219212399,
+        "ci_lo": 0.8250347071663909,
+        "ci_hi": 0.8332702285782155,
+        "n": 172506
+      },
+      {
+        "offset_bins": 4,
+        "offset_hours": 16,
+        "auroc": 0.7868272350952967,
+        "ci_lo": 0.7815799331045693,
+        "ci_hi": 0.7911781297787199,
+        "n": 146123
+      },
+      {
+        "offset_bins": 8,
+        "offset_hours": 32,
+        "auroc": 0.7086043757880279,
+        "ci_lo": 0.7021328390791292,
+        "ci_hi": 0.7151655580749844,
+        "n": 93615
+      }
+    ],
+    "temporal_offset_decay_slope_0_to_max": 0.17288870957756497,
+    "physiology_only_reference_best_probe": {
+      "auroc": 0.79075343331326,
+      "probe": "gb"
+    },
+    "placebo_feature_matched_prevalence": {
+      "auroc": 0.7272460807862267,
+      "ci_lo": 0.7220770661230682,
+      "ci_hi": 0.7314010136282106
+    }
+  },
+  "cohort": {
+    "n_patients": 13192,
+    "n_patient_timesteps": 198890,
+    "decision_interval_hours": 4,
+    "sofa_window_hours": 24
+  },
+  "methodology_fixes_applied": [
+    "variant D now recomputes sofa_total after the MAP-only cardio substitution, instead of leaking the true dose-informed total unchanged",
+    "Experiment 5b reports an offset-decay curve (0,1,2,4,8 bins) instead of a single 8h-shift point, to separate definitional-embedding leakage from treatment-persistence confounding",
+    "all bootstrap CIs (Experiment 2 and 5) resample whole patients (stay_id clusters), not individual timesteps, correcting for within-patient autocorrelation"
+  ]
+}

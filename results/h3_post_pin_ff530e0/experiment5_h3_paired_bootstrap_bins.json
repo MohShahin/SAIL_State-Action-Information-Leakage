@@ -1,0 +1,104 @@
+{
+  "test": "FORMAL_ANALYSIS.md section 7, paired cluster bootstrap on Delta = AUROC(0) - AUROC(far_offset)",
+  "offset_mode": "bins",
+  "far_offset": 8,
+  "probe": "logreg",
+  "decay_curve": [
+    {
+      "offset_bins": 0,
+      "offset_mode": "bins",
+      "n": 198890,
+      "n_patients": 13192,
+      "auroc": 0.8814930853655929
+    },
+    {
+      "offset_bins": 1,
+      "offset_mode": "bins",
+      "n": 180902,
+      "n_patients": 13192,
+      "auroc": 0.8520683629022814
+    },
+    {
+      "offset_bins": 2,
+      "offset_mode": "bins",
+      "n": 168513,
+      "n_patients": 13192,
+      "auroc": 0.8267970826706779
+    },
+    {
+      "offset_bins": 4,
+      "offset_mode": "bins",
+      "n": 144368,
+      "n_patients": 13188,
+      "auroc": 0.7844391110683244
+    },
+    {
+      "offset_bins": 8,
+      "offset_mode": "bins",
+      "n": 93630,
+      "n_patients": 12940,
+      "auroc": 0.7135026404702204
+    }
+  ],
+  "restricted": {
+    "restricted_rows": true,
+    "n_rows_a": 93630,
+    "n_rows_b": 93630,
+    "n_patients": 12940,
+    "auroc_a": 0.8609596129418506,
+    "auroc_b": 0.7135026404702204,
+    "delta": 0.14745697247163025,
+    "delta_ci_lo": 0.14071905313681501,
+    "delta_ci_hi": 0.1542356480311389,
+    "auroc_a_ci": [
+      0.857039977620173,
+      0.8649441731771709
+    ],
+    "auroc_b_ci": [
+      0.7063638464384191,
+      0.7204640496630188
+    ],
+    "p_delta_ge_threshold": 1.0,
+    "p_delta_le_zero": 0.0,
+    "threshold": 0.1,
+    "n_boot": 2000,
+    "n_boot_used": 2000,
+    "n_boot_skipped_single_class": 0,
+    "seed": 42,
+    "prediction_A_supported": true
+  },
+  "unrestricted_sensitivity": {
+    "restricted_rows": false,
+    "n_rows_a": 198890,
+    "n_rows_b": 93630,
+    "n_patients": 13192,
+    "auroc_a": 0.8814930853655929,
+    "auroc_b": 0.7135026404702204,
+    "delta": 0.16799044489537251,
+    "delta_ci_lo": 0.16178919874644213,
+    "delta_ci_hi": 0.17414594127026126,
+    "auroc_a_ci": [
+      0.8782581732948564,
+      0.8848441218844056
+    ],
+    "auroc_b_ci": [
+      0.7067005102033899,
+      0.7206847456641845
+    ],
+    "p_delta_ge_threshold": 1.0,
+    "p_delta_le_zero": 0.0,
+    "threshold": 0.1,
+    "n_boot": 2000,
+    "n_boot_used": 2000,
+    "n_boot_skipped_single_class": 0,
+    "seed": 42,
+    "prediction_A_supported": true
+  },
+  "patient_level_files_cluster_only": [
+    "results/experiment5_predictions_offset0_bins.parquet",
+    "results/experiment5_predictions_offset1_bins.parquet",
+    "results/experiment5_predictions_offset2_bins.parquet",
+    "results/experiment5_predictions_offset4_bins.parquet",
+    "results/experiment5_predictions_offset8_bins.parquet"
+  ]
+}

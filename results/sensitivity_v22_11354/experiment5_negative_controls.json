@@ -1,0 +1,58 @@
+{
+  "shuffled_labels": {
+    "auroc": 0.5019797975667448,
+    "ci_lo": 0.4992372083262824,
+    "ci_hi": 0.5046342547689144
+  },
+  "temporal_offset_decay_curve": [
+    {
+      "offset_bins": 0,
+      "offset_hours": 0,
+      "auroc": 0.8737327527609713,
+      "ci_lo": 0.8704534571484253,
+      "ci_hi": 0.8773285694766341,
+      "n": 170299
+    },
+    {
+      "offset_bins": 1,
+      "offset_hours": 4,
+      "auroc": 0.8457718739668513,
+      "ci_lo": 0.8423922648396296,
+      "ci_hi": 0.8497207694807011,
+      "n": 158945
+    },
+    {
+      "offset_bins": 2,
+      "offset_hours": 8,
+      "auroc": 0.8223454300457249,
+      "ci_lo": 0.8186517819392739,
+      "ci_hi": 0.8269174787224608,
+      "n": 147591
+    },
+    {
+      "offset_bins": 4,
+      "offset_hours": 16,
+      "auroc": 0.7795263161538619,
+      "ci_lo": 0.7741243640547738,
+      "ci_hi": 0.7846025223047564,
+      "n": 124884
+    },
+    {
+      "offset_bins": 8,
+      "offset_hours": 32,
+      "auroc": 0.7025843780829535,
+      "ci_lo": 0.6960824283422876,
+      "ci_hi": 0.7111736118609001,
+      "n": 79686
+    }
+  ],
+  "physiology_only_reference_best_probe": {
+    "auroc": 0.7907641561232432,
+    "probe": "gb"
+  },
+  "placebo_feature_matched_prevalence": {
+    "auroc": 0.7265226345575733,
+    "ci_lo": 0.7210583602343391,
+    "ci_hi": 0.7315985871375675
+  }
+}

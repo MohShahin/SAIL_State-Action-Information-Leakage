@@ -1,0 +1,30 @@
+{
+  "primary_comparison": {
+    "action_auroc": {
+      "A_full": 0.9,
+      "D_treatment_decomposed": 0.792,
+      "F_disentangled": 0.9212371313014466
+    },
+    "mortality_auroc": {
+      "A_full": 0.793,
+      "D_treatment_decomposed": 0.784,
+      "F_disentangled": 0.7873050919703972
+    }
+  },
+  "f_action_best_probe": {
+    "probe": "gb",
+    "auroc": 0.9212371313014466,
+    "auroc_ci_lo": 0.9179011766939956,
+    "auroc_ci_hi": 0.9240764915051178
+  },
+  "f_mortality_best_probe": {
+    "probe": "gb",
+    "auroc": 0.7873050919703972,
+    "auroc_ci_lo": 0.7784797931339079,
+    "auroc_ci_hi": 0.7960981763275078
+  },
+  "mortality_auroc_gap_recovered_by_f": 0.0033050919703971893,
+  "action_auroc_drift_toward_a": 0.12923713130144654,
+  "n_action_rows": 198891,
+  "n_mortality_rows": 13170
+}

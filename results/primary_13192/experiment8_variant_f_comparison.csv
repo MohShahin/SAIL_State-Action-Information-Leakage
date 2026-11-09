@@ -1,0 +1,4 @@
+,action_auroc,mortality_auroc
+A_full,0.9,0.793
+D_treatment_decomposed,0.792,0.784
+F_disentangled,0.9213623346810528,0.7870193049067173
