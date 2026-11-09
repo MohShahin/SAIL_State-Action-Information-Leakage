@@ -32,18 +32,33 @@ class TimingViolationDetector(LeakageCheck):
     and is NOT a violation: this project's own real pipeline is exactly that
     adjacent case, verified as zero overlap -- a stricter ``<=`` here would
     incorrectly flag it.
+
+    Rows where either column is missing (NaN), e.g. a stay that never received
+    the action, cannot be tested. They are excluded from ``n_violations`` and
+    ``n_rows`` and reported as ``evidence["n_missing"]``.
     """
 
     def run(self, df, spec: dict[str, Any]) -> LeakageFinding:
         state_end_col = spec["state_end_col"]
         action_start_col = spec["action_start_col"]
 
-        violation = df[action_start_col] < df[state_end_col]
+        # A row with no action time (or no state end) cannot be tested: NaN < x is False, so
+        # counting it would report "no violation" for a row that was never checked. Such rows
+        # are excluded from both counts and reported separately.
+        missing = df[action_start_col].isna() | df[state_end_col].isna()
+        n_missing = int(missing.sum())
+        tested = df[~missing]
+        violation = tested[action_start_col] < tested[state_end_col]
         n_violations = int(violation.sum())
-        n_rows = int(len(df))
+        n_rows = int(len(tested))
         flagged = n_violations > 0
 
-        if flagged:
+        if n_rows == 0:
+            explanation = (
+                "No row could be tested: every row is missing the action start or the state "
+                "window end."
+            )
+        elif flagged:
             explanation = (
                 f"{n_violations} of {n_rows} row(s) have an action window that "
                 f"starts before the state window ends -- genuine boundary overlap. "
@@ -55,10 +70,23 @@ class TimingViolationDetector(LeakageCheck):
                 f"No timing violation in {n_rows} row(s): every action window "
                 f"starts at or after its corresponding state window's end."
             )
+        if n_missing:
+            explanation += (
+                f" {n_missing} row(s) with a missing action start or state window end were "
+                f"excluded and not counted (rows with no action cannot be tested)."
+            )
+
+        same_column = state_end_col == action_start_col
+        if same_column:
+            explanation += (
+                f" CAUTION: state_end_col and action_start_col are the same column "
+                f"({state_end_col!r}), so this check cannot fail; the result is not informative."
+            )
 
         return LeakageFinding(
             category="timing_violation_leakage",
             flagged=flagged,
             explanation=explanation,
-            evidence={"n_violations": n_violations, "n_rows": n_rows},
+            evidence={"n_violations": n_violations, "n_rows": n_rows,
+                      "n_missing": n_missing, "same_column": same_column},
         )

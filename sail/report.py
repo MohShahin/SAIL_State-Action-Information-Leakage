@@ -40,6 +40,11 @@ class LeakageReport:
         if self.skipped:
             lines.append(f"NOT RUN ({len(self.skipped)}):")
             lines.extend(f"  [{cat}] {reason}" for cat, reason in self.skipped.items())
+        if self.skipped:
+            lines.append(
+                "TO RUN MORE CHECKS: each needs an extra input beyond the table itself -- "
+                "see the 'To enable' hints above or print(sail.requirements())."
+            )
         if not lines:
             lines.append("No checks were run.")
         return "\n".join(lines)
