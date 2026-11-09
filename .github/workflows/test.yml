@@ -18,7 +18,11 @@ jobs:
     # A pre-release Python is expected to break sometimes. That should show up as a red job here (the point
     # of running it) without failing the workflow. Stable rows have no `experimental` key, so this is false.
     continue-on-error: ${{ matrix.experimental == true }}
-    runs-on: ubuntu-latest
+    # TEMPORARY BRIDGE until Python 3.9 support is dropped: actions/setup-python can no longer install
+    # 3.9 on ubuntu-latest ("Set up Python 3.9" fails, since the 2026-10-26 scheduled run), so only the
+    # 3.9 row runs on ubuntu-22.04, which still has 3.9 builds. Every other row stays on ubuntu-latest.
+    # Remove this (and the same line in test-minimum-versions) when 3.9 is dropped.
+    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-22.04' || 'ubuntu-latest' }}
     strategy:
       # Report every Python's result independently instead of cancelling the rest on first failure.
       fail-fast: false
@@ -62,7 +66,9 @@ jobs:
   # whatever lower bounds pyproject.toml declares. A bound is only claimed once it's been tested here.
   test-minimum-versions:
     name: minimum versions (py${{ matrix.python-version }})
-    runs-on: ubuntu-latest
+    # TEMPORARY BRIDGE until Python 3.9 is dropped: same reason as in `test` above; only the 3.9 row
+    # moves to ubuntu-22.04.
+    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-22.04' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
