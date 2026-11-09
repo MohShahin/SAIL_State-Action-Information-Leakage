@@ -56,9 +56,17 @@ class TimingViolationDetector(LeakageCheck):
                 f"starts at or after its corresponding state window's end."
             )
 
+        same_column = state_end_col == action_start_col
+        if same_column:
+            explanation += (
+                f" CAUTION: state_end_col and action_start_col are the same column "
+                f"({state_end_col!r}), so this check cannot fail; the result is not informative."
+            )
+
         return LeakageFinding(
             category="timing_violation_leakage",
             flagged=flagged,
             explanation=explanation,
-            evidence={"n_violations": n_violations, "n_rows": n_rows},
+            evidence={"n_violations": n_violations, "n_rows": n_rows,
+                      "same_column": same_column},
         )

@@ -233,3 +233,41 @@ def test_a_real_wrong_column_name_still_raises_even_alongside_none():
     df = _build_df()
     with pytest.raises(KeyError, match="no_such_column"):
         sail.check(df, [*STATE_COLS, None, "no_such_column"], ACTION_COL)
+
+
+def test_plain_table_reports_all_not_run_with_how_to_enable():
+    df = _build_df()
+    report = sail.check(df, STATE_COLS, ACTION_COL)
+    assert len(report.skipped) == 5 and not report.findings
+    summary = report.summary()
+    assert "TO RUN MORE CHECKS" in summary
+    assert "construction_spec=" in report.skipped["construction_leakage"]
+
+
+def test_requirements_lists_every_category():
+    text = sail.requirements()
+    for cat in ("construction_leakage", "reconstruction_leakage", "temporal_overlap_leakage",
+                "timing_violation_leakage", "persistence_dominance"):
+        assert cat in text
+
+
+def test_same_column_timing_warns_and_cautions():
+    df = _build_df()
+    with pytest.warns(UserWarning, match="cannot fail"):
+        report = sail.check(df, STATE_COLS, ACTION_COL, timestamp_col="t", action_start_col="t")
+    f = next(x for x in report.findings if x.category == "timing_violation_leakage")
+    assert f.evidence["same_column"] is True and "CAUTION" in f.explanation
+
+
+def test_distinct_timing_columns_do_not_warn():
+    import warnings
+    df = _build_df()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        sail.check(df, STATE_COLS, ACTION_COL, timestamp_col="t", action_start_col="action_start")
+
+
+def test_docstrings_are_not_circular():
+    assert "signature" in sail.check.__doc__ and "state_cols" in sail.check.__doc__
+    assert "no detector reads" in sail.check.__doc__
+    assert "see the module docstring" not in sail.check.__doc__
