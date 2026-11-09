@@ -1,0 +1,160 @@
+{
+  "name": "sail-leakage-checks",
+  "displayName": "SAIL: Leakage Checks",
+  "description": "Check a treatment dataset for state-action information leakage. Runs entirely on your computer.",
+  "version": "0.0.1",
+  "publisher": "mohshahin",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage.git",
+    "directory": "extension"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Data Science",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sail",
+          "title": "SAIL",
+          "icon": "media/sail-activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "sail": [
+        {
+          "type": "webview",
+          "id": "sail.sidebar",
+          "name": "Leakage Checks"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "sail.checkDataset",
+        "title": "SAIL: Check a dataset",
+        "icon": "$(sail-logo)"
+      },
+      {
+        "command": "sail.focus",
+        "title": "SAIL: Show Leakage Checks"
+      },
+      {
+        "command": "sail.openWalkthrough",
+        "title": "SAIL: Get Started"
+      },
+      {
+        "command": "sail.moveToSecondarySideBar",
+        "title": "SAIL: Move to Secondary Side Bar"
+      },
+      {
+        "command": "sail.openReport",
+        "title": "SAIL: Open Report"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "sail.checkDataset",
+          "group": "navigation@100"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SAIL",
+      "properties": {
+        "sail.pythonPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to the Python interpreter that has `sail-leakage` installed. Leave empty to use the Python extension's selected interpreter, or `python3`/`python` on PATH."
+        }
+      }
+    },
+    "icons": {
+      "sail-logo": {
+        "description": "The SAIL sail mark",
+        "default": {
+          "fontPath": "./media/sail-icons.woff",
+          "fontCharacter": "\\e900"
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "sail.gettingStarted",
+        "title": "Get started with SAIL",
+        "description": "Check a treatment dataset for hidden leakage in three short steps. No code, and your data stays on this computer.",
+        "steps": [
+          {
+            "id": "sail.step.data",
+            "title": "Choose your data",
+            "description": "Pick the table your model trains on: one row per patient per time step, as a CSV or Parquet file.\n[Check a dataset](command:sail.checkDataset)",
+            "media": {
+              "image": "media/walkthrough/choose-data.svg",
+              "altText": "A list of dataset files with one of them selected"
+            },
+            "completionEvents": [
+              "onCommand:sail.checkDataset"
+            ]
+          },
+          {
+            "id": "sail.step.columns",
+            "title": "Confirm the columns",
+            "description": "SAIL reads your column names and guesses which one is the patient ID, the time step, the treatment and the outcome. Change anything that's wrong.",
+            "media": {
+              "image": "media/walkthrough/confirm-columns.svg",
+              "altText": "Four column choices, each already filled in and marked auto-detected"
+            }
+          },
+          {
+            "id": "sail.step.report",
+            "title": "Read the report",
+            "description": "Five checks, each explained in plain language with what SAIL found and what to do about it. Export the report as a web page.\n[Open SAIL](command:sail.focus)",
+            "media": {
+              "image": "media/walkthrough/read-report.svg",
+              "altText": "Five result cards, some marked Flagged and some marked Passed"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "typecheck": "tsc -p ./ --noEmit",
+    "bundle": "node esbuild.js",
+    "build": "npm run typecheck && npm run bundle",
+    "build:tests": "tsc -p ./",
+    "build:icons": "node scripts/build-icons.js",
+    "watch": "node esbuild.js --watch",
+    "vscode:prepublish": "node esbuild.js --production",
+    "pretest": "npm run build && npm run build:tests",
+    "test": "node ./out/test/runTest.js",
+    "vsix": "npm run build && vsce package"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "1.85.0",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.21.5",
+    "mocha": "^10.4.0",
+    "svg2ttf": "^6.0.3",
+    "svgicons2svgfont": "^10.0.6",
+    "ttf2woff": "^3.0.0",
+    "typescript": "^5.4.0"
+  }
+}
