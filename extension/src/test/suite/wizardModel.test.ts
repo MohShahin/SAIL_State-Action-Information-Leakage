@@ -248,3 +248,20 @@ suite('exported HTML report (pure)', () => {
     assert.ok(!html.includes('<script'), 'the exported report must not run any script');
   });
 });
+
+suite('inconclusive findings (pure)', () => {
+  test('an inconclusive, unflagged finding is "not-run", never "passed"', () => {
+    const s = mapReportToStatuses(
+      { findings: [{ category: 'construction_leakage', flagged: false, inconclusive: true }], skipped: {} },
+      { c1: true }
+    );
+    assert.strictEqual(s.c1, 'not-run');
+  });
+  test('a flagged finding stays flagged even if marked inconclusive', () => {
+    const s = mapReportToStatuses(
+      { findings: [{ category: 'construction_leakage', flagged: true, inconclusive: true }], skipped: {} },
+      { c1: true }
+    );
+    assert.strictEqual(s.c1, 'flagged');
+  });
+});
