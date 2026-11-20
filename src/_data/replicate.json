@@ -1,0 +1,34 @@
+[
+ {
+  "title": "Primary result: AUROC drop of 0.147 (H3)",
+  "what": "Reproduces the paired comparison of offset 0 vs offset 8 on 93,629 common rows.",
+  "commit": "main",
+  "access": "MIMIC-IV access required",
+  "time": "about 40 min",
+  "command": "make replicate-h3"
+ },
+ {
+  "title": "Decay curve across offsets 0, 1, 2, 4, 8",
+  "what": "Re-fits the model at each offset and redraws the home-page curve.",
+  "commit": "main",
+  "access": "MIMIC-IV access required",
+  "time": "about 2 h",
+  "command": "make replicate-decay"
+ },
+ {
+  "title": "Persistence: previous action vs full state",
+  "what": "Compares the previous-action-only model with the full-state model.",
+  "commit": "main",
+  "access": "MIMIC-IV access required",
+  "time": "about 30 min",
+  "command": "make replicate-persistence"
+ },
+ {
+  "title": "Detectors on the synthetic demo",
+  "what": "Runs all five checks on the bundled synthetic dataset. No credentials needed.",
+  "commit": "main",
+  "access": "Synthetic, bundled",
+  "time": "under 2 min",
+  "command": "pip install sail-leakage\nsail demo"
+ }
+]

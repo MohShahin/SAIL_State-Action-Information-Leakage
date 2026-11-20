@@ -1,0 +1,41 @@
+{
+ "note": "Illustrative placeholder rows until the codebook v1 is merged.",
+ "rows": [
+  {
+   "title": "Example: sepsis mortality model, whole-stay features",
+   "source": "MIMIC-IV",
+   "bucket": "B",
+   "check": "Timing violation"
+  },
+  {
+   "title": "Example: AKI risk score with SOFA inputs",
+   "source": "MIMIC-IV",
+   "bucket": "C",
+   "check": "Construction"
+  },
+  {
+   "title": "Example: random row split of ICU stays",
+   "source": "eICU",
+   "bucket": "D",
+   "check": "Temporal overlap"
+  },
+  {
+   "title": "Example: threshold tuned on the test set",
+   "source": "MIMIC-III",
+   "bucket": "E",
+   "check": "Not covered yet"
+  },
+  {
+   "title": "Example: LLM triage with retrieved discharge note",
+   "source": "Private notes",
+   "bucket": "F",
+   "check": "Not covered yet"
+  },
+  {
+   "title": "Example: survivors-only cohort",
+   "source": "MIMIC-IV",
+   "bucket": "A",
+   "check": "Not covered yet"
+  }
+ ]
+}

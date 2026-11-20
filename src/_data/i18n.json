@@ -1,0 +1,107 @@
+{
+ "en": {
+  "name": "English",
+  "dir": "ltr",
+  "nav": [
+   "Home",
+   "Learn",
+   "Workshops",
+   "Tool",
+   "Research",
+   "Library",
+   "Community",
+   "Roadmap"
+  ],
+  "search": "Search"
+ },
+ "ar": {
+  "name": "العربية",
+  "dir": "rtl",
+  "nav": [
+   "الرئيسية",
+   "تعلّم",
+   "ورش العمل",
+   "الأداة",
+   "الأبحاث",
+   "المكتبة",
+   "المجتمع",
+   "خارطة الطريق"
+  ],
+  "search": "بحث"
+ },
+ "es": {
+  "name": "Español",
+  "dir": "ltr",
+  "nav": [
+   "Inicio",
+   "Aprender",
+   "Talleres",
+   "Herramienta",
+   "Investigación",
+   "Biblioteca",
+   "Comunidad",
+   "Hoja de ruta"
+  ],
+  "search": "Buscar"
+ },
+ "fr": {
+  "name": "Français",
+  "dir": "ltr",
+  "nav": [
+   "Accueil",
+   "Apprendre",
+   "Ateliers",
+   "Outil",
+   "Recherche",
+   "Bibliothèque",
+   "Communauté",
+   "Feuille de route"
+  ],
+  "search": "Rechercher"
+ },
+ "pt": {
+  "name": "Português",
+  "dir": "ltr",
+  "nav": [
+   "Início",
+   "Aprender",
+   "Oficinas",
+   "Ferramenta",
+   "Pesquisa",
+   "Biblioteca",
+   "Comunidade",
+   "Roteiro"
+  ],
+  "search": "Buscar"
+ },
+ "hi": {
+  "name": "हिन्दी",
+  "dir": "ltr",
+  "nav": [
+   "मुख्य पृष्ठ",
+   "सीखें",
+   "कार्यशालाएँ",
+   "उपकरण",
+   "शोध",
+   "पुस्तकालय",
+   "समुदाय",
+   "रोडमैप"
+  ],
+  "search": "खोजें"
+ },
+ "zh": {
+  "name": "中文",
+  "dir": "ltr",
+  "nav": [
+   "首页",
+   "学习",
+   "工作坊",
+   "工具",
+   "研究",
+   "文库",
+   "社区",
+   "路线图"
+  ],
+  "search": "搜索"
+ }
+}

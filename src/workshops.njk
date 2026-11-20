@@ -1,0 +1,9 @@
+---
+layout: section.njk
+title: "Workshops"
+activeNav: workshops
+secId: workshops
+permalink: /workshops/
+---
+<p class="plain"><strong>{{ workshops.status }}.</strong> {{ workshops.note }}</p>
+{% for e in workshops.episodes %}<div class="card" style="margin-bottom:16px;"><h3>Episode {{ e.n }} · {{ e.title }}</h3><p class="plain">Status: {{ e.state }}</p></div>{% endfor %}

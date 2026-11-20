@@ -1,0 +1,12 @@
+---
+layout: section.njk
+title: "Community"
+activeNav: community
+secId: community
+permalink: /community/
+---
+{% set sec = sections | findSection(secId) %}
+<div class="grid-12">{% for l in sec.links %}
+  <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;">{{ l[0] }} →</a></div></div>{% endfor %}
+</div>
+<p class="plain" style="margin-top:24px;">No patient-level data goes into this repository, ever. Maintainers will be named after the launch meeting.</p>
