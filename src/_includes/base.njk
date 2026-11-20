@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
 <title>{{ title }} — SAIL</title>
 <meta name="description" content="{{ description or "SAIL (State–Action Information Leakage) is an open toolkit and evidence library for finding when a clinical reinforcement-learning model reads the answer from a clinician's own actions. No patient-level data is hosted here." }}">
 <link rel="icon" type="image/png" href="__PATHPREFIX__/assets/img/favicon.png">
 <link rel="icon" type="image/x-icon" href="__PATHPREFIX__/assets/img/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="__PATHPREFIX__/assets/img/apple-touch-icon.png">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="__PATHPREFIX__/assets/fonts/inter-latin-wght-normal.woff2">
-<link rel="stylesheet" href="__PATHPREFIX__/assets/style.css">
+<link rel="stylesheet" href="__PATHPREFIX__/assets/style.css?v={{ build.v }}">
 <script>(function(){try{var k=localStorage.getItem('sail-lang');var rtl={ar:1};if(k&&/^(en|ar|es|fr|pt|hi|zh)$/.test(k)){var h=document.documentElement;h.lang=k;h.dir=rtl[k]?'rtl':'ltr';}}catch(e){}})();</script>
 {%- if needsMathJax %}
 <script>window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };</script>
@@ -55,7 +56,7 @@
   <span data-t="MIT Laboratory for Computational Physiology × Boston University School of Public Health">MIT Laboratory for Computational Physiology × Boston University School of Public Health</span>
 </footer>
 
-<script src="__PATHPREFIX__/assets/i18n.js"></script>
+<script src="__PATHPREFIX__/assets/i18n.js?v={{ build.v }}"></script>
   <script>
   (function(){var L=window.SAIL_I18N,S=window.SAIL_STR,sel=document.getElementById('langSel');if(!sel)return;
    var page=document.getElementById('sailPage');
