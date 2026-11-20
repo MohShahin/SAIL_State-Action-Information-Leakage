@@ -1,0 +1,5 @@
+---
+permalink: /assets/search.json
+eleventyExcludeFromCollections: true
+---
+[{% for s in sections %}{% if s.id != "home" %}{"t":{{ i18n.en.nav[s.i] | dump | safe }},"k":"nav","u":{{ s.path | dump | safe }},"n":{{ s.i }}},{% for l in s.links %}{"t":{{ l[0] | dump | safe }},"u":{{ l[1] | dump | safe }},"g":{{ i18n.en.nav[s.i] | dump | safe }}},{% endfor %}{% endif %}{% endfor %}{% for r in replicate %}{"t":{{ r.title | dump | safe }},"u":"/research/replicate/","g":"Replicate a result"},{% endfor %}{% for e in workshops.episodes %}{"t":{{ ("Episode " + e.n + " · " + e.title) | dump | safe }},"u":"/workshops/","g":"Workshops"},{% endfor %}{"t":"About","u":"/about/"},{"t":"Privacy","u":"/privacy/"},{"t":"Datasets & models","u":"/datasets-and-models/"}]
