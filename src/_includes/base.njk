@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="__PATHPREFIX__/assets/style.css">
+<script>(function(){try{var k=localStorage.getItem('sail-lang');var rtl={ar:1};if(k&&/^(en|ar|es|fr|pt|hi|zh)$/.test(k)){var h=document.documentElement;h.lang=k;h.dir=rtl[k]?'rtl':'ltr';var f={ar:'Noto+Sans+Arabic',hi:'Noto+Sans+Devanagari',zh:'Noto+Sans+SC'}[k];if(f){var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f+':wght@400;600;700&display=swap';document.head.appendChild(l);}}}catch(e){}})();</script>
 {%- if needsMathJax %}
 <script>window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
@@ -30,25 +31,37 @@
     {%- for s in sections %}
     <a href="{{ s.path | withPrefix }}" data-nav="{{ s.i }}"{% if activeNav == s.id %} class="active"{% endif %}>{{ i18n.en.nav[s.i] }}</a>
     {%- endfor %}
-    <select id="langSel" aria-label="Language" style="margin-left:8px;">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
+    <select id="langSel" aria-label="Language">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
   </div>
-  <script>window.SAIL_I18N = {{ i18n | dump | safe }};</script>
-  <script>
-  (function(){var L=window.SAIL_I18N,s=document.getElementById('langSel');if(!s)return;
-   function g(){try{return localStorage.getItem('sail-lang')}catch(e){return null}}
-   function apply(k){if(!L[k])k='en';document.documentElement.lang=k;document.documentElement.dir=L[k].dir;s.value=k;
-    document.querySelectorAll('[data-nav]').forEach(function(a){a.textContent=L[k].nav[a.dataset.nav]});
-    document.querySelectorAll('[data-i18n-nav]').forEach(function(h){h.textContent=L[k].nav[h.dataset.i18nNav]})}
-   s.onchange=function(){try{localStorage.setItem('sail-lang',s.value)}catch(e){}apply(s.value)};apply(g()||'en');})();
-  </script>
+
 </div></nav>
 
+<div id="sailPage">
 {{ content | safe }}
+</div>
 
 <footer class="page-footer">
-  <p><a href="__PATHPREFIX__/about/">About</a> · <a href="__PATHPREFIX__/datasets-and-models/">Datasets &amp; models</a> · <a href="__PATHPREFIX__/papers/">Papers</a> · <a href="__PATHPREFIX__/privacy/">Privacy</a> · <a href="__PATHPREFIX__/detectors/">Detectors</a></p>
-  MIT Laboratory for Computational Physiology × Boston University School of Public Health
+  <p><a href="__PATHPREFIX__/about/" data-t="About">About</a> · <a href="__PATHPREFIX__/datasets-and-models/" data-t="Datasets &amp; models">Datasets &amp; models</a> · <a href="__PATHPREFIX__/papers/" data-t="Papers">Papers</a> · <a href="__PATHPREFIX__/privacy/" data-t="Privacy">Privacy</a> · <a href="__PATHPREFIX__/detectors/" data-t="Detectors">Detectors</a></p>
+  <span data-t="MIT Laboratory for Computational Physiology × Boston University School of Public Health">MIT Laboratory for Computational Physiology × Boston University School of Public Health</span>
 </footer>
+
+<script src="__PATHPREFIX__/assets/i18n.js"></script>
+  <script>
+  (function(){var L=window.SAIL_I18N,S=window.SAIL_STR,sel=document.getElementById('langSel');if(!sel)return;
+   var page=document.getElementById('sailPage');
+   var FONT={ar:'Noto+Sans+Arabic',hi:'Noto+Sans+Devanagari',zh:'Noto+Sans+SC'};
+   function stored(){try{return localStorage.getItem('sail-lang')}catch(e){return null}}
+   function font(k){if(!FONT[k]||document.querySelector('link[data-f="'+k+'"]'))return;var l=document.createElement('link');l.rel='stylesheet';l.dataset.f=k;l.href='https://fonts.googleapis.com/css2?family='+FONT[k]+':wght@400;600;700&display=swap';document.head.appendChild(l)}
+   function render(k){var h=document.documentElement;h.lang=k;h.dir=L[k].dir;sel.value=k;font(k);
+    document.querySelectorAll('[data-nav]').forEach(function(a){a.textContent=L[k].nav[a.dataset.nav]});
+    document.querySelectorAll('[data-i18n-nav]').forEach(function(e){e.textContent=L[k].nav[e.dataset.i18nNav]});
+    document.querySelectorAll('[data-t]').forEach(function(e){var en=e.dataset.t,tr=(k!=='en'&&S[en])?S[en][k]:null;e.textContent=tr||en})}
+   function apply(k,animate){if(!L[k])k='en';
+    if(!animate||!page){render(k);return}
+    page.classList.add('swap');setTimeout(function(){render(k);page.classList.remove('swap')},160)}
+   sel.onchange=function(){try{localStorage.setItem('sail-lang',sel.value)}catch(e){}apply(sel.value,true)};
+   apply(stored()||'en',false);})();
+  </script>
 
 </body>
 </html>

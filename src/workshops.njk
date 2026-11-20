@@ -5,5 +5,5 @@ activeNav: workshops
 secId: workshops
 permalink: /workshops/
 ---
-<p class="plain"><strong>{{ workshops.status }}.</strong> {{ workshops.note }}</p>
-{% for e in workshops.episodes %}<div class="card" style="margin-bottom:16px;"><h3>Episode {{ e.n }} · {{ e.title }}</h3><p class="plain">Status: {{ e.state }}</p></div>{% endfor %}
+<p class="plain"><strong data-t="{{ workshops.status }}">{{ workshops.status }}</strong>. <span data-t="{{ workshops.note }}">{{ workshops.note }}</span></p>
+{% for e in workshops.episodes %}<div class="card" style="margin-bottom:16px;"><h3><span data-t="Episode {{ e.n }}">Episode {{ e.n }}</span> · <span data-t="{{ e.title }}">{{ e.title }}</span></h3><p class="plain" data-t="Status: proposed">Status: proposed</p></div>{% endfor %}

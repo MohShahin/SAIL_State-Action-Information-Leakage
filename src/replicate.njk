@@ -7,9 +7,9 @@ permalink: /research/replicate/
 ---
 {% set sec = sections | findSection(secId) %}
 <div class="grid-12">{% for l in sec.links %}
-  <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;">{{ l[0] }} →</a></div></div>{% endfor %}
+  <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;"><span data-t="{{ l[0] }}">{{ l[0] }}</span> <span class="arr" aria-hidden="true">→</span></a></div></div>{% endfor %}
 </div>
-<h2 style="margin-top:40px;">Replicate a result</h2>
-<p class="plain">Each row is one command. Rows that need MIMIC-IV require credentialed access; the last row runs on bundled synthetic data.</p>
-{% for r in replicate %}<div class="card" style="margin-bottom:16px;"><h3>{{ r.title }}</h3><p class="plain">{{ r.what }}</p>
-<p class="plain"><strong>Access:</strong> {{ r.access }} · <strong>Time:</strong> {{ r.time }}</p><pre><code>{{ r.command }}</code></pre></div>{% endfor %}
+<h2 style="margin-top:40px;" data-t="Replicate a result">Replicate a result</h2>
+<p class="plain" data-t="Each row is one command. Rows that need MIMIC-IV require credentialed access; the last row runs on bundled synthetic data.">Each row is one command. Rows that need MIMIC-IV require credentialed access; the last row runs on bundled synthetic data.</p>
+{% for r in replicate %}<div class="card" style="margin-bottom:16px;"><h3 data-t="{{ r.title }}">{{ r.title }}</h3><p class="plain" data-t="{{ r.what }}">{{ r.what }}</p>
+<p class="plain"><strong data-t="Access:">Access:</strong> <span data-t="{{ r.access }}">{{ r.access }}</span> · <strong data-t="Time:">Time:</strong> <span data-t="{{ r.time }}">{{ r.time }}</span></p><pre><code>{{ r.command }}</code></pre></div>{% endfor %}

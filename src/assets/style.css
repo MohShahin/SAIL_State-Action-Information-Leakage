@@ -138,7 +138,7 @@ h3.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36
 .card h3{ font-family:var(--sans); margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; border-bottom:1px solid var(--line-soft); padding-bottom:9px; }
 
 .facts{ display:flex; gap:14px; flex-wrap:wrap; margin-top:16px; }
-.fact{ flex:1 1 150px; border-left:2px solid var(--accent); padding-left:12px; }
+.fact{ flex:1 1 150px; border-inline-start:2px solid var(--accent); padding-inline-start:12px; }
 .fact .n{ font-family:var(--serif); font-size:22px; color:var(--ink); }
 .fact .l{ font-size:11.5px; color:var(--ink-faint); line-height:1.4; margin-top:2px; }
 
@@ -174,7 +174,7 @@ footer.page-footer a{ color:var(--ink-soft); }
 .table-scroll{ overflow-x:auto; margin:14px 0; -webkit-overflow-scrolling:touch; }
 .table-scroll table.data{ margin:0; min-width:480px; }
 table.data{ width:100%; border-collapse:collapse; font-size:13px; margin:14px 0; }
-table.data th{ text-align:left; font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); padding:8px 10px; border-bottom:1px solid var(--line); }
+table.data th{ text-align:start; font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); padding:8px 10px; border-bottom:1px solid var(--line); }
 table.data td{ padding:9px 10px; border-bottom:1px solid var(--line-soft); font-family:var(--mono); font-size:12.5px; }
 table.data td.label{ font-family:var(--sans); font-size:13px; }
 table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
@@ -380,3 +380,14 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 /* Giscus comment section: a fixed-height slot before the widget's iframe injects itself, so the
    page doesn't visibly jump once it loads. */
 .landing-dark .comments-section{ min-height:180px; }
+
+/* ---- Languages: right-to-left and per-script type ---- */
+:lang(ar){ font-family:"Noto Sans Arabic","Inter",system-ui,sans-serif; line-height:1.8; }
+:lang(hi){ font-family:"Noto Sans Devanagari","Inter",system-ui,sans-serif; line-height:1.7; }
+:lang(zh){ font-family:"Noto Sans SC","Inter",system-ui,sans-serif; }
+:lang(ar) .sitenav-links a, :lang(ar) h1, :lang(ar) h2, :lang(ar) h3{ letter-spacing:0; }
+pre, code, .install-row, kbd{ direction:ltr; unicode-bidi:isolate; text-align:left; }
+[dir="rtl"] .arr{ display:inline-block; transform:scaleX(-1); }
+#langSel{ margin-inline-start:8px; }
+#sailPage{ transition:opacity .16s ease; }
+#sailPage.swap{ opacity:0; }
