@@ -4,7 +4,7 @@ layout: base.njk
 {% set sec = sections | findSection(secId) %}
 <div class="masthead"><div class="masthead-inner">
   <h1 data-i18n-nav="{{ sec.i }}">{{ i18n.en.nav[sec.i] }}</h1>
-  <p class="deck">{{ sec.blurb }}</p>
+  <p class="deck" data-t="{{ sec.blurb }}">{{ sec.blurb }}</p>
 </div></div>
 <main class="wide"><div class="grid-container">
 {{ content | safe }}
