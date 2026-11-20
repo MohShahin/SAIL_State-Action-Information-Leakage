@@ -55,7 +55,7 @@
    function render(k){var h=document.documentElement;h.lang=k;h.dir=L[k].dir;sel.value=k;font(k);
     document.querySelectorAll('[data-nav]').forEach(function(a){a.textContent=L[k].nav[a.dataset.nav]});
     document.querySelectorAll('[data-i18n-nav]').forEach(function(e){e.textContent=L[k].nav[e.dataset.i18nNav]});
-    document.querySelectorAll('[data-t]').forEach(function(e){var en=e.dataset.t,tr=(k!=='en'&&S[en])?S[en][k]:null;e.textContent=tr||en})}
+    document.querySelectorAll('[data-t]').forEach(function(e){var en=e.dataset.t,tr=(k!=='en'&&S[en])?S[en][k]:null;e.textContent=tr||en});if(window.SAIL_ONLANG)window.SAIL_ONLANG(k)}
    function apply(k,animate){if(!L[k])k='en';
     if(!animate||!page){render(k);return}
     page.classList.add('swap');setTimeout(function(){render(k);page.classList.remove('swap')},160)}
