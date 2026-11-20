@@ -1,0 +1,339 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "results/README.md": {
+      "bytes": 6905,
+      "sha256": "4cb91bcfb4bf8a3c57eadf111ea80dad21f53a0665b9e7e9962db3e9dac58238"
+    },
+    "results/experiment0_cohort_duckdb_diagnostics.json": {
+      "bytes": 2134,
+      "sha256": "db047839d90c26be5f5f1cf322d524e5e370f22c7a364b5d0b04148e97e17d8c"
+    },
+    "results/experiment1_sofa_decomposition_summary.json": {
+      "bytes": 621,
+      "sha256": "33485570330698f57f03c550c0f0fdef8c660b6e7fa6b5a10f81c796a7a090ed"
+    },
+    "results/experiment2_action_recoverability_best_probe.csv": {
+      "bytes": 261,
+      "sha256": "52ee118b4daa33b203af705355cfcd0a4e0ed280084a099aeaab1f61312c48cf"
+    },
+    "results/experiment3_summary.json": {
+      "bytes": 1122,
+      "sha256": "ddc315eddfd489c60f7ca01f6675a486786923da7ff3c7d617cbcc3f26a7b3fd"
+    },
+    "results/experiment5_h3_paired_bootstrap_bins.json": {
+      "bytes": 2643,
+      "sha256": "07f8c66ada87a4ccbdf4585a6d0b2f91d3b72fad57afb0b13007abe958d26c58"
+    },
+    "results/experiment5_h3_paired_bootstrap_rows.json": {
+      "bytes": 2645,
+      "sha256": "c880364548d462110dde4b89d8c598d2776e36fff62678907e4d91d35d01e9a4"
+    },
+    "results/experiment6_mortality_best_probe.csv": {
+      "bytes": 230,
+      "sha256": "8bd611d3e7dc635f22a642070c86abbbfec856b968949ae12d8c6bf2624876ad"
+    },
+    "results/experiment6_mortality_vs_action_recoverability.json": {
+      "bytes": 1803,
+      "sha256": "ec1a1ec8bfc812020a5dea34dff8767919fb8eb13115cc33ce3ee518b2e06e35"
+    },
+    "results/experiment7_respiratory_sofa_summary.json": {
+      "bytes": 1890,
+      "sha256": "013d53993611a47da128907d68d6e9b93c48a6acc9edb9f916c2b8786cb789c6"
+    },
+    "results/experiment8_validation.json": {
+      "bytes": 3488,
+      "sha256": "986bbdb9044605c063fbdba3a433ed26ffa96c5bf80a700c9643ff4cac6c5dd6"
+    },
+    "results/experiment8_variant_f_summary.json": {
+      "bytes": 2665,
+      "sha256": "f42de8d4c07fcfe17e94fd19e04faaed0a16e72c24aabf832da49f5fcad45b5f"
+    },
+    "results/exploratory/decision6a/README.md": {
+      "bytes": 4187,
+      "sha256": "fb52bd18ab8f61e7c98c7a27b0685fad238c8aa23058c25e081940a001fc1682"
+    },
+    "results/exploratory/decision6a/decision6a_11354.json": {
+      "bytes": 4466,
+      "sha256": "5aece47b9bf9da3164d6c399f79ef1681ad031185c6be8fd22ace5b96723c21f"
+    },
+    "results/exploratory/decision6a/decision6a_13192.json": {
+      "bytes": 4471,
+      "sha256": "f5095d6952aa4c7137cdeada04ee08f99b1a96a0d551bd409062636835f01036"
+    },
+    "results/exploratory/dose_decisions/README.md": {
+      "bytes": 17100,
+      "sha256": "8c1e521c0baee8ec21198d3b056cee00d4cc8d04bce4e4333df0fa71b31d5ed9"
+    },
+    "results/exploratory/dose_decisions/dose_decisions_11354.json": {
+      "bytes": 76620,
+      "sha256": "4db5398f6549c483e69d9c5bbd3c4079b1649b54c023bcfe896f988ce896652a"
+    },
+    "results/exploratory/dose_decisions/dose_decisions_11354_at_risk.json": {
+      "bytes": 23114,
+      "sha256": "65e05ceff43b2bf87068f24b6589d5a9dbff6868fa4dacfeada81a0345bda3b4"
+    },
+    "results/exploratory/dose_decisions/dose_decisions_13192.json": {
+      "bytes": 76644,
+      "sha256": "02e1c6806a9df5d971181dadc0a270d11d6c5433863f6600b36136a61634979e"
+    },
+    "results/exploratory/dose_decisions/dose_decisions_13192_at_risk.json": {
+      "bytes": 23090,
+      "sha256": "385804a3b6a31a9975354cbbbc64886b6aa580eda33d802fad18045c2eba000c"
+    },
+    "results/exploratory/label_alignment/README.md": {
+      "bytes": 8011,
+      "sha256": "0b7768d7575e5cc4553600b8dbd14ae9e35fe9ffaf8335613a3920843f10a883"
+    },
+    "results/exploratory/label_alignment/label_alignment_primary_13192.json": {
+      "bytes": 18757,
+      "sha256": "fa4b09edc54dac9b2b5dab8f13eb6f140f45c5f7681f2c1d955b57c6cc87016f"
+    },
+    "results/exploratory/label_alignment/label_alignment_sensitivity_11354.json": {
+      "bytes": 18749,
+      "sha256": "2a382e4f50d5032b51c610120c0f96e66a0f82a3977454209b1679503ad2ff4a"
+    },
+    "results/exploratory/paired_cis/README.md": {
+      "bytes": 9800,
+      "sha256": "11bdba43f4f2609c578c0159381b74ab1c148e1ab17586c98a9e9a71642bee2c"
+    },
+    "results/exploratory/paired_cis/paired_cis_11354.json": {
+      "bytes": 27248,
+      "sha256": "bf8913b8e8e2fbcd45102d37e9ab7f58a0cc8d0410750f9c73de6b1b02dea4b4"
+    },
+    "results/exploratory/paired_cis/paired_cis_13192.json": {
+      "bytes": 27191,
+      "sha256": "e9d20636be747ee10455a6bb2639024a690fef3542d90bc2883f7c553c99bbe9"
+    },
+    "results/exploratory/persistence/README.md": {
+      "bytes": 6427,
+      "sha256": "72fa02e300333ab02b2b408789e616e76be04e5ec951470bb0effbba8d423be6"
+    },
+    "results/exploratory/persistence/persistence_11354.json": {
+      "bytes": 184045,
+      "sha256": "e806cf4ca63d4cc885ae9bee9d5f93635706e462628d1c011ca48c0dfc812f51"
+    },
+    "results/exploratory/persistence/persistence_13192.json": {
+      "bytes": 184079,
+      "sha256": "477328c5afa05825f8e527f165cc5af97b18cf23f87e3116eca85ba0c70595ae"
+    },
+    "results/exploratory/persistence/persistence_decay_curves.png": {
+      "bytes": 301852,
+      "sha256": "6edd313198b9e4c08767937acefe2ba195011e8e2a19e5f1a93787ed406727cd"
+    },
+    "results/exploratory/scaler_within_fold/README.md": {
+      "bytes": 2693,
+      "sha256": "415735c8cbdc414cabd9f00351ef7e3c9634b1febbe36410894839c75f01d46a"
+    },
+    "results/exploratory/scaler_within_fold/scaler_within_fold_11354.json": {
+      "bytes": 14592,
+      "sha256": "966ce275bea24eba326b1739f563f3b53fb9d55682be5b4b6ba0e36ac6c03f42"
+    },
+    "results/exploratory/scaler_within_fold/scaler_within_fold_13192.json": {
+      "bytes": 14617,
+      "sha256": "161322138c03963561b7fd57dfefd9be3021d9c84a574ecce0a75b8e5ac3ddef"
+    },
+    "results/exploratory/simulation/README.md": {
+      "bytes": 8474,
+      "sha256": "bf61fe42594448b7a29790a84cb7b410cc8ab5734be718f25aa8cea5a0786b15"
+    },
+    "results/exploratory/simulation/calibration_aggregates.json": {
+      "bytes": 7253,
+      "sha256": "0b7061f88ff013bdaebbf0f9d0f9ffc04b06826f94087c324f86e89cc4c558ed"
+    },
+    "results/exploratory/simulation/delta_vs_persistence.png": {
+      "bytes": 183260,
+      "sha256": "9c8a88dbadc06136090fee3836fef4959bfe9cf3ee320b898fd6774f9e5ba473"
+    },
+    "results/exploratory/simulation/grid_results.csv": {
+      "bytes": 7361,
+      "sha256": "6b3326100e743e8b5f7fabe91f3916fe6e70fbffb60c6efb094f863e925b11fc"
+    },
+    "results/exploratory/simulation/grid_results_mean.csv": {
+      "bytes": 2287,
+      "sha256": "fe402d4f82ba78e8c564aa8790167d05c455caa74625fa13f410dd0fe81b5ca1"
+    },
+    "results/exploratory/simulation/sim_params.json": {
+      "bytes": 2488,
+      "sha256": "82581e1a14d266fe55b457f8e1ff9bc1fd8c88d6052c315f62bd4216f87ff0a4"
+    },
+    "results/figures/cohort_flow.png": {
+      "bytes": 88092,
+      "sha256": "ac7e4944b097ccb2c6a6d6424f50632841ea3961f97ffce5fdd8ac81454244ae"
+    },
+    "results/figures/figure3_sofa_decomposition_13192.png": {
+      "bytes": 38522,
+      "sha256": "41e41ad3d509aa4d6d6947f5615819c8e21c952e07c98100a1256c44bb94e555"
+    },
+    "results/figures/figure4_action_recoverability_13192.png": {
+      "bytes": 50742,
+      "sha256": "40a38b6a91c5058171ab1534980a44875ac5cd9326da5e560908de94313a0952"
+    },
+    "results/figures/figure5_window_contamination_13192.png": {
+      "bytes": 45089,
+      "sha256": "6bfd08f6ab368247e36b3f682925a4e2496a4671046be0c9a906fb08177c7f95"
+    },
+    "results/figures/figure6_temporal_offset_decay_13192.png": {
+      "bytes": 59708,
+      "sha256": "b372932c534f872a62b9f3128744f49af5ed54eec07300ca7c07950fbe766157"
+    },
+    "results/figures/h3_pinned_29fb4ec_bins.png": {
+      "bytes": 143410,
+      "sha256": "31d3a3ba29c625fcc93e25bc6509cf7203edd5bfa9ce1e6def2c3b6b27d52997"
+    },
+    "results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_bins.json": {
+      "bytes": 2645,
+      "sha256": "daab119c76da439e4a8030c0375a2ca3df247709e2cc250fc68eca1a21027f83"
+    },
+    "results/h3_post_pin_ff530e0/experiment5_h3_paired_bootstrap_rows.json": {
+      "bytes": 2641,
+      "sha256": "d74cbf9e5d32da095532dcc3b0fcbd10a59d589968bdc3ea5a9f852a084ac91b"
+    },
+    "results/pinned_13192/README.md": {
+      "bytes": 284,
+      "sha256": "cada7f048518aa0e08122f6303efb0be3fc968e9b4c4cad380d2efada52a4d43"
+    },
+    "results/pinned_13192/experiment1_summary.json": {
+      "bytes": 2006,
+      "sha256": "2520bed3c762cf5707d3912d8ec2fc8cb39eecbe172118f93f9431fd7515de8c"
+    },
+    "results/pinned_13192/experiment2_action_recoverability_best_probe.csv": {
+      "bytes": 859,
+      "sha256": "fbae97a8c10a5c38ea6c34e0f7f11acb1489d792d6a660e615f68d89c79eac16"
+    },
+    "results/pinned_13192/experiment2_action_recoverability_full.csv": {
+      "bytes": 2420,
+      "sha256": "3a86b3f840a7d02a0364d2126c22dbd1a2c1a39159422078e0901dd1e7cbe926"
+    },
+    "results/pinned_13192/experiment3_summary.json": {
+      "bytes": 206,
+      "sha256": "550ca68687fd8ab17c498d0a6b1bc10d9b5ffe9e81176bdd914276a2204d2afd"
+    },
+    "results/pinned_13192/experiment5_negative_controls.json": {
+      "bytes": 1336,
+      "sha256": "2d85b48f8b564fc0e63700702a4b74e87bff7330f0617974f5f7ca862786a5e4"
+    },
+    "results/pinned_13192/experiment6_mortality_best_probe.csv": {
+      "bytes": 423,
+      "sha256": "7c824e3bdf7b08f52edf87e197bca16928cb44058e3b40689f42c857e5c02783"
+    },
+    "results/pinned_13192/experiment6_mortality_full.csv": {
+      "bytes": 1201,
+      "sha256": "7689d0824842eb0f1cd37d15fd3dfe79188ea92ed3d8b2b8a53bea2cc22d4936"
+    },
+    "results/pinned_13192/experiment6_vs_experiment2_comparison.csv": {
+      "bytes": 301,
+      "sha256": "a37aca9793764ecf93242da5da2273442e675eb47b88b90a1127968f26104ead"
+    },
+    "results/pinned_13192/experiment7_respiratory_sofa_summary.json": {
+      "bytes": 277,
+      "sha256": "a0ab5cf4995d020b851a0c4e848f98998490a57285a63358c8dcaf179623da63"
+    },
+    "results/pinned_13192/experiment8_variant_f_comparison.csv": {
+      "bytes": 135,
+      "sha256": "5a00cd0036ccb079e3eccd62719f7ecfee3aa6c1962585f9ad617121890996a3"
+    },
+    "results/pinned_13192/experiment8_variant_f_summary.json": {
+      "bytes": 799,
+      "sha256": "fcb4a55eebbef1481d8361ac1620106c3f137559ac11f4fa667074641e5163cb"
+    },
+    "results/pinned_13192/table3_all_metrics.json": {
+      "bytes": 6309,
+      "sha256": "ef1424511de80d7b0033505f31efe60df068564d222d77f5235b394fa9f6c8a6"
+    },
+    "results/primary_13192/experiment1_summary.json": {
+      "bytes": 2005,
+      "sha256": "9ee75098aee25db8d2ca3e0901e56c591f65ba7ecb72de7554f8aae1a2374806"
+    },
+    "results/primary_13192/experiment2_action_recoverability_best_probe.csv": {
+      "bytes": 854,
+      "sha256": "5f256fbc90308a8490ec16c5bd7327ff965c18233eb67824e2a0e5b5e8553f3c"
+    },
+    "results/primary_13192/experiment2_action_recoverability_full.csv": {
+      "bytes": 2416,
+      "sha256": "886175b0191f7268af3c1e1673b888dbc58bc835b7a1b8b698dd1f638d12882d"
+    },
+    "results/primary_13192/experiment3_summary.json": {
+      "bytes": 206,
+      "sha256": "14e74633eeceecbcb0b7c6f499d1dbb539b6dbe0f563e7055476cf00802c7958"
+    },
+    "results/primary_13192/experiment5_negative_controls.json": {
+      "bytes": 1335,
+      "sha256": "d8b2d0578c67ab2a1e9834ca26d3288d68c80c49fef0f672aab9e6fdcda1be58"
+    },
+    "results/primary_13192/experiment6_mortality_best_probe.csv": {
+      "bytes": 425,
+      "sha256": "aad00164c1c2464d08f9bc18a20790268de8ee5311fa8c8de498d01ae8a48f24"
+    },
+    "results/primary_13192/experiment6_mortality_full.csv": {
+      "bytes": 1203,
+      "sha256": "c21bb8b318a830522d0d96f23c188acc37bdbd74ed3f76b23dd3856936695e6b"
+    },
+    "results/primary_13192/experiment6_vs_experiment2_comparison.csv": {
+      "bytes": 301,
+      "sha256": "7bcb643f52c66b50e3fb0c1e2831d72f2bf4e489aa43565d8e8d2595e3cb1721"
+    },
+    "results/primary_13192/experiment7_respiratory_sofa_summary.json": {
+      "bytes": 276,
+      "sha256": "4f7546fac647298f6ef44f9c0252f53d26ebdd2a583f1c38f806eb47eec231a8"
+    },
+    "results/primary_13192/experiment8_variant_f_comparison.csv": {
+      "bytes": 135,
+      "sha256": "4526e9c721cbc16c0b298e10bd45d47c3fab6b155c3b81319273308de7c53ceb"
+    },
+    "results/primary_13192/experiment8_variant_f_summary.json": {
+      "bytes": 797,
+      "sha256": "280d2638dc52c84a4247f92def646111b59247da1b7c630017ba2ea206b3b13f"
+    },
+    "results/primary_13192/table3_all_metrics.json": {
+      "bytes": 6302,
+      "sha256": "b7eec84334aaee5c8caf52d56ff098732fa7e24f72f99fcf58009baa3dd9e353"
+    },
+    "results/sensitivity_v22_11354/comparison_vs_published.md": {
+      "bytes": 10363,
+      "sha256": "a88b6b48091accb4dadea5873b697e86f74f8468d7a92c68ff393fc9aa0f7490"
+    },
+    "results/sensitivity_v22_11354/experiment1_summary.json": {
+      "bytes": 2011,
+      "sha256": "0732fb63bb2c407ca7ccd5665badf687c7adae84831bc13ac03ab5a0fb85fbff"
+    },
+    "results/sensitivity_v22_11354/experiment2_action_recoverability_full.csv": {
+      "bytes": 2420,
+      "sha256": "c83037b592e362dafd1a6f0908805d4178640cb11ce7624c0220d5ed387701f7"
+    },
+    "results/sensitivity_v22_11354/experiment3_summary.json": {
+      "bytes": 204,
+      "sha256": "571cb47b43bafcc19866ab74d3b14739d030c6d4e1303dcffd541a24993d671e"
+    },
+    "results/sensitivity_v22_11354/experiment5_h3_paired_bootstrap_bins.json": {
+      "bytes": 2642,
+      "sha256": "2f1f96eec75bfeaf237bbd62e3ff56bed063cab4187b6fa3715304107e86a6d1"
+    },
+    "results/sensitivity_v22_11354/experiment5_h3_paired_bootstrap_rows.json": {
+      "bytes": 2645,
+      "sha256": "406f7159cb1886806674bbfa8da508f30f386dcad36145c8a27d14c07cf8a639"
+    },
+    "results/sensitivity_v22_11354/experiment5_negative_controls.json": {
+      "bytes": 1338,
+      "sha256": "8f089af286b42b78866c02fa2d4cf0489f9088be848b0caddc284d337fbfa740"
+    },
+    "results/sensitivity_v22_11354/experiment6_mortality_full.csv": {
+      "bytes": 1204,
+      "sha256": "dc9d201d20b90665ecdc1f87d28a9f20dbaa245877e00946c7bb1c4f921be7a5"
+    },
+    "results/sensitivity_v22_11354/experiment7_respiratory_sofa_summary.json": {
+      "bytes": 278,
+      "sha256": "667b3f21ae1ce1d5bb015c925eeca5060c86497ea445303315f82b604986d3c5"
+    },
+    "results/sensitivity_v22_11354/experiment8_validation.json": {
+      "bytes": 2792,
+      "sha256": "56012dd6cf0c3e8370acd11a1f2392003fee6091e47c39eec3a8439b0ee3ed05"
+    },
+    "results/sensitivity_v22_11354/experiment8_variant_f_summary.json": {
+      "bytes": 798,
+      "sha256": "5179b623724dbb4710e71d7312e1ce067a9feb36d6b0327d1132d699d51a6449"
+    }
+  },
+  "n_files": 83,
+  "schema_version": "1"
+}

@@ -30,6 +30,9 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 
+[project.scripts]
+sail = "sail.cli:main"
+
 [project.urls]
 Homepage = "https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/"
 Repository = "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage"

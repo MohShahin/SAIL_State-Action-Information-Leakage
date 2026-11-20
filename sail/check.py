@@ -88,8 +88,11 @@ def check(
     missing_cols = [c for c in (*state_cols, action_col) if c is not None and c not in df.columns]
     if missing_cols:
         raise KeyError(f"columns not found in df: {missing_cols}")
+    if len(df) == 0:
+        raise ValueError("df has no rows, so nothing can be checked")
 
     report = LeakageReport()
+    report.meta = _fingerprint(df)
 
     # --- Category 1: construction leakage ---
     if construction_spec is not None:
@@ -189,6 +192,22 @@ def check(
         )
 
     return report
+
+
+def _fingerprint(df) -> dict:
+    """Shape, column names and a content hash of ``df``. Lets a report be tied to the exact table
+    it was run on without storing any row values."""
+    import hashlib
+
+    import pandas as pd
+
+    row_hashes = pd.util.hash_pandas_object(df, index=False).to_numpy().tobytes()
+    return {
+        "n_rows": int(len(df)),
+        "n_columns": int(df.shape[1]),
+        "columns": [str(c) for c in df.columns],
+        "sha256": hashlib.sha256(row_hashes).hexdigest(),
+    }
 
 
 _REQUIREMENTS = (

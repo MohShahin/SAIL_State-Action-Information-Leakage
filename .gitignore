@@ -172,3 +172,6 @@ results/exploratory/simulation/*
 !results/exploratory/simulation/grid_results.csv
 !results/exploratory/simulation/grid_results_mean.csv
 !results/exploratory/simulation/delta_vs_persistence.png
+
+# Hash manifest of the reviewed aggregate result files (hashes only, no data).
+!results/MANIFEST.json

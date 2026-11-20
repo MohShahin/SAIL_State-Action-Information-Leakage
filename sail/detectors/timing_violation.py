@@ -86,6 +86,7 @@ class TimingViolationDetector(LeakageCheck):
         return LeakageFinding(
             category="timing_violation_leakage",
             flagged=flagged,
+            inconclusive=(n_rows == 0),
             explanation=explanation,
             evidence={"n_violations": n_violations, "n_rows": n_rows,
                       "n_missing": n_missing, "same_column": same_column},
