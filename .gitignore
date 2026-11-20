@@ -98,6 +98,14 @@ results/pinned_13192/*
 !results/pinned_13192/experiment8_variant_f_comparison.csv
 !results/pinned_13192/experiment8_variant_f_summary.json
 !results/pinned_13192/table3_all_metrics.json
+# Decision 6(a) across offsets 0 and 8 (exploratory, aggregates only)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/decision6a/
+results/exploratory/decision6a/*
+!results/exploratory/decision6a/README.md
+!results/exploratory/decision6a/decision6a_13192.json
+!results/exploratory/decision6a/decision6a_11354.json
 # Primary cohort (13,192 stays): notebook aggregates from the run of 1d3f170, whose extraction includes the post-pin change ff530e0 (pending the project lead's approval for H3 under Decision 4)
 !results/primary_13192/
 results/primary_13192/*
