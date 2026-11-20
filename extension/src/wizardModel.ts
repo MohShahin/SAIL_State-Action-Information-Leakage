@@ -157,7 +157,7 @@ export function categoryToCheckId(category: string): string | null {
 }
 
 export interface ReportLike {
-  readonly findings: readonly { category: string; flagged: boolean }[];
+  readonly findings: readonly { category: string; flagged: boolean; inconclusive?: boolean }[];
   readonly skipped: Readonly<Record<string, string>>;
 }
 
@@ -179,7 +179,8 @@ export function mapReportToStatuses(
   for (const finding of report.findings) {
     const id = categoryToCheckId(finding.category);
     if (id) {
-      statuses[id] = finding.flagged ? 'flagged' : 'passed';
+      // An inconclusive finding (e.g. too little data) is never shown as a pass.
+      statuses[id] = finding.flagged ? 'flagged' : finding.inconclusive ? 'not-run' : 'passed';
     }
   }
   for (const category of Object.keys(report.skipped)) {
@@ -192,7 +193,7 @@ export function mapReportToStatuses(
 }
 
 export interface ReportLikeWithText extends ReportLike {
-  readonly findings: readonly { category: string; flagged: boolean; explanation: string }[];
+  readonly findings: readonly { category: string; flagged: boolean; explanation: string; inconclusive?: boolean }[];
 }
 
 export interface ResultCard {

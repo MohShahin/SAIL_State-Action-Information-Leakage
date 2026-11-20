@@ -46,7 +46,8 @@ def _report_payload(report):
     # this bridge sidesteps the question entirely by not sending evidence at all in this phase).
     return {
         "findings": [
-            {"category": f.category, "flagged": bool(f.flagged), "explanation": f.explanation}
+            {"category": f.category, "flagged": bool(f.flagged),
+             "inconclusive": bool(getattr(f, "inconclusive", False)), "explanation": f.explanation}
             for f in report.findings
         ],
         "skipped": dict(report.skipped),

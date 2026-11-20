@@ -41,7 +41,7 @@ export interface ColumnsData {
 }
 
 export interface CheckReportData {
-  readonly findings: readonly { category: string; flagged: boolean; explanation: string }[];
+  readonly findings: readonly { category: string; flagged: boolean; explanation: string; inconclusive?: boolean }[];
   readonly skipped: Readonly<Record<string, string>>;
   readonly summary: string;
 }
