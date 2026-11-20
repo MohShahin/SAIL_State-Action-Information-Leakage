@@ -268,7 +268,7 @@ def build_labels(vaso_dose_clean: pd.DataFrame, rows: pd.DataFrame, nee_cuts=Non
 
     def look(series, keys_stay, keys_idx, fill):
         idx = pd.MultiIndex.from_arrays([keys_stay, keys_idx])
-        return series.reindex(idx).fillna(fill).values
+        return series.reindex(idx, fill_value=fill).to_numpy()
 
     sid = rows["stay_id"].values; b = rows["bin"].values.astype(int)
     out = pd.DataFrame({"stay_id": sid, "bin": b})

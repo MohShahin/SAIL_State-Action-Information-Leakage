@@ -166,7 +166,7 @@ Labels, one-vs-rest on the on-at-tau rows:
    carries into the next bin's window max. On `tierP` this disappears (F 0.656 vs A 0.768). So
    `tierW` DOWN partly measures a decrease that already happened, and `tierP` is the cleaner reading.
 6. **Against H3 and Decision 6.** This does not touch the H3 test. It complements Decision 6(a)
-   (provisional, pending the project lead's definitions). On off rows, A minus E is about 0.02. On on
+   (recorded in docs/DECISIONS_H3.md). On off rows, A minus E is about 0.02. On on
    rows with an informative label it is 0.05 for STOP, around 0.2 for tier-scale DOWN, and about 0 for
    NE-equivalent DOWN. STOP is the complement of Decision 6(b)'s "still running at tau + 4h",
    restricted to on rows.
