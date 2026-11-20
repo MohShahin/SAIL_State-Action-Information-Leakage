@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="only light">
+<meta name="color-scheme" content="dark light">
+<script>(function(){var t="light";try{if(localStorage.getItem("sail-theme")==="dark")t="dark"}catch(e){}document.documentElement.setAttribute("data-theme",t)})()</script>
 <title>{{ title }} — SAIL</title>
 <meta name="description" content="{{ description or "SAIL (State–Action Information Leakage) is an open toolkit and evidence library for finding when a clinical reinforcement-learning model reads the answer from a clinician's own actions. No patient-level data is hosted here." }}">
 <link rel="icon" type="image/png" href="__PATHPREFIX__/assets/img/favicon.png">
@@ -42,9 +43,10 @@
     {%- for s in sections %}
     <a href="{{ s.path | withPrefix }}" data-nav="{{ s.i }}"{% if activeNav == s.id %} class="active"{% endif %}>{{ i18n.en.nav[s.i] }}</a>
     {%- endfor %}
-    <button type="button" id="palBtn" aria-label="Search" data-t="Search">Search</button><select id="langSel" aria-label="Language">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
   </div>
-
+  <div class="tools">
+    <button type="button" id="palBtn" aria-label="Search"><span data-t="Search">Search</span><kbd>/</kbd></button><select id="langSel" aria-label="Language">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select><button type="button" id="themeBtn" aria-label="Toggle light or dark theme" title="Theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1.8a6.2 6.2 0 0 1 0 12.4z" fill="currentColor"/></svg></button>
+  </div>
 </div></nav>
 
 <div id="sailPage">
@@ -86,7 +88,9 @@ function draw(){var s=q.value.trim().toLowerCase();cur=(idx||[]).map(function(it
 function open(){pal.classList.add('on');q.placeholder=T('Search');q.value='';sel=0;if(!idx){fetch('__PATHPREFIX__/assets/search.json').then(function(r){return r.json()}).then(function(j){idx=j;draw()}).catch(function(){})}draw();q.focus()}
 function close(){pal.classList.remove('on')}
 document.getElementById('palBtn').onclick=open;
+(function(){var b=document.getElementById('themeBtn');if(!b)return;b.onclick=function(){var r=document.documentElement,n=r.getAttribute('data-theme')==='light'?'dark':'light';r.setAttribute('data-theme',n);try{localStorage.setItem('sail-theme',n)}catch(e){}}})();
 document.addEventListener('keydown',function(e){var on=pal.classList.contains('on');
+ if(e.key==='/'&&!on&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName)){e.preventDefault();open();return}
  if((e.key==='k'||e.key==='K')&&(e.metaKey||e.ctrlKey)){e.preventDefault();on?close():open();return}
  if(!on)return;if(e.key==='Escape'){close()}
  else if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(sel+1,cur.length-1);draw()}

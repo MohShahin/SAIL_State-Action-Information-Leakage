@@ -90,34 +90,34 @@ templateEngineOverride: false
           <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </marker>
       </defs>
-      <path id="e-physio-map" class="e" d="M140,64 L140,110" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-      <path id="e-map-cardio" class="e" d="M140,144 L140,190" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-      <path id="e-cardio-state" class="e" d="M140,234 L140,280" fill="none" stroke="#948f80" stroke-width="1" marker-end="url(#ah)"/>
-      <path id="e-state-action" class="e" d="M140,314 L140,340" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah)" opacity="0.35"/>
-      <path id="e-aprev-map" class="e" d="M470,120 L280,148 L240,138" fill="none" stroke="#948f80" stroke-width="1.2" marker-end="url(#ah)"/>
-      <path id="e-aprev-cardio" class="e" d="M470,132 L240,208" fill="none" stroke="#7c1d2e" stroke-width="1" marker-end="url(#ah)" opacity="0.2"/>
-      <path id="e-aprev-action" class="e" d="M500,150 C500,280 320,330 244,338" fill="none" stroke="#7c1d2e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah)" opacity="0.4"/>
+      <path id="e-physio-map" class="e" d="M140,64 L140,110" fill="none" stroke="var(--ink-faint)" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-map-cardio" class="e" d="M140,144 L140,190" fill="none" stroke="var(--ink-faint)" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-cardio-state" class="e" d="M140,234 L140,280" fill="none" stroke="var(--ink-faint)" stroke-width="1" marker-end="url(#ah)"/>
+      <path id="e-state-action" class="e" d="M140,314 L140,340" fill="none" stroke="var(--treat)" stroke-width="1" stroke-dasharray="1 4" marker-end="url(#ah)" opacity="0.35"/>
+      <path id="e-aprev-map" class="e" d="M470,120 L280,148 L240,138" fill="none" stroke="var(--ink-faint)" stroke-width="1.2" marker-end="url(#ah)"/>
+      <path id="e-aprev-cardio" class="e" d="M470,132 L240,208" fill="none" stroke="var(--treat)" stroke-width="1" marker-end="url(#ah)" opacity="0.2"/>
+      <path id="e-aprev-action" class="e" d="M500,150 C500,280 320,330 244,338" fill="none" stroke="var(--treat)" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ah)" opacity="0.4"/>
 
-      <g class="box"><rect x="40" y="20" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-      <text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428">True physiology U_t</text>
-      <text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c">unobserved</text></g>
+      <g class="box"><rect x="40" y="20" width="200" height="44" rx="6" fill="var(--physio-soft)" stroke="var(--physio)" stroke-width="0.75"/>
+      <text x="140" y="37" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--physio-ink)">True physiology U_t</text>
+      <text x="140" y="53" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="var(--physio)">unobserved</text></g>
 
-      <g class="box"><rect x="40" y="110" width="200" height="34" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-      <text x="140" y="131" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428" id="mapNodeLabel">MAP_t = 68</text></g>
+      <g class="box"><rect x="40" y="110" width="200" height="34" rx="6" fill="var(--physio-soft)" stroke="var(--physio)" stroke-width="0.75"/>
+      <text x="140" y="131" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--physio-ink)" id="mapNodeLabel">MAP_t = 68</text></g>
 
-      <g class="box" id="cardioBox"><rect x="40" y="190" width="200" height="44" rx="6" fill="#e7efe9" stroke="#2f5d50" stroke-width="0.75"/>
-      <text x="140" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#173428" id="cardioNodeLabel">sofa_cardio_t = 0</text>
-      <text x="140" y="223" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#3b6c5c" id="cardioNodeSub">reflects MAP only</text></g>
+      <g class="box" id="cardioBox"><rect x="40" y="190" width="200" height="44" rx="6" fill="var(--physio-soft)" stroke="var(--physio)" stroke-width="0.75"/>
+      <text x="140" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--physio-ink)" id="cardioNodeLabel">sofa_cardio_t = 0</text>
+      <text x="140" y="223" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="var(--physio)" id="cardioNodeSub">reflects MAP only</text></g>
 
-      <g class="box"><rect x="40" y="280" width="200" height="34" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
-      <text x="140" y="301" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">State S_t</text></g>
+      <g class="box"><rect x="40" y="280" width="200" height="34" rx="6" fill="var(--treat-soft)" stroke="var(--treat)" stroke-width="0.75"/>
+      <text x="140" y="301" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--treat-ink)">State S_t</text></g>
 
-      <g class="box"><rect x="40" y="340" width="200" height="34" rx="6" fill="#faf9f6" stroke="#948f80" stroke-width="0.75"/>
-      <text x="140" y="361" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#201f1c">Next action A_t</text></g>
+      <g class="box"><rect x="40" y="340" width="200" height="34" rx="6" fill="var(--card)" stroke="var(--ink-faint)" stroke-width="0.75"/>
+      <text x="140" y="361" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--ink)">Next action A_t</text></g>
 
-      <g class="box"><rect x="440" y="98" width="220" height="52" rx="6" fill="#f4e6e3" stroke="#7c1d2e" stroke-width="0.75"/>
-      <text x="550" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5a1420">Prior action A_(t-1)</text>
-      <text x="550" y="136" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#8a3040" id="aprevSub">no vasopressor</text></g>
+      <g class="box"><rect x="440" y="98" width="220" height="52" rx="6" fill="var(--treat-soft)" stroke="var(--treat)" stroke-width="0.75"/>
+      <text x="550" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="var(--treat-ink)">Prior action A_(t-1)</text>
+      <text x="550" y="136" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="var(--treat)" id="aprevSub">no vasopressor</text></g>
     </svg>
     <p class="plain" id="dagNote" style="margin-top:8px; font-size:13px;"></p>
   </div>
