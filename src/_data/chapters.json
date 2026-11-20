@@ -1,0 +1,6 @@
+{"note":"Chapters are communities of students and researchers. A listing does not imply endorsement by the institution. Leads and meeting times are placeholders until confirmed.",
+"items":[
+ {"city":"Boston","country":"United States","tz":"America/New_York","status":"Founding chapter","institutions":["MIT (Laboratory for Computational Physiology)","Boston University School of Public Health"],"lead":"To be confirmed","next":"To be announced"},
+ {"city":"Beirut","country":"Lebanon","tz":"Asia/Beirut","status":"Forming","institutions":["Lebanese American University (LAU)"],"lead":"To be confirmed","next":"To be announced"},
+ {"city":"Amman","country":"Jordan","tz":"Asia/Amman","status":"Forming","institutions":["University of Jordan"],"lead":"To be confirmed","next":"To be announced"}
+]}

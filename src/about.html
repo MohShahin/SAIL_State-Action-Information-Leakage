@@ -16,13 +16,13 @@ templateEngineOverride: false
 <main class="wide">
 <div class="grid-container">
 
-<h3 class="section" style="margin-top:0;">What is SAIL?</h3>
+<h2 class="section" style="margin-top:0;">What is SAIL?</h2>
 <p class="plain">SAIL audits whether the state representations used in offline reinforcement
 learning for sepsis treatment already encode the treatment action they're meant to precede. It
 proves two mechanisms by which this happens, quantifies both on an independent MIMIC-IV extraction,
 and pre-registers a falsifiable test for the one claim that isn't provable in closed form.</p>
 
-<h3 class="section">What's actually new here?</h3>
+<h2 class="section">What's actually new here?</h2>
 <p class="plain">The treatment-dependence of the SOFA cardiovascular subscore is not a secret — it's
 documented in the clinical literature (Vincent et al., 1996) and known to clinicians who use the
 score daily. <b>The contribution isn't discovering that dependence.</b> It's showing that offline
@@ -33,7 +33,7 @@ subscore alone doesn't remove the information, because the total is a determinis
 it be reconstructed by subtraction — is the least clinician-known and most novel single finding:
 the failure mode a clinically-informed intuition ("just drop the risky field") would miss entirely.</p>
 
-<h3 class="section">Why was it created?</h3>
+<h2 class="section">Why was it created?</h2>
 <p class="plain">Offline sepsis-RL research — the "AI Clinician" and its descendants — evaluates
 policies against retrospective data using state representations built substantially from the SOFA
 score. If that state is already a near-deterministic function of the treatment it's supposed to
@@ -42,13 +42,13 @@ in this literature should be read with that in mind. This project does not evalu
 discredit any specific published policy — it quantifies a property of a commonly used state
 construction.</p>
 
-<h3 class="section">Research question</h3>
+<h2 class="section">Research question</h2>
 <div class="card">
   <p class="plain" style="margin:0;">Does a SOFA-based state representation in offline sepsis-RL
   encode the prior treatment action it precedes, undermining the assumption the framework depends on?</p>
 </div>
 
-<h3 class="section">Scientific contribution</h3>
+<h2 class="section">Scientific contribution</h2>
 <ul class="plain" style="padding-left:20px;">
   <li>Two mathematically proven treatment-confounding mechanisms (non-identifiability, algebraic reconstructibility) — see <a href="__PATHPREFIX__/mechanisms/#term" style="color:#7fd8ca;">Terminology</a> for why this is confounding, not ML-sense leakage</li>
   <li>A causal-graph formalization explaining why predictability alone can't settle whether the AUROC gap reflects these mechanisms specifically, or ordinary treatment persistence</li>
@@ -57,13 +57,13 @@ construction.</p>
   <li>A pre-specified, falsifiable decision procedure for the one open claim</li>
 </ul>
 
-<h3 class="section">Open science</h3>
+<h2 class="section">Open science</h2>
 <p class="plain">Every extraction query, the full analysis notebook, and the complete bug-fix
 history are public. Patient-level MIMIC-IV data is not — see
 <a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a> for the governance policy
 this project holds itself to.</p>
 
-<h3 class="section">Team</h3>
+<h2 class="section">Team</h2>
 <p class="plain">Built across disciplines. SAIL brings together the perspectives needed to test the
 system around a model, not only the model itself.</p>
 <div class="affiliate-badge">
@@ -163,7 +163,7 @@ owners confirm additional names and public information to display.</p>
 
 </div>
 
-<h3 class="section">Community &amp; related work</h3>
+<h2 class="section">Community &amp; related work</h2>
 <div class="grid-12">
 
   <div class="col-span-4">
@@ -196,7 +196,7 @@ owners confirm additional names and public information to display.</p>
 
 </div>
 
-<h3 class="section">Contact &amp; collaboration</h3>
+<h2 class="section">Contact &amp; collaboration</h2>
 <p class="plain">For questions, corrections, or collaboration inquiries, open an issue on the
 <a href="https://github.com/MohShahin__PATHPREFIX__" style="color:#7fd8ca;">GitHub repository</a>.</p>
 <p class="plain">SAIL is open source (MIT licence) and built in the open: code, results and

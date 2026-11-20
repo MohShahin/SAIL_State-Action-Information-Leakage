@@ -12,7 +12,7 @@ templateEngineOverride: false
   .phase-badge.done{ background:var(--physio-soft); color:var(--physio); border:1px solid var(--physio); }
   .phase-badge.open{ background:#f7f0df; color:var(--gold); border:1px solid var(--gold); }
   .phase-badge.next{ background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent); }
-  .phase-body h4{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0 0 4px; }
+  .phase-body h3{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0 0 4px; }
   .phase-body p{ font-size:13px; color:var(--ink-soft); margin:0; line-height:1.55; }
 </style>
 
@@ -29,7 +29,7 @@ templateEngineOverride: false
 
 <main>
 
-<h3 class="section" style="margin-top:0;">Verified figures</h3>
+<h2 class="section" style="margin-top:0;">Verified figures</h2>
 <div class="card">
   <p class="plain">Every published figure has been independently re-extracted from MIMIC-IV and
   reproduced across five or more separate pipeline runs. Experiment 2's action-recoverability gap
@@ -38,7 +38,7 @@ templateEngineOverride: false
   <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>.</p>
 </div>
 
-<h3 class="section">What was found and fixed</h3>
+<h2 class="section">What was found and fixed</h2>
 <div class="card">
   <p class="plain">Three real pipeline bugs were found, diagnosed, and fixed in the open: a
   BigQuery write-disposition gap that silently duplicated rows (~15×) on re-run, a schema-autodetect
@@ -47,12 +47,12 @@ templateEngineOverride: false
   diagnostic trail, including the false starts: <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence page</a>.</p>
 </div>
 
-<h3 class="section">Project phases</h3>
+<h2 class="section">Project phases</h2>
 
 <div class="phase">
   <div class="phase-badge done">Done</div>
   <div class="phase-body">
-    <h4>Phase 0 — Foundation</h4>
+    <h3>Phase 0 — Foundation</h3>
     <p>Cohort extraction, interactive demo, manuscript draft, repo scaffold.</p>
   </div>
 </div>
@@ -60,7 +60,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge done">Done</div>
   <div class="phase-body">
-    <h4>Phase 1–3 — Extraction, verification, bug fixes</h4>
+    <h3>Phase 1–3 — Extraction, verification, bug fixes</h3>
     <p>Full pipeline re-run five+ times end to end. Cohort, Experiment 1, Experiment 2, and
     Experiment 3 all independently reproduced. Two real bugs found, fixed, and confirmed against
     the original source run recovered from an earlier commit.</p>
@@ -70,7 +70,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge done">Done</div>
   <div class="phase-body">
-    <h4>Reviewer response — Mortality-predictive validity per variant (Experiment 6, 2026-09-03)</h4>
+    <h3>Reviewer response — Mortality-predictive validity per variant (Experiment 6, 2026-09-03)</h3>
     <p>Operationalizes the clinical reviewer's task-specificity point: does a variant's lower
     action-recoverability also mean lower mortality-predictive validity? Action-recoverability gap
     (A minus E) = 0.109 — large. Mortality-AUROC gap (A minus E) = 0.011 — about 3% to 10% of the
@@ -84,7 +84,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge done">Done</div>
   <div class="phase-body">
-    <h4>Reviewer response — Respiratory SOFA, a second mechanism instance (Experiment 7 / Proposition 3, 2026-09-04)</h4>
+    <h3>Reviewer response — Respiratory SOFA, a second mechanism instance (Experiment 7 / Proposition 3, 2026-09-04)</h3>
     <p>Tests whether the cardiovascular non-identifiability pattern generalizes to a different SOFA
     subscore. It doesn't, in the same form — respiratory SOFA shows a narrower <b>score-shift
     collision</b> instead: for PF in [100,200), two patients with identical PF get different
@@ -98,7 +98,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge done">Done</div>
   <div class="phase-body">
-    <h4>Reviewer response — Variant F disentanglement test (Experiment 8, 2026-09-08)</h4>
+    <h3>Reviewer response — Variant F disentanglement test (Experiment 8, 2026-09-08)</h3>
     <p>Tests a specific alternative to Variant D: keep severity untouched, add explicit
     treatment-history features (duration on vasopressor, time since last dose-tier change)
     alongside it. The pre-specified success criterion was <b>falsified</b> — F's
@@ -114,7 +114,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge next">Ran — Prediction A</div>
   <div class="phase-body">
-    <h4>Phase 4 — Experiment 5 (negative controls) and H3</h4>
+    <h3>Phase 4 — Experiment 5 (negative controls) and H3</h3>
     <p>All four negative controls have run: shuffled labels (AUROC ≈0.5, as expected), a 5-offset
     temporal decay curve (0.874 at 0h down to 0.703 at 32h), a cross-reference against the variant
     with no explicit treatment features, and prevalence-matched placebo features (matches variant
@@ -138,7 +138,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge open">Open</div>
   <div class="phase-body">
-    <h4>Phase 5 — Statistical rigor pass</h4>
+    <h3>Phase 5 — Statistical rigor pass</h3>
     <p>Clustered bootstrap CIs for mutual information, multiple-comparisons correction, the
     matched 4-hour window-overlap statistic.</p>
   </div>
@@ -147,7 +147,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge open">Open</div>
   <div class="phase-body">
-    <h4>Phase 6 — Literature completion</h4>
+    <h3>Phase 6 — Literature completion</h3>
     <p>Verified citation table of related sepsis-RL work, causal-inference and window-bias
     references, the Appendix A literature audit.</p>
   </div>
@@ -156,7 +156,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge open">Open</div>
   <div class="phase-body">
-    <h4>Phase 7 — Manuscript finalization</h4>
+    <h3>Phase 7 — Manuscript finalization</h3>
     <p>Sweep every remaining placeholder, rewrite the Abstract and Results with the verified
     figures above, remove the internal-draft watermark.</p>
   </div>
@@ -165,7 +165,7 @@ templateEngineOverride: false
 <div class="phase">
   <div class="phase-badge open">Open</div>
   <div class="phase-body">
-    <h4>Phase 8 — Thesis-scale extensions</h4>
+    <h3>Phase 8 — Thesis-scale extensions</h3>
     <p>Cross-dataset replication on eICU, fluid administration (the other half of the action
     space), reward-function leakage, a formal policy-sensitivity study.</p>
   </div>

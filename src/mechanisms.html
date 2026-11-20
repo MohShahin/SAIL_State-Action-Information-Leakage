@@ -15,7 +15,7 @@ needsMathJax: true
 
 <main class="wide">
 
-<h3 class="section" id="term" style="margin-top:0;">Terminology: this is confounding, not ML-sense leakage</h3>
+<h2 class="section" id="term" style="margin-top:0;">Terminology: this is confounding, not ML-sense leakage</h2>
 <div class="card">
   <p class="plain">Both mechanisms below were originally described as "leakage." A reviewer
   correctly pushed back — the two diagrams below are the actual distinction, made visual. Full
@@ -65,7 +65,7 @@ needsMathJax: true
   the full scope note.</p>
 </div>
 
-<h3 class="section">Mechanism 1 — Treatment-confounded severity construction</h3>
+<h2 class="section">Mechanism 1 — Treatment-confounded severity construction</h2>
 <div class="card">
   <p class="plain">The cardiovascular SOFA subscore is defined as a function of two things: mean
   arterial pressure, and whichever vasopressor drug and dose is currently running. For <b>any
@@ -97,7 +97,7 @@ needsMathJax: true
   no; the pre-specified test for this was falsified)?</p>
 </div>
 
-<h3 class="section">Mechanism 2 — Treatment overlap</h3>
+<h2 class="section">Mechanism 2 — Treatment overlap</h2>
 <div class="card">
   <p class="plain">A "current state" snapshot is built by aggregating physiology over a lookback
   window. If that window overlaps a period when treatment was already running, the snapshot carries
@@ -117,7 +117,7 @@ needsMathJax: true
   <p class="plain">Full statement and proof: <a href="__PATHPREFIX__/proof/#prop1" style="color:var(--accent);">Proposition 1, treatment overlap</a>.</p>
 </div>
 
-<h3 class="section">Try both yourself</h3>
+<h2 class="section">Try both yourself</h2>
 <div class="card">
   <p class="plain" style="margin-bottom:14px;">The live SOFA calculator and window-overlap timeline
   are on the guided walkthrough. The full synchronized model — causal graph, state vector, and

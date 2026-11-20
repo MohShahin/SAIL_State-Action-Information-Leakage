@@ -5,5 +5,81 @@ activeNav: library
 secId: library
 permalink: /library/
 ---
-<p class="plain" data-t="{{ library.note }}">{{ library.note }}</p>
-{% for r in library.rows %}<div class="card" style="margin-bottom:12px;"><h3 data-t="{{ r.title }}">{{ r.title }}</h3><p class="plain">{{ r.source }} · {{ r.bucket }} · <span data-t="{{ r.check }}">{{ r.check }}</span></p></div>{% endfor %}
+<style>
+.lib{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:28px;align-items:start;margin:8px 0 48px}
+@media (max-width:860px){.lib{grid-template-columns:minmax(0,1fr)}}
+.libf{position:sticky;top:12px;border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--paper)}
+@media (max-width:860px){.libf{position:static}}
+.libf label,.libf legend{display:block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+:lang(ar) .libf label,:lang(ar) .libf legend,:lang(hi) .libf label,:lang(hi) .libf legend{letter-spacing:0;text-transform:none}
+.libf select,.libf input[type=search]{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--paper);color:var(--ink)}
+.libf fieldset{border:0;padding:0;margin:0}
+.libf .chk{display:flex;gap:8px;align-items:center;font-size:14.5px;margin:6px 0}
+.libf button{margin-top:16px;width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font:inherit;font-weight:600;cursor:pointer;color:var(--ink)}
+.libf :focus-visible,.paper a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.libbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.libbar select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--paper);color:var(--ink)}
+.paper{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--paper)}
+.paper .pt{font-size:16.5px;line-height:1.35;margin:0 0 4px}
+.paper .pt a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.paper .pt a:hover{text-decoration-color:var(--accent)}
+.paper .meta{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px}
+.paper p{margin:6px 0 0;font-size:14.5px;color:var(--ink-soft)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;padding:0;list-style:none}
+.tags li{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--ink-soft)}
+.tags li.ok{color:#166534;border-color:#86efac;background:#f0fdf4}
+.tags li.warn{color:#92400e;border-color:#fcd34d;background:#fffbeb}
+.tags li.hi{color:#0e7490;border-color:#67e8f9;background:#ecfeff}
+.libnone{padding:28px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--ink-soft)}
+</style>
+<p class="plain" style="max-width:68ch;"><span data-t="A shared catalogue of papers on leakage and evaluation design in clinical machine learning, collected by the project team. Entries marked not yet verified still need a second reader to check the paper itself.">A shared catalogue of papers on leakage and evaluation design in clinical machine learning, collected by the project team. Entries marked not yet verified still need a second reader to check the paper itself.</span></p>
+<div class="lib">
+ <form class="libf" id="libf" role="search" aria-label="Filter the library" onsubmit="return false">
+  <label for="q" data-t="Search">Search</label>
+  <input type="search" id="q" autocomplete="off">
+  <label for="f_family" data-t="Leakage family">Leakage family</label>
+  <select id="f_family"><option value="" data-t="All">All</option>{% set fam = library.rows | groupBy('family') %}{% for k, v in fam %}<option value="{{ k }}">{{ k }} ({{ v.length }})</option>{% endfor %}</select>
+  <label for="f_scope" data-t="Dataset scope">Dataset scope</label>
+  <select id="f_scope"><option value="" data-t="All">All</option>{% set sc = library.rows | groupBy('scope') %}{% for k, v in sc %}<option value="{{ k }}">{{ k }} ({{ v.length }})</option>{% endfor %}</select>
+  <label for="f_kind" data-t="Kind of paper">Kind of paper</label>
+  <select id="f_kind"><option value="" data-t="All">All</option>{% set kd = library.rows | groupBy('kind') %}{% for k, v in kd %}<option value="{{ k }}">{{ k }} ({{ v.length }})</option>{% endfor %}</select>
+  <label for="f_pri" data-t="Priority">Priority</label>
+  <select id="f_pri"><option value="" data-t="All">All</option><option value="High">High</option><option value="Medium-High">Medium-High</option><option value="Medium">Medium</option><option value="Low-Medium">Low-Medium</option></select>
+  <fieldset><legend data-t="Show only">Show only</legend>
+   <label class="chk"><input type="checkbox" id="f_ver"> <span data-t="Verified by the team">Verified by the team</span></label>
+   <label class="chk"><input type="checkbox" id="f_pos"> <span data-t="Positive practice (guards against leakage)">Positive practice (guards against leakage)</span></label>
+  </fieldset>
+  <button type="button" id="f_reset" data-t="Reset filters">Reset filters</button>
+ </form>
+ <div>
+  <div class="libbar"><p id="count" aria-live="polite" style="margin:0;font-weight:600"></p>
+   <label style="font-size:14px"><span data-t="Sort by">Sort by</span> <select id="f_sort"><option value="pri" data-t="Priority">Priority</option><option value="new" data-t="Newest first">Newest first</option><option value="old" data-t="Oldest first">Oldest first</option></select></label></div>
+  <div id="list">
+  {% for r in library.rows %}<article class="paper" data-id="{{ r.id }}" data-family="{{ r.family }}" data-scope="{{ r.scope }}" data-kind="{{ r.kind }}" data-pri="{{ r.priority }}" data-ver="{{ 1 if r.verified else 0 }}" data-pos="{{ 1 if r.positive else 0 }}" data-year="{{ r.year or 0 }}" data-text="{{ (r.title + ' ' + r.authors + ' ' + r.datasets + ' ' + r.mechanism + ' ' + r.what) | lower }}">
+   <h2 class="pt">{% if r.link %}<a href="{{ r.link }}" rel="noopener" target="_blank">{{ r.title }}</a>{% else %}{{ r.title }}{% endif %}</h2>
+   <p class="meta">{% if r.year %}{{ r.year }}{% endif %}{% if r.year and r.authors %} · {% endif %}{{ r.authors }}{% if r.linkKind == "search" %} · <span data-t="Search link, not a direct link">Search link, not a direct link</span>{% endif %}</p>
+   <ul class="tags"><li class="hi">{{ r.family }}</li><li>{{ r.scope }}</li><li>{{ r.kind }}</li>{% if r.positive %}<li class="ok" data-t="Positive practice">Positive practice</li>{% endif %}{% if r.verified %}<li class="ok" data-t="Verified">Verified</li>{% else %}<li class="warn" data-t="Not yet verified">Not yet verified</li>{% endif %}<li>{{ r.priority }}</li></ul>
+   {% if r.mechanism %}<p><strong data-t="Mechanism:">Mechanism:</strong> {{ r.mechanism }}</p>{% endif %}
+   {% if r.datasets %}<p><strong data-t="Data:">Data:</strong> {{ r.datasets }}</p>{% endif %}
+  </article>{% endfor %}
+  </div>
+  <div class="libnone" id="none" hidden data-t="No papers match these filters.">No papers match these filters.</div>
+  <p class="plain" style="font-size:13px;margin-top:24px"><span data-t="Source: the project's literature tracker, bibliographic fields only. To suggest a paper, open an issue on GitHub.">Source: the project's literature tracker, bibliographic fields only. To suggest a paper, open an issue on GitHub.</span> <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new/choose" style="color:var(--accent)" data-t="Suggest a paper">Suggest a paper</a></p>
+ </div>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},cards=[].slice.call(document.querySelectorAll('.paper')),list=$('list');
+var rank={'High':0,'Medium-High':1,'Medium':2,'Low-Medium':3};
+function T(s){var k=document.documentElement.lang;return (k!=='en'&&window.SAIL_STR&&SAIL_STR[s]&&SAIL_STR[s][k])||s}
+function run(){var q=$('q').value.trim().toLowerCase(),fa=$('f_family').value,sc=$('f_scope').value,ki=$('f_kind').value,pr=$('f_pri').value,ve=$('f_ver').checked,po=$('f_pos').checked,so=$('f_sort').value;
+ var shown=0;cards.forEach(function(c){var d=c.dataset,ok=(!q||d.text.indexOf(q)>=0)&&(!fa||d.family===fa)&&(!sc||d.scope===sc)&&(!ki||d.kind===ki)&&(!pr||d.pri===pr)&&(!ve||d.ver==='1')&&(!po||d.pos==='1');c.hidden=!ok;if(ok)shown++});
+ var order=cards.slice().sort(function(a,b){if(so==='new')return (+b.dataset.year)-(+a.dataset.year);if(so==='old')return (+a.dataset.year||9999)-(+b.dataset.year||9999);return (rank[a.dataset.pri]-rank[b.dataset.pri])||((+b.dataset.year)-(+a.dataset.year))});
+ order.forEach(function(c){list.appendChild(c)});
+ $('count').textContent=T('Showing')+' '+shown+' '+T('of')+' '+cards.length;$('none').hidden=shown>0}
+['q','f_family','f_scope','f_kind','f_pri','f_ver','f_pos','f_sort'].forEach(function(i){$(i).addEventListener('input',run);$(i).addEventListener('change',run)});
+$('f_reset').onclick=function(){$('libf').reset();$('f_sort').value='pri';run()};
+var prev=window.SAIL_ONLANG;window.SAIL_ONLANG=function(k){if(prev)prev(k);$('q').placeholder=T('Search');run()};
+run();
+})();
+</script>

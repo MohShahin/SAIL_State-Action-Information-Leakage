@@ -58,11 +58,11 @@ templateEngineOverride: false
 <main class="wide">
 
 <div class="card">
-  <h3>Controls</h3>
+  <h2>Controls</h2>
 
   <div class="ctrl">
     <div class="ctrl-row"><span class="ctrl-name">Blood pressure (MAP)</span><span class="ctrl-value" id="mapVal">68 mmHg</span></div>
-    <input type="range" id="mapSlider" min="40" max="100" value="68">
+    <input type="range" id="mapSlider" aria-label="Blood pressure (MAP), mmHg" min="40" max="100" value="68">
   </div>
 
   <div class="toggle-row">
@@ -83,7 +83,7 @@ templateEngineOverride: false
 <div class="viz-grid">
 
   <div class="card">
-    <h3>1 — Causal graph <span style="font-weight:400; text-transform:none; letter-spacing:0;">(which paths are active right now)</span></h3>
+    <h2>1 — Causal graph <span style="font-weight:400; text-transform:none; letter-spacing:0;">(which paths are active right now)</span></h2>
     <svg width="100%" viewBox="0 0 680 380" role="img" id="dagsvg" aria-label="Causal graph of prior action, state, and next action, with the currently active information pathway highlighted based on the controls at left">
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -123,7 +123,7 @@ templateEngineOverride: false
   </div>
 
   <div class="card">
-    <h3>2 — State vector <span style="font-weight:400; text-transform:none; letter-spacing:0;">(what the model actually sees)</span></h3>
+    <h2>2 — State vector <span style="font-weight:400; text-transform:none; letter-spacing:0;">(what the model actually sees)</span></h2>
     <div class="statevec" id="statevec"></div>
     <p class="plain" style="margin:12px 0 0; font-size:12.5px;">
       <span class="flag physio" style="margin-right:8px;"><span class="dot"></span>clean physiology</span>
@@ -132,7 +132,7 @@ templateEngineOverride: false
   </div>
 
   <div class="card">
-    <h3>3 — Predictability <span style="font-weight:400; text-transform:none; letter-spacing:0;">(Experiment 2's measured AUROC for this variant)</span></h3>
+    <h2>3 — Predictability <span style="font-weight:400; text-transform:none; letter-spacing:0;">(Experiment 2's measured AUROC for this variant)</span></h2>
     <div class="gauge-wrap">
       <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div><div class="gauge-num" id="gaugeNum">—</div></div>
       <div class="gauge-scale"><span>0.50 — random guessing</span><span>1.00 — perfect prediction</span></div>

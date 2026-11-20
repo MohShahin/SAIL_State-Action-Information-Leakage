@@ -6,6 +6,34 @@ secId: community
 permalink: /community/
 ---
 {% set sec = sections | findSection(secId) %}
+<style>
+.chap{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:8px 0 12px}
+.chapc{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--paper)}
+.chapc h3{margin:0 0 2px;font-size:19px}.chapc .co{color:var(--ink-soft);font-size:14px;margin:0 0 10px}
+.chapc .st{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:2px 10px;border:1px solid currentColor}
+.chapc .st.f{color:#166534}.chapc .st.p{color:#92400e}
+:lang(ar) .chapc .st,:lang(hi) .chapc .st{letter-spacing:0;text-transform:none}
+.chapc ul{margin:12px 0 0;padding-inline-start:18px;font-size:14.5px}
+.chapc dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:12px 0 0;font-size:14px}
+.chapc dt{color:var(--ink-soft);font-weight:600}.chapc dd{margin:0}
+.tbd{display:inline-block;border:1px dashed var(--ink-faint);border-radius:6px;padding:0 8px;color:var(--ink-soft)}
+.chapmap{width:100%;max-width:760px;height:auto;display:block;margin:16px 0 4px}
+</style>
+<h2 data-t="Chapters">Chapters</h2>
+<p class="plain" style="max-width:68ch" data-t="{{ chapters.note }}">{{ chapters.note }}</p>
+<div class="chap">{% for c in chapters.items %}<article class="chapc"><h3>{{ c.city }}</h3><p class="co">{{ c.country }}</p>
+<span class="st {{ 'f' if c.status == 'Founding chapter' else 'p' }}" data-t="{{ c.status }}">{{ c.status }}</span>
+<ul>{% for i in c.institutions %}<li>{{ i }}</li>{% endfor %}</ul>
+<dl><dt data-t="Chapter lead">Chapter lead</dt><dd><span class="tbd" data-t="To be confirmed">To be confirmed</span></dd><dt data-t="Next meeting">Next meeting</dt><dd><span class="tbd" data-t="Date to be announced">Date to be announced</span></dd></dl></article>{% endfor %}</div>
+<svg class="chapmap" viewBox="0 0 760 150" role="img" aria-labelledby="cmT"><title id="cmT">Chapter cities along a time line: Boston, then Beirut and Amman seven hours ahead in winter</title>
+<line x1="40" y1="70" x2="720" y2="70" stroke="currentColor" stroke-opacity=".3" stroke-width="2"/>
+<circle cx="90" cy="70" r="9" fill="#0891B2"/><text x="90" y="108" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Boston</text><text x="90" y="128" text-anchor="middle" font-size="12" fill="currentColor" fill-opacity=".7">MIT · BU</text>
+<circle cx="610" cy="70" r="9" fill="#d97706"/><text x="610" y="108" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Beirut</text><text x="610" y="128" text-anchor="middle" font-size="12" fill="currentColor" fill-opacity=".7">LAU</text>
+<circle cx="690" cy="70" r="9" fill="#d97706"/><text x="690" y="108" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Amman</text><text x="690" y="128" text-anchor="middle" font-size="12" fill="currentColor" fill-opacity=".7">Univ. of Jordan</text>
+<text x="350" y="50" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity=".75">Transatlantic: pick a shared slot on the Workshops page</text></svg>
+<p class="plain" style="font-size:14px"><a href="__PATHPREFIX__/workshops/" style="color:var(--accent);font-weight:600"><span data-t="Find a time that works across chapters">Find a time that works across chapters</span> <span class="arr" aria-hidden="true">→</span></a></p>
+
+<h2 style="margin-top:36px" data-t="Get involved">Get involved</h2>
 <div class="grid-12">{% for l in sec.links %}
   <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;"><span data-t="{{ l[0] }}">{{ l[0] }}</span> <span class="arr" aria-hidden="true">→</span></a></div></div>{% endfor %}
 </div>

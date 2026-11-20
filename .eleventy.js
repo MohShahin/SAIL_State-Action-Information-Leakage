@@ -46,6 +46,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ ".nojekyll": ".nojekyll" });
 
   eleventyConfig.addFilter("findSection", (list, id) => list.find((s) => s.id === id));
+  eleventyConfig.addFilter("groupBy", (list, key) => { const o = {}; for (const x of list) (o[x[key]] = o[x[key]] || []).push(x); return o; });
   eleventyConfig.addFilter("withPrefix", (p) => (p.startsWith("http") ? p : "__PATHPREFIX__" + p));
 
   // Single-source-of-truth path prefixing. Every page (including the 10 content files
