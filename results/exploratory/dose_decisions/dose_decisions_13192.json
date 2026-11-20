@@ -1,0 +1,2463 @@
+{
+  "status": "exploratory, not pre-registered; does not change the H3 decision. Titration labels are this analysis's own definitions, not the project lead's.",
+  "cohort": "13192",
+  "n_stays_cohort": 13192,
+  "n_rows_state": 198890,
+  "checks": {
+    "dose_rows": 447713,
+    "dose_rows_expected": 447713,
+    "on_rows": 81557,
+    "on_rows_expected": 81557,
+    "published_label_rate_on_rows": 1.0,
+    "rows_tierW_ge2_sofa_cardio_mismatch": 0,
+    "rows_tierW_0_sofa_cardio_gt1": 0
+  },
+  "label_diagnostics": {
+    "nee_quartile_cuts_ne_mcg_kg_min": [
+      0.05079847574234009,
+      0.10070493817329407,
+      0.2248229111234347
+    ],
+    "nee_nonzero_bins": 98766,
+    "phenylephrine_rows_unconvertible_mcg_min": 1,
+    "vasopressin_rows_by_unit": {
+      "units/hour": 22275
+    }
+  },
+  "settings": {
+    "probes": {
+      "logreg": "LogisticRegression(max_iter=2000, class_weight='balanced')",
+      "gb": "GradientBoostingClassifier(random_state=42)"
+    },
+    "cv": "notebook cv_predict: StandardScaler on all rows, GroupKFold(5) by stay_id",
+    "bootstrap": "paired patient bootstrap, 2000 resamples, seed 42, identical rows (h3_paired_bootstrap.paired_cluster_bootstrap restrict=True)",
+    "offsets": [
+      0,
+      2,
+      4
+    ],
+    "offset_mode": "bins (features at t, label of the on-at-tau row at t + k)",
+    "row_set": "rows with any of the six label drugs running at tau (start <= tau < end)",
+    "labels": "one-vs-rest on the on-at-tau rows; see the script docstring",
+    "at_risk_restriction": false,
+    "nee": "Goradia 2021: NE + epi + phenylephrine/10 + dopamine/100 + vasopressin(U/min)*2.5; dobutamine excluded; 5 levels (0, quartiles of nonzero)"
+  },
+  "results": [
+    {
+      "label": "STOP",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 11631,
+      "prevalence": 0.1426119155927756,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.3467522078248543,
+        "tierP_tau": 0.33564211731766413,
+        "F1_hours_on": 0.36433133226684117
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6689843728408046,
+            "D_treatment_decomposed": 0.6165622282944835,
+            "E_physiology_only": 0.6138264179655164,
+            "F_disentangled": 0.6608809883702476
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6689843728408046,
+            "auroc_b": 0.6138264179655164,
+            "delta": 0.055157954875288184,
+            "delta_ci_lo": 0.05044711449272262,
+            "delta_ci_hi": 0.06002413500763584,
+            "auroc_a_ci": [
+              0.6632225322487304,
+              0.6751520573597972
+            ],
+            "auroc_b_ci": [
+              0.607996920348529,
+              0.6200102929119589
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6689843728408046,
+            "auroc_b": 0.6165622282944835,
+            "delta": 0.0524221445463211,
+            "delta_ci_lo": 0.04766915507748433,
+            "delta_ci_hi": 0.05722286967775802,
+            "auroc_a_ci": [
+              0.6632225322487304,
+              0.6751520573597972
+            ],
+            "auroc_b_ci": [
+              0.6108307903622933,
+              0.6227574951515971
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6984057213037718,
+            "D_treatment_decomposed": 0.6470377175298176,
+            "E_physiology_only": 0.6474374947088088,
+            "F_disentangled": 0.6894297137182887
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6984057213037718,
+            "auroc_b": 0.6474374947088088,
+            "delta": 0.05096822659496292,
+            "delta_ci_lo": 0.04675285316331882,
+            "delta_ci_hi": 0.05515498446476251,
+            "auroc_a_ci": [
+              0.6927511789099606,
+              0.7046089552962738
+            ],
+            "auroc_b_ci": [
+              0.6417291529511182,
+              0.6531208649514089
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6984057213037718,
+            "auroc_b": 0.6470377175298176,
+            "delta": 0.05136800377395412,
+            "delta_ci_lo": 0.04700731455884004,
+            "delta_ci_hi": 0.05571912434872794,
+            "auroc_a_ci": [
+              0.6927511789099606,
+              0.7046089552962738
+            ],
+            "auroc_b_ci": [
+              0.6413870902723834,
+              0.6529422912826055
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "STOP",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 7170,
+      "prevalence": 0.12286233249940025,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.38048535826421137,
+        "tierP_tau": 0.37685884091339833,
+        "F1_hours_on": 0.4036352921257586
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6343026047008709,
+            "D_treatment_decomposed": 0.5969581761066951,
+            "E_physiology_only": 0.5967134496633353,
+            "F_disentangled": 0.6265821950511631
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6343026047008709,
+            "auroc_b": 0.5967134496633353,
+            "delta": 0.03758915503753557,
+            "delta_ci_lo": 0.03215232355162095,
+            "delta_ci_hi": 0.04281069164171522,
+            "auroc_a_ci": [
+              0.6276553089416719,
+              0.6414285488592011
+            ],
+            "auroc_b_ci": [
+              0.5895863514289725,
+              0.604237025271219
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6343026047008709,
+            "auroc_b": 0.5969581761066951,
+            "delta": 0.03734442859417575,
+            "delta_ci_lo": 0.03194371523335863,
+            "delta_ci_hi": 0.042527036677638054,
+            "auroc_a_ci": [
+              0.6276553089416719,
+              0.6414285488592011
+            ],
+            "auroc_b_ci": [
+              0.5898865324048048,
+              0.6047092290674047
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6536865007914053,
+            "D_treatment_decomposed": 0.6148555305031939,
+            "E_physiology_only": 0.6172333528310168,
+            "F_disentangled": 0.6430764273770144
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6536865007914053,
+            "auroc_b": 0.6172333528310168,
+            "delta": 0.036453147960388566,
+            "delta_ci_lo": 0.03107262747171469,
+            "delta_ci_hi": 0.04177631571410227,
+            "auroc_a_ci": [
+              0.6468808157696616,
+              0.6606668790808277
+            ],
+            "auroc_b_ci": [
+              0.6101396935840215,
+              0.6242904975157094
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6536865007914053,
+            "auroc_b": 0.6148555305031939,
+            "delta": 0.038830970288211475,
+            "delta_ci_lo": 0.033381232738218684,
+            "delta_ci_hi": 0.044327578761876395,
+            "auroc_a_ci": [
+              0.6468808157696616,
+              0.6606668790808277
+            ],
+            "auroc_b_ci": [
+              0.6075489881179136,
+              0.6223443713110289
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "STOP",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 5308,
+      "prevalence": 0.12017478321899976,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.4003713712352609,
+        "tierP_tau": 0.3974103051614,
+        "F1_hours_on": 0.41440255481698957
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6166401052564074,
+            "D_treatment_decomposed": 0.5843755884764409,
+            "E_physiology_only": 0.5844262637456122,
+            "F_disentangled": 0.6094755782046758
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6166401052564074,
+            "auroc_b": 0.5844262637456122,
+            "delta": 0.032213841510795205,
+            "delta_ci_lo": 0.02619342348854158,
+            "delta_ci_hi": 0.03815337610076686,
+            "auroc_a_ci": [
+              0.6082134343473912,
+              0.6251471254101496
+            ],
+            "auroc_b_ci": [
+              0.5757477629335552,
+              0.5928420407646195
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6166401052564074,
+            "auroc_b": 0.5843755884764409,
+            "delta": 0.03226451677996656,
+            "delta_ci_lo": 0.026128446852696722,
+            "delta_ci_hi": 0.03824605433071458,
+            "auroc_a_ci": [
+              0.6082134343473912,
+              0.6251471254101496
+            ],
+            "auroc_b_ci": [
+              0.5760654858350552,
+              0.5928183312876978
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6332123993138687,
+            "D_treatment_decomposed": 0.6095292422142512,
+            "E_physiology_only": 0.6087307976701379,
+            "F_disentangled": 0.6305113827426628
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6332123993138687,
+            "auroc_b": 0.6087307976701379,
+            "delta": 0.02448160164373081,
+            "delta_ci_lo": 0.01839329057373161,
+            "delta_ci_hi": 0.030249123954061635,
+            "auroc_a_ci": [
+              0.625022688138292,
+              0.6412981975144403
+            ],
+            "auroc_b_ci": [
+              0.6000839511660196,
+              0.6169658554541659
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6332123993138687,
+            "auroc_b": 0.6095292422142512,
+            "delta": 0.023683157099617547,
+            "delta_ci_lo": 0.017777289849094203,
+            "delta_ci_hi": 0.029404816587382834,
+            "auroc_a_ci": [
+              0.625022688138292,
+              0.6412981975144403
+            ],
+            "auroc_b_ci": [
+              0.6008003967671449,
+              0.6177019943279793
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierW",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 3044,
+      "prevalence": 0.037323589636695804,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.32449654963941876,
+        "tierP_tau": 0.365915251477977,
+        "F1_hours_on": 0.4396249891607964
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6494798278507674,
+            "D_treatment_decomposed": 0.5759198368732696,
+            "E_physiology_only": 0.5724865478808777,
+            "F_disentangled": 0.615577982992781
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6494798278507674,
+            "auroc_b": 0.5724865478808777,
+            "delta": 0.0769932799698897,
+            "delta_ci_lo": 0.06759739208549222,
+            "delta_ci_hi": 0.08664235101681333,
+            "auroc_a_ci": [
+              0.6399895188248527,
+              0.6589695501271274
+            ],
+            "auroc_b_ci": [
+              0.5620401864578604,
+              0.5832629091631183
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6494798278507674,
+            "auroc_b": 0.5759198368732696,
+            "delta": 0.07355999097749777,
+            "delta_ci_lo": 0.06325782434430796,
+            "delta_ci_hi": 0.08359342894459763,
+            "auroc_a_ci": [
+              0.6399895188248527,
+              0.6589695501271274
+            ],
+            "auroc_b_ci": [
+              0.5654780387699124,
+              0.5870305096928105
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.8279122670295082,
+            "D_treatment_decomposed": 0.5951755263108081,
+            "E_physiology_only": 0.5984520370280084,
+            "F_disentangled": 0.7093508669764557
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.8279122670295082,
+            "auroc_b": 0.5984520370280084,
+            "delta": 0.22946023000149973,
+            "delta_ci_lo": 0.22096615337702755,
+            "delta_ci_hi": 0.23801633537817551,
+            "auroc_a_ci": [
+              0.8216201251862091,
+              0.8343164320887065
+            ],
+            "auroc_b_ci": [
+              0.5880248521625271,
+              0.6083765478003078
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.8279122670295082,
+            "auroc_b": 0.5951755263108081,
+            "delta": 0.2327367407187001,
+            "delta_ci_lo": 0.2241382400544444,
+            "delta_ci_hi": 0.24141028733970465,
+            "auroc_a_ci": [
+              0.8216201251862091,
+              0.8343164320887065
+            ],
+            "auroc_b_ci": [
+              0.5847059461068974,
+              0.6053011284070853
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierW",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 1820,
+      "prevalence": 0.031186812433599505,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.4469233276539867,
+        "tierP_tau": 0.40276160174679754,
+        "F1_hours_on": 0.48901787439275496
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.525794301916556,
+            "D_treatment_decomposed": 0.5293108320806507,
+            "E_physiology_only": 0.5269766536480958,
+            "F_disentangled": 0.5949764021397259
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.525794301916556,
+            "auroc_b": 0.5269766536480958,
+            "delta": -0.0011823517315397991,
+            "delta_ci_lo": -0.006470241790302656,
+            "delta_ci_hi": 0.004170470474923565,
+            "auroc_a_ci": [
+              0.5122278646911596,
+              0.5395724644110046
+            ],
+            "auroc_b_ci": [
+              0.5133970930156226,
+              0.5405895309033938
+            ],
+            "p_delta_le_zero": 0.6775,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.525794301916556,
+            "auroc_b": 0.5293108320806507,
+            "delta": -0.0035165301640947,
+            "delta_ci_lo": -0.010881423757350342,
+            "delta_ci_hi": 0.003427598294277764,
+            "auroc_a_ci": [
+              0.5122278646911596,
+              0.5395724644110046
+            ],
+            "auroc_b_ci": [
+              0.5163329982985113,
+              0.5430485711598773
+            ],
+            "p_delta_le_zero": 0.842,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.60744037657839,
+            "D_treatment_decomposed": 0.5176139970433189,
+            "E_physiology_only": 0.5167488296308735,
+            "F_disentangled": 0.6000399954674072
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.60744037657839,
+            "auroc_b": 0.5167488296308735,
+            "delta": 0.09069154694751647,
+            "delta_ci_lo": 0.07496743398898185,
+            "delta_ci_hi": 0.1060167475114532,
+            "auroc_a_ci": [
+              0.5942685973326265,
+              0.6211121649167896
+            ],
+            "auroc_b_ci": [
+              0.5031832012833406,
+              0.5303018845450755
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.60744037657839,
+            "auroc_b": 0.5176139970433189,
+            "delta": 0.08982637953507111,
+            "delta_ci_lo": 0.07487579310746106,
+            "delta_ci_hi": 0.10455680166889728,
+            "auroc_a_ci": [
+              0.5942685973326265,
+              0.6211121649167896
+            ],
+            "auroc_b_ci": [
+              0.5041486722539549,
+              0.5311971912625669
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierW",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 1352,
+      "prevalence": 0.030609703638298354,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.47885524372128363,
+        "tierP_tau": 0.45779155696743246,
+        "F1_hours_on": 0.49771400523460724
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5245796822392477,
+            "D_treatment_decomposed": 0.5238333865620206,
+            "E_physiology_only": 0.5243431070969018,
+            "F_disentangled": 0.562453799180854
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5245796822392477,
+            "auroc_b": 0.5243431070969018,
+            "delta": 0.00023657514234587396,
+            "delta_ci_lo": -0.004208625680741926,
+            "delta_ci_hi": 0.004935402606216751,
+            "auroc_a_ci": [
+              0.5091099744113524,
+              0.5406749664235843
+            ],
+            "auroc_b_ci": [
+              0.5088570616153879,
+              0.5398087334907538
+            ],
+            "p_delta_le_zero": 0.431,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5245796822392477,
+            "auroc_b": 0.5238333865620206,
+            "delta": 0.0007462956772270601,
+            "delta_ci_lo": -0.004276686369273816,
+            "delta_ci_hi": 0.006106218148371696,
+            "auroc_a_ci": [
+              0.5091099744113524,
+              0.5406749664235843
+            ],
+            "auroc_b_ci": [
+              0.5083548913766542,
+              0.5393146231511489
+            ],
+            "p_delta_le_zero": 0.3735,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5607963566702547,
+            "D_treatment_decomposed": 0.5282377782811201,
+            "E_physiology_only": 0.5272054072008394,
+            "F_disentangled": 0.560157785168834
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5607963566702547,
+            "auroc_b": 0.5272054072008394,
+            "delta": 0.03359094946941532,
+            "delta_ci_lo": 0.021101250472445272,
+            "delta_ci_hi": 0.046229290504126636,
+            "auroc_a_ci": [
+              0.5452833558662631,
+              0.5770693534488602
+            ],
+            "auroc_b_ci": [
+              0.5118765102774412,
+              0.5433421643155102
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5607963566702547,
+            "auroc_b": 0.5282377782811201,
+            "delta": 0.032558578389134674,
+            "delta_ci_lo": 0.01956545740721791,
+            "delta_ci_hi": 0.04502651615341842,
+            "auroc_a_ci": [
+              0.5452833558662631,
+              0.5770693534488602
+            ],
+            "auroc_b_ci": [
+              0.5127068828130653,
+              0.5448654454231301
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierW",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 4980,
+      "prevalence": 0.061061588827445834,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.7436678062393874,
+        "tierP_tau": 0.3900477158382148,
+        "F1_hours_on": 0.533401561375633
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.7878255542771265,
+            "D_treatment_decomposed": 0.5638196490992897,
+            "E_physiology_only": 0.5531706621987905,
+            "F_disentangled": 0.9170420926559838
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.7878255542771265,
+            "auroc_b": 0.5531706621987905,
+            "delta": 0.234654892078336,
+            "delta_ci_lo": 0.22590086457606537,
+            "delta_ci_hi": 0.2433638634188217,
+            "auroc_a_ci": [
+              0.7816198023337271,
+              0.7937025039895022
+            ],
+            "auroc_b_ci": [
+              0.5450490101694185,
+              0.5612434861710518
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.7878255542771265,
+            "auroc_b": 0.5638196490992897,
+            "delta": 0.2240059051778368,
+            "delta_ci_lo": 0.2148667637286317,
+            "delta_ci_hi": 0.23280467487589573,
+            "auroc_a_ci": [
+              0.7816198023337271,
+              0.7937025039895022
+            ],
+            "auroc_b_ci": [
+              0.5555636782960406,
+              0.5718431788561454
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.798941348270447,
+            "D_treatment_decomposed": 0.5816928172095253,
+            "E_physiology_only": 0.5830907001604233,
+            "F_disentangled": 0.9609592961343526
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.798941348270447,
+            "auroc_b": 0.5830907001604233,
+            "delta": 0.21585064811002375,
+            "delta_ci_lo": 0.2074374191689004,
+            "delta_ci_hi": 0.22406664617205418,
+            "auroc_a_ci": [
+              0.7928823296483516,
+              0.8047613480437338
+            ],
+            "auroc_b_ci": [
+              0.5753180930500326,
+              0.5910325832343502
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.798941348270447,
+            "auroc_b": 0.5816928172095253,
+            "delta": 0.2172485310609218,
+            "delta_ci_lo": 0.2090705114785409,
+            "delta_ci_hi": 0.2252227121980876,
+            "auroc_a_ci": [
+              0.7928823296483516,
+              0.8047613480437338
+            ],
+            "auroc_b_ci": [
+              0.5740771525505183,
+              0.5894249447263374
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierW",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 3595,
+      "prevalence": 0.06160252236197265,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.6356310135694849,
+        "tierP_tau": 0.6347300240304681,
+        "F1_hours_on": 0.5852271173721475
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.656007206880111,
+            "D_treatment_decomposed": 0.5157962988167218,
+            "E_physiology_only": 0.5163098481998432,
+            "F_disentangled": 0.6147638844405189
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.656007206880111,
+            "auroc_b": 0.5163098481998432,
+            "delta": 0.1396973586802679,
+            "delta_ci_lo": 0.1287383049270338,
+            "delta_ci_hi": 0.15102951619090993,
+            "auroc_a_ci": [
+              0.6473473794992747,
+              0.6648743715648588
+            ],
+            "auroc_b_ci": [
+              0.5068394228191069,
+              0.5258180941167417
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.656007206880111,
+            "auroc_b": 0.5157962988167218,
+            "delta": 0.1402109080633892,
+            "delta_ci_lo": 0.12892769653169117,
+            "delta_ci_hi": 0.1514548975479094,
+            "auroc_a_ci": [
+              0.6473473794992747,
+              0.6648743715648588
+            ],
+            "auroc_b_ci": [
+              0.5063162025632536,
+              0.5251924793721878
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6592656656270031,
+            "D_treatment_decomposed": 0.5363146802492988,
+            "E_physiology_only": 0.5385298851439673,
+            "F_disentangled": 0.6353793995656641
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6592656656270031,
+            "auroc_b": 0.5385298851439673,
+            "delta": 0.12073578048303579,
+            "delta_ci_lo": 0.11009125455719343,
+            "delta_ci_hi": 0.13214100793577557,
+            "auroc_a_ci": [
+              0.6511624673572121,
+              0.6676180531688066
+            ],
+            "auroc_b_ci": [
+              0.5287403686208909,
+              0.5483239342195239
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6592656656270031,
+            "auroc_b": 0.5363146802492988,
+            "delta": 0.12295098537770421,
+            "delta_ci_lo": 0.11219935459579712,
+            "delta_ci_hi": 0.13391467137685836,
+            "auroc_a_ci": [
+              0.6511624673572121,
+              0.6676180531688066
+            ],
+            "auroc_b_ci": [
+              0.5265546959788273,
+              0.5455398673444041
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierW",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 2710,
+      "prevalence": 0.06135524915664833,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.6035669926515228,
+        "tierP_tau": 0.600171467138343,
+        "F1_hours_on": 0.572646389902477
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6134949577624772,
+            "D_treatment_decomposed": 0.5260607621151345,
+            "E_physiology_only": 0.5266065287103099,
+            "F_disentangled": 0.5873248714396982
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6134949577624772,
+            "auroc_b": 0.5266065287103099,
+            "delta": 0.08688842905216732,
+            "delta_ci_lo": 0.07516945300233083,
+            "delta_ci_hi": 0.09854966396763383,
+            "auroc_a_ci": [
+              0.6029792932897247,
+              0.6235940588125157
+            ],
+            "auroc_b_ci": [
+              0.5163450112994035,
+              0.5372356273180314
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6134949577624772,
+            "auroc_b": 0.5260607621151345,
+            "delta": 0.08743419564734267,
+            "delta_ci_lo": 0.07572947129469525,
+            "delta_ci_hi": 0.09909009525584968,
+            "auroc_a_ci": [
+              0.6029792932897247,
+              0.6235940588125157
+            ],
+            "auroc_b_ci": [
+              0.5156419230205377,
+              0.5367536388369579
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6172365505101782,
+            "D_treatment_decomposed": 0.5345970531149389,
+            "E_physiology_only": 0.5360485782913258,
+            "F_disentangled": 0.6016852732023786
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6172365505101782,
+            "auroc_b": 0.5360485782913258,
+            "delta": 0.08118797221885243,
+            "delta_ci_lo": 0.0701190556137901,
+            "delta_ci_hi": 0.0921901794077806,
+            "auroc_a_ci": [
+              0.6067421578381784,
+              0.6276060866292464
+            ],
+            "auroc_b_ci": [
+              0.5251509278259322,
+              0.5462185181513082
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6172365505101782,
+            "auroc_b": 0.5345970531149389,
+            "delta": 0.08263949739523935,
+            "delta_ci_lo": 0.07161771825951574,
+            "delta_ci_hi": 0.09365268116501738,
+            "auroc_a_ci": [
+              0.6067421578381784,
+              0.6276060866292464
+            ],
+            "auroc_b_ci": [
+              0.5234861278284478,
+              0.5445708517098272
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierP",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 3476,
+      "prevalence": 0.04262049854702846,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.4480050787157988,
+        "tierP_tau": 0.35668061002244156,
+        "F1_hours_on": 0.44249617725324303
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.565832265684853,
+            "D_treatment_decomposed": 0.5600013582425226,
+            "E_physiology_only": 0.5550733445803949,
+            "F_disentangled": 0.6654498524731384
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.565832265684853,
+            "auroc_b": 0.5550733445803949,
+            "delta": 0.010758921104458086,
+            "delta_ci_lo": 0.004427644564807129,
+            "delta_ci_hi": 0.01690789238765018,
+            "auroc_a_ci": [
+              0.5556844381863012,
+              0.5759365162002436
+            ],
+            "auroc_b_ci": [
+              0.5446267166013316,
+              0.5652428198220982
+            ],
+            "p_delta_le_zero": 0.0005,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.565832265684853,
+            "auroc_b": 0.5600013582425226,
+            "delta": 0.005830907442330391,
+            "delta_ci_lo": -0.001522782945628104,
+            "delta_ci_hi": 0.013061402145030498,
+            "auroc_a_ci": [
+              0.5556844381863012,
+              0.5759365162002436
+            ],
+            "auroc_b_ci": [
+              0.5495785447984459,
+              0.5697767311626268
+            ],
+            "p_delta_le_zero": 0.062,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6733257431805385,
+            "D_treatment_decomposed": 0.5966401216175307,
+            "E_physiology_only": 0.598131069489683,
+            "F_disentangled": 0.7086277039560097
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6733257431805385,
+            "auroc_b": 0.598131069489683,
+            "delta": 0.07519467369085553,
+            "delta_ci_lo": 0.06496129152480383,
+            "delta_ci_hi": 0.08500779185218392,
+            "auroc_a_ci": [
+              0.6636816548995011,
+              0.6830180455698276
+            ],
+            "auroc_b_ci": [
+              0.5885643417892589,
+              0.6076359417778331
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6733257431805385,
+            "auroc_b": 0.5966401216175307,
+            "delta": 0.07668562156300784,
+            "delta_ci_lo": 0.06647175382863442,
+            "delta_ci_hi": 0.08629439186673347,
+            "auroc_a_ci": [
+              0.6636816548995011,
+              0.6830180455698276
+            ],
+            "auroc_b_ci": [
+              0.5870170024963708,
+              0.6063793980433051
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierP",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 2141,
+      "prevalence": 0.036687343637547554,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.510270977635646,
+        "tierP_tau": 0.4784192163819193,
+        "F1_hours_on": 0.49908099076643825
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5407833345991131,
+            "D_treatment_decomposed": 0.531472322291655,
+            "E_physiology_only": 0.5319764324532223,
+            "F_disentangled": 0.5932954453524354
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5407833345991131,
+            "auroc_b": 0.5319764324532223,
+            "delta": 0.00880690214589075,
+            "delta_ci_lo": 0.0012998311578551692,
+            "delta_ci_hi": 0.016471650089103264,
+            "auroc_a_ci": [
+              0.5288122896253333,
+              0.553301000636835
+            ],
+            "auroc_b_ci": [
+              0.5195005947235954,
+              0.544894647917516
+            ],
+            "p_delta_le_zero": 0.0085,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5407833345991131,
+            "auroc_b": 0.531472322291655,
+            "delta": 0.009311012307458122,
+            "delta_ci_lo": 0.0009573622080527034,
+            "delta_ci_hi": 0.01751706529271968,
+            "auroc_a_ci": [
+              0.5288122896253333,
+              0.553301000636835
+            ],
+            "auroc_b_ci": [
+              0.5189394562882642,
+              0.5444431101857801
+            ],
+            "p_delta_le_zero": 0.015,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5477657069115403,
+            "D_treatment_decomposed": 0.5297118832004464,
+            "E_physiology_only": 0.5274406166330331,
+            "F_disentangled": 0.5964503358187896
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5477657069115403,
+            "auroc_b": 0.5274406166330331,
+            "delta": 0.020325090278507152,
+            "delta_ci_lo": 0.011533466411791354,
+            "delta_ci_hi": 0.028793970762104118,
+            "auroc_a_ci": [
+              0.5354884066569202,
+              0.5596665341640231
+            ],
+            "auroc_b_ci": [
+              0.5146121889649805,
+              0.5398766601239299
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5477657069115403,
+            "auroc_b": 0.5297118832004464,
+            "delta": 0.018053823711093875,
+            "delta_ci_lo": 0.009287119505394997,
+            "delta_ci_hi": 0.02650161868160939,
+            "auroc_a_ci": [
+              0.5354884066569202,
+              0.5596665341640231
+            ],
+            "auroc_b_ci": [
+              0.517269943267066,
+              0.5421739378195221
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_tierP",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 1537,
+      "prevalence": 0.03479816160655663,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.5136142811463722,
+        "tierP_tau": 0.4977170297849761,
+        "F1_hours_on": 0.5082984176025584
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5347265420069878,
+            "D_treatment_decomposed": 0.5274476682196934,
+            "E_physiology_only": 0.5300545358116482,
+            "F_disentangled": 0.5577843694895401
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5347265420069878,
+            "auroc_b": 0.5300545358116482,
+            "delta": 0.004672006195339584,
+            "delta_ci_lo": -0.004954529753219341,
+            "delta_ci_hi": 0.014438160602028767,
+            "auroc_a_ci": [
+              0.521146669263419,
+              0.5487095126879392
+            ],
+            "auroc_b_ci": [
+              0.5158577913566266,
+              0.5443981628212116
+            ],
+            "p_delta_le_zero": 0.164,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5347265420069878,
+            "auroc_b": 0.5274476682196934,
+            "delta": 0.007278873787294415,
+            "delta_ci_lo": -0.002883337771498584,
+            "delta_ci_hi": 0.017367185579496628,
+            "auroc_a_ci": [
+              0.521146669263419,
+              0.5487095126879392
+            ],
+            "auroc_b_ci": [
+              0.5127640521663044,
+              0.5419884784944496
+            ],
+            "p_delta_le_zero": 0.0765,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5332734028693369,
+            "D_treatment_decomposed": 0.5116760399298079,
+            "E_physiology_only": 0.5094140692101858,
+            "F_disentangled": 0.5433610125810174
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5332734028693369,
+            "auroc_b": 0.5094140692101858,
+            "delta": 0.02385933365915105,
+            "delta_ci_lo": 0.01355752145122827,
+            "delta_ci_hi": 0.034852728227895,
+            "auroc_a_ci": [
+              0.5195512293113589,
+              0.547402855007224
+            ],
+            "auroc_b_ci": [
+              0.494228963027079,
+              0.5241186822886147
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5332734028693369,
+            "auroc_b": 0.5116760399298079,
+            "delta": 0.021597362939528963,
+            "delta_ci_lo": 0.010913708114958667,
+            "delta_ci_hi": 0.03228708336832133,
+            "auroc_a_ci": [
+              0.5195512293113589,
+              0.547402855007224
+            ],
+            "auroc_b_ci": [
+              0.49640843975124416,
+              0.5269820043842145
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierP",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 5531,
+      "prevalence": 0.06781759996076364,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.7436261421247837,
+        "tierP_tau": 0.7713385080610478,
+        "F1_hours_on": 0.6250527711301728
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.768214523266629,
+            "D_treatment_decomposed": 0.538094700096009,
+            "E_physiology_only": 0.5388806600305542,
+            "F_disentangled": 0.6557330849279868
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.768214523266629,
+            "auroc_b": 0.5388806600305542,
+            "delta": 0.22933386323607474,
+            "delta_ci_lo": 0.2203817595621704,
+            "delta_ci_hi": 0.2381726412902897,
+            "auroc_a_ci": [
+              0.7625962013070235,
+              0.773997807627589
+            ],
+            "auroc_b_ci": [
+              0.5312650376689552,
+              0.5464493280108969
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.768214523266629,
+            "auroc_b": 0.538094700096009,
+            "delta": 0.23011982317061996,
+            "delta_ci_lo": 0.22123696110678087,
+            "delta_ci_hi": 0.23945182111169017,
+            "auroc_a_ci": [
+              0.7625962013070235,
+              0.773997807627589
+            ],
+            "auroc_b_ci": [
+              0.5306263955336167,
+              0.5459385659611659
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.7731336551437077,
+            "D_treatment_decomposed": 0.5532092576042711,
+            "E_physiology_only": 0.5521440846990545,
+            "F_disentangled": 0.6988455043425157
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.7731336551437077,
+            "auroc_b": 0.5521440846990545,
+            "delta": 0.22098957044465317,
+            "delta_ci_lo": 0.2124968743437938,
+            "delta_ci_hi": 0.22939677866192856,
+            "auroc_a_ci": [
+              0.7677166303133105,
+              0.7786769052342174
+            ],
+            "auroc_b_ci": [
+              0.5448703732752521,
+              0.5597021799646869
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.7731336551437077,
+            "auroc_b": 0.5532092576042711,
+            "delta": 0.2199243975394366,
+            "delta_ci_lo": 0.21146642167847463,
+            "delta_ci_hi": 0.22857143720773862,
+            "auroc_a_ci": [
+              0.7677166303133105,
+              0.7786769052342174
+            ],
+            "auroc_b_ci": [
+              0.5457183437171362,
+              0.5607201369937348
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierP",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 4041,
+      "prevalence": 0.06924500496932726,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.6451078449865534,
+        "tierP_tau": 0.6473852704715634,
+        "F1_hours_on": 0.5858676359716755
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6578016354513994,
+            "D_treatment_decomposed": 0.5332453431729015,
+            "E_physiology_only": 0.5324278849052765,
+            "F_disentangled": 0.6009777571376718
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6578016354513994,
+            "auroc_b": 0.5324278849052765,
+            "delta": 0.12537375054612288,
+            "delta_ci_lo": 0.11481782969917245,
+            "delta_ci_hi": 0.13597820353352216,
+            "auroc_a_ci": [
+              0.6498315213850886,
+              0.6660553226721571
+            ],
+            "auroc_b_ci": [
+              0.5235196405332289,
+              0.5415180752167307
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6578016354513994,
+            "auroc_b": 0.5332453431729015,
+            "delta": 0.12455629227849785,
+            "delta_ci_lo": 0.11425216229075735,
+            "delta_ci_hi": 0.13530903663841856,
+            "auroc_a_ci": [
+              0.6498315213850886,
+              0.6660553226721571
+            ],
+            "auroc_b_ci": [
+              0.5240799727606834,
+              0.5421238571584577
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6603124808352694,
+            "D_treatment_decomposed": 0.5421868977724353,
+            "E_physiology_only": 0.5383966405393741,
+            "F_disentangled": 0.6177899057079648
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6603124808352694,
+            "auroc_b": 0.5383966405393741,
+            "delta": 0.1219158402958953,
+            "delta_ci_lo": 0.11167418381902108,
+            "delta_ci_hi": 0.132028943915881,
+            "auroc_a_ci": [
+              0.652228853130638,
+              0.6681746562925877
+            ],
+            "auroc_b_ci": [
+              0.5294457423388654,
+              0.546660377837772
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.6603124808352694,
+            "auroc_b": 0.5421868977724353,
+            "delta": 0.11812558306283405,
+            "delta_ci_lo": 0.10786079861071288,
+            "delta_ci_hi": 0.12821884421048402,
+            "auroc_a_ci": [
+              0.652228853130638,
+              0.6681746562925877
+            ],
+            "auroc_b_ci": [
+              0.533228236858294,
+              0.5508917374267891
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_tierP",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 2942,
+      "prevalence": 0.06660780185197764,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.622274530444159,
+        "tierP_tau": 0.6238139504750249,
+        "F1_hours_on": 0.583363981683741
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6291010588735739,
+            "D_treatment_decomposed": 0.5391603223729369,
+            "E_physiology_only": 0.5372591984914415,
+            "F_disentangled": 0.592552315637599
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6291010588735739,
+            "auroc_b": 0.5372591984914415,
+            "delta": 0.09184186038213238,
+            "delta_ci_lo": 0.08110628182601881,
+            "delta_ci_hi": 0.10243389546133654,
+            "auroc_a_ci": [
+              0.6194434027986404,
+              0.638399703852753
+            ],
+            "auroc_b_ci": [
+              0.5263362615074997,
+              0.5481195853992364
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6291010588735739,
+            "auroc_b": 0.5391603223729369,
+            "delta": 0.08994073650063705,
+            "delta_ci_lo": 0.07906633138180302,
+            "delta_ci_hi": 0.10042997254827518,
+            "auroc_a_ci": [
+              0.6194434027986404,
+              0.638399703852753
+            ],
+            "auroc_b_ci": [
+              0.5284664594693048,
+              0.5498956255778925
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6333176612311961,
+            "D_treatment_decomposed": 0.5312342541420247,
+            "E_physiology_only": 0.5318272923021726,
+            "F_disentangled": 0.5984704167374819
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6333176612311961,
+            "auroc_b": 0.5318272923021726,
+            "delta": 0.10149036892902352,
+            "delta_ci_lo": 0.09041278382522804,
+            "delta_ci_hi": 0.11298187147655751,
+            "auroc_a_ci": [
+              0.6238339377085791,
+              0.6428577711506736
+            ],
+            "auroc_b_ci": [
+              0.5212047528583514,
+              0.5422084475655106
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.6333176612311961,
+            "auroc_b": 0.5312342541420247,
+            "delta": 0.10208340708917141,
+            "delta_ci_lo": 0.09095402273869976,
+            "delta_ci_hi": 0.11375841651070095,
+            "auroc_a_ci": [
+              0.6238339377085791,
+              0.6428577711506736
+            ],
+            "auroc_b_ci": [
+              0.5206743781260966,
+              0.5417842850182101
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_NEE",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 6838,
+      "prevalence": 0.08384320168716358,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.3963874823570722,
+        "tierP_tau": 0.4187844508316566,
+        "F1_hours_on": 0.4040984171167489
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.6106999659729311,
+            "D_treatment_decomposed": 0.5634810851291641,
+            "E_physiology_only": 0.5538115486142305,
+            "F_disentangled": 0.6083886583258705
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6106999659729311,
+            "auroc_b": 0.5538115486142305,
+            "delta": 0.05688841735870054,
+            "delta_ci_lo": 0.050365884606317156,
+            "delta_ci_hi": 0.06359078732153157,
+            "auroc_a_ci": [
+              0.6041553664965428,
+              0.6175211282391624
+            ],
+            "auroc_b_ci": [
+              0.5464323224445972,
+              0.5609557571680991
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6106999659729311,
+            "auroc_b": 0.5634810851291641,
+            "delta": 0.04721888084376702,
+            "delta_ci_lo": 0.03988483787552193,
+            "delta_ci_hi": 0.05482244660121243,
+            "auroc_a_ci": [
+              0.6041553664965428,
+              0.6175211282391624
+            ],
+            "auroc_b_ci": [
+              0.5561459547234299,
+              0.5703941978604857
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6559901386754055,
+            "D_treatment_decomposed": 0.5908459079918033,
+            "E_physiology_only": 0.591801883199623,
+            "F_disentangled": 0.6435319390918637
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6559901386754055,
+            "auroc_b": 0.591801883199623,
+            "delta": 0.06418825547578244,
+            "delta_ci_lo": 0.05780887888403637,
+            "delta_ci_hi": 0.07079575350129522,
+            "auroc_a_ci": [
+              0.6497316872781268,
+              0.6625344638840548
+            ],
+            "auroc_b_ci": [
+              0.5844548541600096,
+              0.5993670976941298
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6559901386754055,
+            "auroc_b": 0.5908459079918033,
+            "delta": 0.0651442306836022,
+            "delta_ci_lo": 0.058686857843318285,
+            "delta_ci_hi": 0.07161916403359299,
+            "auroc_a_ci": [
+              0.6497316872781268,
+              0.6625344638840548
+            ],
+            "auroc_b_ci": [
+              0.5837255753217598,
+              0.5982619975828618
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_NEE",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 3985,
+      "prevalence": 0.06828541074060111,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.4228941886865808,
+        "tierP_tau": 0.40811911430780845,
+        "F1_hours_on": 0.4427815640563171
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5808042343142993,
+            "D_treatment_decomposed": 0.5481133144146453,
+            "E_physiology_only": 0.5467367501320691,
+            "F_disentangled": 0.5710258045863369
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5808042343142993,
+            "auroc_b": 0.5467367501320691,
+            "delta": 0.03406748418223016,
+            "delta_ci_lo": 0.026759093054286785,
+            "delta_ci_hi": 0.04156714161390137,
+            "auroc_a_ci": [
+              0.5723529114832672,
+              0.5897220427327331
+            ],
+            "auroc_b_ci": [
+              0.5376708570221298,
+              0.5557793971744076
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5808042343142993,
+            "auroc_b": 0.5481133144146453,
+            "delta": 0.032690919899654,
+            "delta_ci_lo": 0.025582254170952824,
+            "delta_ci_hi": 0.04033979992649413,
+            "auroc_a_ci": [
+              0.5723529114832672,
+              0.5897220427327331
+            ],
+            "auroc_b_ci": [
+              0.5387449781853736,
+              0.5570622877391014
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5912600751336999,
+            "D_treatment_decomposed": 0.5477192475110523,
+            "E_physiology_only": 0.5478895890856228,
+            "F_disentangled": 0.5821414657493509
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5912600751336999,
+            "auroc_b": 0.5478895890856228,
+            "delta": 0.04337048604807714,
+            "delta_ci_lo": 0.03476143703820567,
+            "delta_ci_hi": 0.05131800686139658,
+            "auroc_a_ci": [
+              0.5824545339839419,
+              0.6003474821707828
+            ],
+            "auroc_b_ci": [
+              0.5389633006827447,
+              0.5572677713722688
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5912600751336999,
+            "auroc_b": 0.5477192475110523,
+            "delta": 0.04354082762264766,
+            "delta_ci_lo": 0.03532439469519888,
+            "delta_ci_hi": 0.05146263778313286,
+            "auroc_a_ci": [
+              0.5824545339839419,
+              0.6003474821707828
+            ],
+            "auroc_b_ci": [
+              0.5390012043429844,
+              0.5567058384374618
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "UP_NEE",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 2825,
+      "prevalence": 0.06395888519097104,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.4430904913490781,
+        "tierP_tau": 0.43527203656264557,
+        "F1_hours_on": 0.45855691251815117
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5586021363599003,
+            "D_treatment_decomposed": 0.536207173484205,
+            "E_physiology_only": 0.5374289364092166,
+            "F_disentangled": 0.5529056275514397
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5586021363599003,
+            "auroc_b": 0.5374289364092166,
+            "delta": 0.021173199950683674,
+            "delta_ci_lo": 0.013687478049581658,
+            "delta_ci_hi": 0.0286037410493684,
+            "auroc_a_ci": [
+              0.5473059161412226,
+              0.5691499469412299
+            ],
+            "auroc_b_ci": [
+              0.526162942802079,
+              0.5484531502683586
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5586021363599003,
+            "auroc_b": 0.536207173484205,
+            "delta": 0.022394962875695312,
+            "delta_ci_lo": 0.014971300129462337,
+            "delta_ci_hi": 0.029877114576281928,
+            "auroc_a_ci": [
+              0.5473059161412226,
+              0.5691499469412299
+            ],
+            "auroc_b_ci": [
+              0.5248124099332839,
+              0.5472613270884649
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.559595836529768,
+            "D_treatment_decomposed": 0.5313856843680649,
+            "E_physiology_only": 0.5314445943724486,
+            "F_disentangled": 0.5492050081851557
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.559595836529768,
+            "auroc_b": 0.5314445943724486,
+            "delta": 0.028151242157319345,
+            "delta_ci_lo": 0.01991822252321707,
+            "delta_ci_hi": 0.03710577403351505,
+            "auroc_a_ci": [
+              0.5493586396424266,
+              0.5696195370358471
+            ],
+            "auroc_b_ci": [
+              0.5207999069732537,
+              0.5415016737563024
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.559595836529768,
+            "auroc_b": 0.5313856843680649,
+            "delta": 0.028210152161703084,
+            "delta_ci_lo": 0.01917322854880744,
+            "delta_ci_hi": 0.03729239337089808,
+            "auroc_a_ci": [
+              0.5493586396424266,
+              0.5696195370358471
+            ],
+            "auroc_b_ci": [
+              0.5208508890090906,
+              0.5418063922708064
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_NEE",
+      "offset_bins": 0,
+      "n_rows": 81557,
+      "n_patients": 10881,
+      "n_positive": 10722,
+      "prevalence": 0.13146633642728398,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.5397425633501997,
+        "tierP_tau": 0.44104190800369203,
+        "F1_hours_on": 0.47807103903424397
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.578513887167894,
+            "D_treatment_decomposed": 0.5751723739026017,
+            "E_physiology_only": 0.5629164385703845,
+            "F_disentangled": 0.618924311297353
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.578513887167894,
+            "auroc_b": 0.5629164385703845,
+            "delta": 0.015597448597509445,
+            "delta_ci_lo": 0.012025596104643627,
+            "delta_ci_hi": 0.019215190861486858,
+            "auroc_a_ci": [
+              0.5726618597634218,
+              0.5841471427006236
+            ],
+            "auroc_b_ci": [
+              0.5567860974464964,
+              0.5688222871118888
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.578513887167894,
+            "auroc_b": 0.5751723739026017,
+            "delta": 0.0033415132652923063,
+            "delta_ci_lo": -0.0016773109377003965,
+            "delta_ci_hi": 0.008414569343294325,
+            "auroc_a_ci": [
+              0.5726618597634218,
+              0.5841471427006236
+            ],
+            "auroc_b_ci": [
+              0.5691297045520275,
+              0.5808296419445446
+            ],
+            "p_delta_le_zero": 0.0885,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.6208718964010814,
+            "D_treatment_decomposed": 0.5944208436084463,
+            "E_physiology_only": 0.5934009196162697,
+            "F_disentangled": 0.6853705065065324
+          },
+          "A_minus_E": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6208718964010814,
+            "auroc_b": 0.5934009196162697,
+            "delta": 0.027470976784811696,
+            "delta_ci_lo": 0.023523632702009883,
+            "delta_ci_hi": 0.0315161909822733,
+            "auroc_a_ci": [
+              0.61551592098485,
+              0.6262847552147643
+            ],
+            "auroc_b_ci": [
+              0.587727754490029,
+              0.5991627827390764
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 81557,
+            "n_patients": 10881,
+            "auroc_a": 0.6208718964010814,
+            "auroc_b": 0.5944208436084463,
+            "delta": 0.026451052792635155,
+            "delta_ci_lo": 0.0224844508730514,
+            "delta_ci_hi": 0.030712053347694446,
+            "auroc_a_ci": [
+              0.61551592098485,
+              0.6262847552147643
+            ],
+            "auroc_b_ci": [
+              0.5888725966885439,
+              0.6000474298285668
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_NEE",
+      "offset_bins": 2,
+      "n_rows": 58358,
+      "n_patients": 8268,
+      "n_positive": 7521,
+      "prevalence": 0.12887693204016587,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.5067356562302487,
+        "tierP_tau": 0.5043614946296274,
+        "F1_hours_on": 0.489654934147354
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.534112981399784,
+            "D_treatment_decomposed": 0.5279945555569425,
+            "E_physiology_only": 0.5290954092760556,
+            "F_disentangled": 0.5283116957721414
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.534112981399784,
+            "auroc_b": 0.5290954092760556,
+            "delta": 0.005017572123728442,
+            "delta_ci_lo": 0.0019281636651724693,
+            "delta_ci_hi": 0.008081151928712582,
+            "auroc_a_ci": [
+              0.5271269784738125,
+              0.5410428138148964
+            ],
+            "auroc_b_ci": [
+              0.5220886128185663,
+              0.5361091831052383
+            ],
+            "p_delta_le_zero": 0.0015,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.534112981399784,
+            "auroc_b": 0.5279945555569425,
+            "delta": 0.006118425842841502,
+            "delta_ci_lo": 0.002697991486737633,
+            "delta_ci_hi": 0.009563962850100317,
+            "auroc_a_ci": [
+              0.5271269784738125,
+              0.5410428138148964
+            ],
+            "auroc_b_ci": [
+              0.5208433980221211,
+              0.5349055041721829
+            ],
+            "p_delta_le_zero": 0.0005,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5563477086433102,
+            "D_treatment_decomposed": 0.5392902378078743,
+            "E_physiology_only": 0.5384409094928663,
+            "F_disentangled": 0.5431594873130798
+          },
+          "A_minus_E": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5563477086433102,
+            "auroc_b": 0.5384409094928663,
+            "delta": 0.01790679915044391,
+            "delta_ci_lo": 0.013493843920003756,
+            "delta_ci_hi": 0.022481314805148516,
+            "auroc_a_ci": [
+              0.5494562243839197,
+              0.5634666053209485
+            ],
+            "auroc_b_ci": [
+              0.5317447741182262,
+              0.5453457291933571
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 58358,
+            "n_patients": 8268,
+            "auroc_a": 0.5563477086433102,
+            "auroc_b": 0.5392902378078743,
+            "delta": 0.01705747083543585,
+            "delta_ci_lo": 0.012275091315854008,
+            "delta_ci_hi": 0.02178426627600859,
+            "auroc_a_ci": [
+              0.5494562243839197,
+              0.5634666053209485
+            ],
+            "auroc_b_ci": [
+              0.5323945623476558,
+              0.5460922449554655
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    },
+    {
+      "label": "DOWN_NEE",
+      "offset_bins": 4,
+      "n_rows": 44169,
+      "n_patients": 6764,
+      "n_positive": 5605,
+      "prevalence": 0.12689895628155493,
+      "single_feature_auroc_no_fit": {
+        "tierW_t": 0.5057293986126935,
+        "tierP_tau": 0.503148460138231,
+        "F1_hours_on": 0.49323374395018443
+      },
+      "probes": {
+        "logreg": {
+          "auroc": {
+            "A_full": 0.5234425833913868,
+            "D_treatment_decomposed": 0.5212807820376864,
+            "E_physiology_only": 0.522178505400062,
+            "F_disentangled": 0.5216932756613633
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5234425833913868,
+            "auroc_b": 0.522178505400062,
+            "delta": 0.0012640779913247746,
+            "delta_ci_lo": -0.001317596305278429,
+            "delta_ci_hi": 0.003839674439748497,
+            "auroc_a_ci": [
+              0.5151997232800849,
+              0.5314379198971706
+            ],
+            "auroc_b_ci": [
+              0.5140712112175749,
+              0.5303531506473366
+            ],
+            "p_delta_le_zero": 0.181,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5234425833913868,
+            "auroc_b": 0.5212807820376864,
+            "delta": 0.0021618013537004765,
+            "delta_ci_lo": -0.0009758262067147694,
+            "delta_ci_hi": 0.005372300679591582,
+            "auroc_a_ci": [
+              0.5151997232800849,
+              0.5314379198971706
+            ],
+            "auroc_b_ci": [
+              0.5131735507474313,
+              0.5294137007218817
+            ],
+            "p_delta_le_zero": 0.096,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        },
+        "gb": {
+          "auroc": {
+            "A_full": 0.5410671681612531,
+            "D_treatment_decomposed": 0.5312805197213322,
+            "E_physiology_only": 0.5321742065577979,
+            "F_disentangled": 0.5329477622194313
+          },
+          "A_minus_E": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5410671681612531,
+            "auroc_b": 0.5321742065577979,
+            "delta": 0.008892961603455207,
+            "delta_ci_lo": 0.004287893581858565,
+            "delta_ci_hi": 0.013518496040681864,
+            "auroc_a_ci": [
+              0.5333128522760082,
+              0.5490801066505796
+            ],
+            "auroc_b_ci": [
+              0.5242865633978459,
+              0.5399224043851057
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          },
+          "A_minus_D": {
+            "n_rows_a": 44169,
+            "n_patients": 6764,
+            "auroc_a": 0.5410671681612531,
+            "auroc_b": 0.5312805197213322,
+            "delta": 0.009786648439920942,
+            "delta_ci_lo": 0.004531386510784713,
+            "delta_ci_hi": 0.014745545992061609,
+            "auroc_a_ci": [
+              0.5333128522760082,
+              0.5490801066505796
+            ],
+            "auroc_b_ci": [
+              0.5232462145904334,
+              0.5388986327369624
+            ],
+            "p_delta_le_zero": 0.0,
+            "n_boot": 2000,
+            "n_boot_used": 2000,
+            "seed": 42
+          }
+        }
+      }
+    }
+  ],
+  "runtime_s": 743.9
+}

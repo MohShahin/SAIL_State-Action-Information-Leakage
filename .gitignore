@@ -155,3 +155,11 @@ results/exploratory/label_alignment/*
 !results/exploratory/label_alignment/README.md
 !results/exploratory/label_alignment/label_alignment_primary_13192.json
 !results/exploratory/label_alignment/label_alignment_sensitivity_11354.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision), aggregates only
+!results/exploratory/dose_decisions/
+results/exploratory/dose_decisions/*
+!results/exploratory/dose_decisions/README.md
+!results/exploratory/dose_decisions/dose_decisions_13192.json
+!results/exploratory/dose_decisions/dose_decisions_11354.json
+!results/exploratory/dose_decisions/dose_decisions_13192_at_risk.json
+!results/exploratory/dose_decisions/dose_decisions_11354_at_risk.json
