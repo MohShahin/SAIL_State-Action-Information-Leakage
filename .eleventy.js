@@ -45,6 +45,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("LICENSE");
   eleventyConfig.addPassthroughCopy({ ".nojekyll": ".nojekyll" });
 
+  eleventyConfig.addFilter("findSection", (list, id) => list.find((s) => s.id === id));
+  eleventyConfig.addFilter("withPrefix", (p) => (p.startsWith("http") ? p : "__PATHPREFIX__" + p));
+
   // Single-source-of-truth path prefixing. Every page (including the 10 content files
   // that run with templateEngineOverride: false, which rules out using Nunjucks's own
   // `| url` filter there -- that flag exists specifically to stop Nunjucks from

@@ -1,0 +1,11 @@
+---
+layout: section.njk
+title: "Tool"
+activeNav: tool
+secId: tool
+permalink: /tool/
+---
+{% set sec = sections | findSection(secId) %}
+<div class="grid-12">{% for l in sec.links %}
+  <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;">{{ l[0] }} →</a></div></div>{% endfor %}
+</div>

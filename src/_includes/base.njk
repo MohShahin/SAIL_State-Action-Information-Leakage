@@ -27,18 +27,26 @@
     <span>SAIL</span>
   </a>
   <div class="sitenav-links">
-    <a href="__PATHPREFIX__/"{% if activeNav == "home" %} class="active"{% endif %}>Home</a>
-    <a href="__PATHPREFIX__/about/"{% if activeNav == "about" %} class="active"{% endif %}>About</a>
-    <a href="__PATHPREFIX__/detectors/"{% if activeNav == "detectors" %} class="active"{% endif %}>Detectors</a>
-    <a href="__PATHPREFIX__/papers/"{% if activeNav == "papers" %} class="active"{% endif %}>Papers</a>
-    <a href="__PATHPREFIX__/datasets-and-models/"{% if activeNav == "datasets-and-models" %} class="active"{% endif %}>Datasets &amp; Models</a>
-    <a href="__PATHPREFIX__/privacy/"{% if activeNav == "privacy" %} class="active"{% endif %}>Privacy</a>
+    {%- for s in sections %}
+    <a href="{{ s.path | withPrefix }}" data-nav="{{ s.i }}"{% if activeNav == s.id %} class="active"{% endif %}>{{ i18n.en.nav[s.i] }}</a>
+    {%- endfor %}
+    <select id="langSel" aria-label="Language" style="margin-left:8px;">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
   </div>
+  <script>window.SAIL_I18N = {{ i18n | dump | safe }};</script>
+  <script>
+  (function(){var L=window.SAIL_I18N,s=document.getElementById('langSel');if(!s)return;
+   function g(){try{return localStorage.getItem('sail-lang')}catch(e){return null}}
+   function apply(k){if(!L[k])k='en';document.documentElement.lang=k;document.documentElement.dir=L[k].dir;s.value=k;
+    document.querySelectorAll('[data-nav]').forEach(function(a){a.textContent=L[k].nav[a.dataset.nav]});
+    document.querySelectorAll('[data-i18n-nav]').forEach(function(h){h.textContent=L[k].nav[h.dataset.i18nNav]})}
+   s.onchange=function(){try{localStorage.setItem('sail-lang',s.value)}catch(e){}apply(s.value)};apply(g()||'en');})();
+  </script>
 </div></nav>
 
 {{ content | safe }}
 
 <footer class="page-footer">
+  <p><a href="__PATHPREFIX__/about/">About</a> · <a href="__PATHPREFIX__/datasets-and-models/">Datasets &amp; models</a> · <a href="__PATHPREFIX__/papers/">Papers</a> · <a href="__PATHPREFIX__/privacy/">Privacy</a> · <a href="__PATHPREFIX__/detectors/">Detectors</a></p>
   MIT Laboratory for Computational Physiology × Boston University School of Public Health
 </footer>
 

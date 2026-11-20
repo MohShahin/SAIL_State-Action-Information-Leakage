@@ -1,0 +1,125 @@
+[
+ {
+  "id": "home",
+  "path": "/",
+  "i": 0
+ },
+ {
+  "id": "learn",
+  "path": "/learn/",
+  "i": 1,
+  "blurb": "Short, plain-language lessons on leakage, from first idea to formal proof.",
+  "links": [
+   [
+    "How leakage happens",
+    "/mechanisms/"
+   ],
+   [
+    "Worked proofs",
+    "/proof/"
+   ],
+   [
+    "Interactive demo",
+    "/demo/"
+   ],
+   [
+    "Explainer video",
+    "/showcase/"
+   ]
+  ]
+ },
+ {
+  "id": "workshops",
+  "path": "/workshops/",
+  "i": 2,
+  "blurb": "A live teaching series. Dates and hosts are announced here once confirmed."
+ },
+ {
+  "id": "tool",
+  "path": "/tool/",
+  "i": 3,
+  "blurb": "Run the five checks on your own data, locally. Nothing leaves your machine.",
+  "links": [
+   [
+    "Detectors",
+    "/detectors/"
+   ],
+   [
+    "Python package",
+    "/package/"
+   ],
+   [
+    "Visualizer",
+    "/visualizer/"
+   ],
+   [
+    "VS Code extension (in development)",
+    "/status/"
+   ]
+  ]
+ },
+ {
+  "id": "research",
+  "path": "/research/",
+  "i": 4,
+  "blurb": "Proofs, the audit, the pre-registered test and everything needed to replicate it.",
+  "links": [
+   [
+    "Replicate a result",
+    "/research/replicate/"
+   ],
+   [
+    "Evidence",
+    "/evidence/"
+   ],
+   [
+    "Papers",
+    "/papers/"
+   ],
+   [
+    "Reproducibility",
+    "/reproducibility/"
+   ],
+   [
+    "Project status",
+    "/status/"
+   ]
+  ]
+ },
+ {
+  "id": "library",
+  "path": "/library/",
+  "i": 5,
+  "blurb": "A shared, evidence-coded catalogue of leakage patterns in published clinical models."
+ },
+ {
+  "id": "community",
+  "path": "/community/",
+  "i": 6,
+  "blurb": "How to join, contribute and be credited.",
+  "links": [
+   [
+    "Contributing guide",
+    "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/main/CONTRIBUTING.md"
+   ],
+   [
+    "Code of conduct",
+    "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/main/CODE_OF_CONDUCT.md"
+   ],
+   [
+    "Authorship policy (draft)",
+    "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/main/AUTHORSHIP.md"
+   ],
+   [
+    "Suggest a detector, paper or dataset",
+    "https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues/new/choose"
+   ]
+  ]
+ },
+ {
+  "id": "roadmap",
+  "path": "/roadmap/",
+  "i": 7,
+  "blurb": "What is built, what is next, and what is not decided yet."
+ }
+]

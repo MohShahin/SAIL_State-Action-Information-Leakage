@@ -1,0 +1,9 @@
+---
+layout: section.njk
+title: "Library"
+activeNav: library
+secId: library
+permalink: /library/
+---
+<p class="plain">{{ library.note }}</p>
+{% for r in library.rows %}<div class="card" style="margin-bottom:12px;"><h3>{{ r.title }}</h3><p class="plain">{{ r.source }} · bucket {{ r.bucket }} · {{ r.check }}</p></div>{% endfor %}

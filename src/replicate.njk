@@ -1,0 +1,15 @@
+---
+layout: section.njk
+title: "Replicate a result"
+activeNav: research
+secId: research
+permalink: /research/replicate/
+---
+{% set sec = sections | findSection(secId) %}
+<div class="grid-12">{% for l in sec.links %}
+  <div class="col-span-6"><div class="card" style="height:100%;"><a href="{{ l[1] | withPrefix }}" style="color:var(--accent);font-weight:600;">{{ l[0] }} →</a></div></div>{% endfor %}
+</div>
+<h2 style="margin-top:40px;">Replicate a result</h2>
+<p class="plain">Each row is one command. Rows that need MIMIC-IV require credentialed access; the last row runs on bundled synthetic data.</p>
+{% for r in replicate %}<div class="card" style="margin-bottom:16px;"><h3>{{ r.title }}</h3><p class="plain">{{ r.what }}</p>
+<p class="plain"><strong>Access:</strong> {{ r.access }} · <strong>Time:</strong> {{ r.time }}</p><pre><code>{{ r.command }}</code></pre></div>{% endfor %}
