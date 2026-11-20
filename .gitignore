@@ -143,3 +143,9 @@ results/exploratory/paired_cis/*
 !results/exploratory/paired_cis/README.md
 !results/exploratory/paired_cis/paired_cis_13192.json
 !results/exploratory/paired_cis/paired_cis_11354.json
+# Exploratory, not pre-registered: within-fold StandardScaler sensitivity (scripts/exp_scaler_within_fold.py)
+!results/exploratory/scaler_within_fold/
+results/exploratory/scaler_within_fold/*
+!results/exploratory/scaler_within_fold/README.md
+!results/exploratory/scaler_within_fold/scaler_within_fold_13192.json
+!results/exploratory/scaler_within_fold/scaler_within_fold_11354.json
