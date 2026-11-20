@@ -59,7 +59,7 @@ This repository is also a live, five-page site — not just code and a PDF.
 | **[Project hub](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/)** | Overview and entry point to everything below |
 | **[Interactive walkthrough](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/demo/)** | Six-step, plain-language guide — try the live SOFA calculator yourself |
 | **[Live mechanism visualizer](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/visualizer/)** | Adjust one synthetic patient and watch the mechanism happen: the causal graph, the state vector, and the predictability gauge move together in real time |
-| **[Formal proof](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/proof/)** | The theorems, illustrated, with a pre-registered test for the one claim that isn't provable in closed form |
+| **[Formal proof](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/proof/)** | The theorems, illustrated, with a pre-specified test for the one claim that isn't provable in closed form |
 | **[Status & roadmap](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/status/)** | What's confirmed, what's open, and the honest history of two bugs found and fixed |
 
 ## Verified results
@@ -89,7 +89,7 @@ its exact numbers), is in [`ROADMAP.md`](ROADMAP.md).
 .
 ├── index.html, demo.html, visualizer.html,       # the live project site
 │   proof.html, status.html, assets/
-├── FORMAL_ANALYSIS.md          # theorems, proofs, causal DAG, pre-registered H3 test
+├── FORMAL_ANALYSIS.md          # theorems, proofs, causal DAG, pre-specified H3 test
 ├── ROADMAP.md                  # phased plan + full bug-fix / verification history
 ├── DATA_ACCESS.md              # MIMIC-IV governance — read before touching results/ or notebook/
 ├── paper/                      # manuscript draft (docx + pdf)

@@ -33,7 +33,7 @@ extraHead: |
     <img src="__PATHPREFIX__/assets/img/logo-cropped.png" alt="SAIL logo">
     <span>SAIL</span>
   </div>
-  <h1 style="font-size:var(--text-3xl); font-weight:var(--weight-display);">We gave a model a question and accidentally also gave it the answer.</h1>
+  <h1 style="font-size:var(--text-3xl); font-weight:var(--weight-display);">The score remembers what the clinician did.</h1>
   <p class="deck" style="max-width:600px; margin-left:auto; margin-right:auto;">This is that story — and it's not about a bad model. It's about a widely-used
   clinical score that was never designed to be a machine-learning feature, and the open-source
   detector that catches it before it ships into one.</p>
@@ -68,8 +68,9 @@ extraHead: |
         but the identical SOFA cardiovascular score, 3. Once a vasopressor dose is running, the dose
         sets the score, not blood pressure.</li>
         <li>That's why validation can look excellent: the input already carries the dose, so the
-        model reads it off and scores well. On a new patient, no dose has been chosen yet, the
-        shortcut is gone, and performance drops below what was reported.</li>
+        model can read it off. A running infusion is also something a clinician knows at the bedside,
+        so we measure how much of the score is that shortcut. With no infusion running, the gap
+        between near and far state windows shrinks from 0.147 to 0.039 AUROC (13,192-stay cohort).</li>
         <li>The extension's three steps: choose your data, run the checks — everything runs locally,
         on your own computer — and read the report.</li>
         <li>SAIL runs five checks, each asking a plain question about how the data was built:

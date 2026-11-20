@@ -25,7 +25,7 @@ templateEngineOverride: false
 </style>
 
 <div class="masthead"><div class="masthead-inner">
-  <h1>We gave a model a question and accidentally also gave it the answer.</h1>
+  <h1>The score remembers what the clinician did.</h1>
   <p class="deck">This is that story — and it's not about a bad model. It's about a widely-used
   clinical score that was never designed to be a machine-learning feature in the first place.
   Three acts, all built from real, already-verified numbers — nothing on this page is fabricated.</p>
@@ -115,7 +115,7 @@ templateEngineOverride: false
         <circle cx="385" cy="267.7" r="7" fill="#CA8A04"/>
         <text x="385" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">D · 0.792</text>
       </g>
-      <g class="pt" tabindex="0" data-name="F_disentangled" data-purity="High" data-auroc="0.914" data-note="D's severity term, unchanged, plus two explicit treatment-history features (duration on vasopressor, time since last dose-tier change). The pre-registered disentanglement hypothesis was falsified: this exceeds even variant A.">
+      <g class="pt" tabindex="0" data-name="F_disentangled" data-purity="High" data-auroc="0.914" data-note="D's severity term, unchanged, plus two explicit treatment-history features (duration on vasopressor, time since last dose-tier change). The pre-specified disentanglement hypothesis was falsified: this exceeds even variant A.">
         <circle cx="415" cy="57.4" r="8.5" fill="#CA8A04" stroke="#92660a" stroke-width="1.5"/>
         <text x="415" y="78" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">F · 0.914</text>
       </g>
@@ -145,18 +145,18 @@ templateEngineOverride: false
 </div>
 
 <!-- ============ ACT 3 ============ -->
-<div class="act-eyebrow">Act 3 — What the pre-registered test found, and what it can't tell us</div>
+<div class="act-eyebrow">Act 3 — What the pre-specified test found, and what it can't tell us</div>
 <div class="card">
   <div class="flag pending" style="margin-bottom:14px;"><span class="dot"></span>H3 — run, Prediction A, mechanism not separated</div>
   <p class="plain">Everything in Act 2 is proven or directly measured. H3 asked: <b>does the AUROC
   gap in Experiment 2 actually reflect the mechanisms proven here (Theorems 1–2), or is it
   substantially explained by ordinary treatment persistence</b> — vasopressor courses just don't
   change from one decision point to the next very often, independent of any SOFA-construction
-  quirk? The pre-registered paired-bootstrap test has now run: Delta = 0.147, 95% CI [0.140, 0.154]
+  quirk? The pre-specified paired-bootstrap test has now run: Delta = 0.147, 95% CI [0.140, 0.154]
   — <b>Prediction A</b>. Full results: see <a href="__PATHPREFIX__/status/" style="color:var(--accent);">Status</a>.</p>
   <p class="plain">That result doesn't settle which mechanism produces Delta. Act 2's Variant F
   result (Experiment 8) was already <b>corroborating evidence for the persistence explanation</b>,
-  and exploratory work in review (a synthetic ground-truth simulation, not pre-registered) goes
+  and exploratory work in review (a synthetic ground-truth simulation, not pre-specified) goes
   further: the same decision rule fires whenever a state encodes a currently-running treatment under
   realistic persistence, whether or not a SOFA-specific construction effect is present. So Prediction
   A, on its own, <b>cannot separate the SOFA-construction mechanism from ordinary treatment
