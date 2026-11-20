@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="720" height="440" rx="14" fill="#17191c"/>
+  <text x="40" y="62" font-size="24" fill="#e8e6e1" font-weight="500">Which dataset should SAIL check?</text>
+  <text x="40" y="92" font-size="14" fill="#9ea3a9">One row per patient per time step.</text>
+  <g>
+    <rect x="40" y="124" width="640" height="64" rx="10" fill="#1f2a28" stroke="#7fd8ca" stroke-width="1.5"/>
+    <path d="M62 146h14l8 8v22H62z" fill="none" stroke="#a9adb3" stroke-width="1.6"/>
+    <text x="102" y="152" font-size="15" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">cohort_4h.parquet</text>
+    <text x="102" y="174" font-size="12" fill="#8d9298">example dataset (synthetic)</text>
+    <text x="600" y="162" font-size="13" fill="#7fd8ca">Selected</text>
+  </g>
+  <g>
+    <rect x="40" y="200" width="640" height="64" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <path d="M62 222h14l8 8v22H62z" fill="none" stroke="#a9adb3" stroke-width="1.6"/>
+    <text x="102" y="228" font-size="15" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">cohort_1h.parquet</text>
+    <text x="102" y="250" font-size="12" fill="#8d9298">example dataset (synthetic)</text>
+  </g>
+  <g>
+    <rect x="40" y="276" width="640" height="64" rx="10" fill="#1b1e21" stroke="#2c3035"/>
+    <path d="M62 298h14l8 8v22H62z" fill="none" stroke="#a9adb3" stroke-width="1.6"/>
+    <text x="102" y="304" font-size="15" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">vitals_raw.csv</text>
+    <text x="102" y="326" font-size="12" fill="#8d9298">example dataset (synthetic)</text>
+  </g>
+  <rect x="40" y="362" width="216" height="44" rx="8" fill="none" stroke="#4a4f56" stroke-dasharray="5 4"/>
+  <text x="62" y="390" font-size="14" fill="#c9ccd0">Browse for another file…</text>
+</svg>

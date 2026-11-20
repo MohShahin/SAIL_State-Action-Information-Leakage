@@ -1,0 +1,28 @@
+/*
+ * Shared by every SAIL page (sidebar, setup wizard). Surfaces, text, borders and the font all come from
+ * the user's VS Code theme (--vscode-*), so every page follows any light, dark or high-contrast theme.
+ * Only the three SAIL accents below are ours: teal (brand / active), amber (flagged) and blue (passed).
+ * Each has a light-theme tone, because the dark-theme tones from the design do not have enough contrast
+ * on a light background.
+ */
+:root {
+  --sail-accent: #7fd8ca;
+  --sail-flagged: #f5a15a;
+  --sail-passed: #8fbde8;
+}
+body.vscode-light,
+body.vscode-high-contrast-light {
+  --sail-accent: #0b6b5e;
+  --sail-flagged: #9a5200;
+  --sail-passed: #2f5f8f;
+}
+
+/* A page's own "display: flex" rules would otherwise beat the browser's built-in hidden behaviour. */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}

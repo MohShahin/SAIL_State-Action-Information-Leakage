@@ -1,0 +1,226 @@
+/*
+ * SAIL sidebar. See theme.css (loaded before this file) for the shared color tokens and base rules
+ * every SAIL page uses -- this file holds only what is specific to the sidebar's own layout.
+ */
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--vscode-foreground);
+  background: transparent;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  line-height: 1.45;
+}
+
+.sail {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 18px 18px;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: sail-fade-in 180ms ease-out;
+}
+
+.eyebrow {
+  margin: 0;
+  padding: 10px 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--vscode-descriptionForeground);
+}
+
+section + section {
+  margin-top: 8px;
+}
+
+/* DATASET */
+.dataset {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--vscode-descriptionForeground);
+  background: color-mix(in srgb, var(--vscode-foreground) 7%, transparent);
+}
+.dataset svg {
+  flex-shrink: 0;
+}
+.dataset-label {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.95em;
+  overflow-wrap: anywhere;
+}
+.dataset-label:not(.is-empty) {
+  color: var(--vscode-foreground);
+}
+
+/* CHECKS */
+.checks {
+  margin: 0 -10px 24px;
+  padding: 0;
+  list-style: none;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.check-name {
+  flex-grow: 1;
+}
+.check-tag {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+.tag-flagged {
+  color: var(--sail-flagged);
+}
+.tag-passed {
+  color: var(--sail-passed);
+}
+
+.glyph {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+/* waiting to run */
+.glyph-pending,
+.glyph-off {
+  border-radius: 50%;
+  border: 1.5px solid var(--vscode-descriptionForeground);
+  opacity: 0.7;
+}
+/* used from Phase 4 on */
+.glyph-running {
+  border-radius: 50%;
+  border: 2px solid var(--sail-accent);
+  border-top-color: transparent;
+  animation: sail-spin 900ms linear infinite;
+}
+.glyph-flagged {
+  border-radius: 4px;
+  background: var(--sail-flagged);
+  color: #1a1206;
+  font-size: 12px;
+  font-weight: 700;
+}
+.glyph-passed {
+  border-radius: 50%;
+  background: var(--sail-passed);
+  color: #ffffff;
+}
+body.vscode-dark .glyph-passed,
+body.vscode-high-contrast .glyph-passed {
+  color: #10243a;
+}
+body.vscode-light .glyph-flagged,
+body.vscode-high-contrast-light .glyph-flagged {
+  color: #ffffff;
+}
+
+/* Privacy note */
+.privacy {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  /* pushed to the bottom of the panel; the checks list keeps a minimum gap above it */
+  margin-top: auto;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--sail-accent) 45%, transparent);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--vscode-foreground);
+}
+.privacy svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--sail-accent);
+}
+.privacy p {
+  margin: 0;
+}
+body.vscode-high-contrast .privacy,
+body.vscode-high-contrast-light .privacy {
+  border-color: var(--vscode-contrastBorder);
+}
+
+/* Loading skeleton: the same shapes as the real content, shown until the extension sends its state. */
+.skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--vscode-foreground) 8%, transparent) 25%,
+    color-mix(in srgb, var(--vscode-foreground) 16%, transparent) 50%,
+    color-mix(in srgb, var(--vscode-foreground) 8%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: sail-shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-eyebrow {
+  width: 64px;
+  height: 11px;
+  margin: 12px 0 10px;
+}
+.skeleton-box {
+  height: 40px;
+  border-radius: 8px;
+}
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+}
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+}
+.skeleton-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+.skeleton-line {
+  width: 62%;
+  height: 12px;
+}
+
+@keyframes sail-fade-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sail-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes sail-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app,
+  .skeleton,
+  .glyph-running {
+    animation: none;
+  }
+}

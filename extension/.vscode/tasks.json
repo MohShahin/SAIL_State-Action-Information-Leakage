@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // What F5 runs first. Bundling takes about 0.3 s; the slower type-check is a separate task.
+      "type": "npm",
+      "script": "bundle",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "label": "npm: bundle",
+      "detail": "bundle src/extension.ts into dist/extension.js (fast)"
+    },
+    {
+      "type": "npm",
+      "script": "typecheck",
+      "problemMatcher": "$tsc",
+      "label": "npm: typecheck",
+      "detail": "tsc --noEmit (about 5 s)"
+    },
+    {
+      // Opens the test window with SAIL only, and no debugger at all. Nothing can fail to attach.
+      // Runs the `code` command (not VS Code's executable directly): `code` exits as soon as the window is open,
+      // so the task finishes. Running the executable directly never finishes and leaves F5 "waiting for preLaunchTask".
+      "label": "SAIL: open test window (no debugger)",
+      "type": "shell",
+      "command": "code",
+      "args": ["--extensionDevelopmentPath", "${workspaceFolder}", "--disable-extensions", "--new-window"],
+      "dependsOn": ["npm: bundle"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "close": true }
+    },
+    {
+      // Same window, with the extension host's debug port opened on 127.0.0.1 (IPv4) so the "Debug SAIL"
+      // launch configuration can attach to it. This is what F5 runs.
+      "label": "SAIL: open test window (debuggable)",
+      "type": "shell",
+      "command": "code",
+      "args": [
+        "--extensionDevelopmentPath", "${workspaceFolder}",
+        "--disable-extensions",
+        "--new-window",
+        "--inspect-extensions=5870"
+      ],
+      "dependsOn": ["npm: bundle"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "close": true }
+    }
+  ]
+}

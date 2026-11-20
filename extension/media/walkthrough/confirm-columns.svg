@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="720" height="440" rx="14" fill="#17191c"/>
+  <text x="40" y="62" font-size="24" fill="#e8e6e1" font-weight="500">Does this look right?</text>
+  <text x="40" y="92" font-size="14" fill="#9ea3a9">SAIL read the column names and made its best guess.</text>
+  <g font-size="14">
+    <text x="40" y="150" fill="#e8e6e1" font-weight="500">Patient or stay ID</text>
+    <text x="40" y="170" font-size="12" fill="#8d9298">Identifies each ICU stay</text>
+    <rect x="270" y="130" width="290" height="44" rx="8" fill="#1f2226" stroke="#3a3f45"/>
+    <text x="286" y="158" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">stay_id</text>
+    <text x="588" y="158" font-size="12" fill="#7fd8ca">Auto-detected</text>
+
+    <text x="40" y="214" fill="#e8e6e1" font-weight="500">Time step</text>
+    <text x="40" y="234" font-size="12" fill="#8d9298">When each row was measured</text>
+    <rect x="270" y="194" width="290" height="44" rx="8" fill="#1f2226" stroke="#3a3f45"/>
+    <text x="286" y="222" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">charttime_bin</text>
+    <text x="588" y="222" font-size="12" fill="#7fd8ca">Auto-detected</text>
+
+    <text x="40" y="278" fill="#e8e6e1" font-weight="500">Treatment (action)</text>
+    <text x="40" y="298" font-size="12" fill="#8d9298">What the model decides</text>
+    <rect x="270" y="258" width="290" height="44" rx="8" fill="#1f2226" stroke="#3a3f45"/>
+    <text x="286" y="286" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">vaso_dose_bin</text>
+    <text x="588" y="286" font-size="12" fill="#7fd8ca">Auto-detected</text>
+
+    <text x="40" y="342" fill="#e8e6e1" font-weight="500">Outcome (reward)</text>
+    <text x="40" y="362" font-size="12" fill="#8d9298">What the model tries to improve</text>
+    <rect x="270" y="322" width="290" height="44" rx="8" fill="#1f2226" stroke="#3a3f45"/>
+    <text x="286" y="350" fill="#e8e6e1" font-family="Consolas, 'Courier New', monospace">survived_90d</text>
+    <text x="588" y="350" font-size="12" fill="#7fd8ca">Auto-detected</text>
+  </g>
+</svg>

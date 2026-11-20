@@ -7,21 +7,17 @@ __pycache__/
 # ---------------------------------------------------------------------------
 # sail/ Python package (docs/SAIL_PACKAGE_ROADMAP.md) -- build/test artifacts,
 # never the package source itself.
-# ---------------------------------------------------------------------------
 .venv/
 .pytest_cache/
 *.egg-info/
 build/
 dist/
 
-# ---------------------------------------------------------------------------
 # Eleventy build — GitHub Actions builds this fresh on every push (see
 # .github/workflows/deploy.yml). Never commit build output or node_modules.
-# ---------------------------------------------------------------------------
 node_modules/
 _site/
 
-# ---------------------------------------------------------------------------
 # MIMIC-IV governance — see DATA_ACCESS.md before removing anything below.
 # Row-level / patient-level derived data must never be committed. results/ is
 # blocked by default; only specific, hand-reviewed aggregate files under
@@ -29,7 +25,6 @@ _site/
 # this file (git evaluates rules in file order, so negations must come after
 # every rule that could otherwise re-catch them — don't move these above the
 # *.csv/*.parquet lines below).
-# ---------------------------------------------------------------------------
 results/*
 # The notebook's own working output directory (OUT_DIR in cell 3) -- separate from the curated
 # top-level results/ folder above. Blocked entirely, no negation exceptions: everything written
@@ -57,6 +52,13 @@ bigquery-credentials*
 !results/experiment7_respiratory_sofa_summary.json
 !results/experiment8_variant_f_summary.json
 
+# VS Code extension (extension/): build output and packages are never committed,
+# but its launch/tasks config is (the repo-wide ".vscode/" rule above would hide it).
+extension/out/
+extension/.vscode-test/
+extension/*.vsix
+!extension/.vscode/
+extension/dist/
 # Experiment 5b: H3 paired cluster bootstrap aggregates (FORMAL_ANALYSIS.md section 7)
 !results/experiment5_h3_paired_bootstrap_rows.json
 !results/experiment5_h3_paired_bootstrap_bins.json
