@@ -4,7 +4,7 @@ title: "Reproducibility"
 activeNav: reproducibility
 templateEngineOverride: false
 extraHead: |
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="__PATHPREFIX__/assets/vendor/prism/prism-tomorrow.min.css">
 ---
 
 <style>
@@ -107,8 +107,7 @@ extraHead: |
   <a href="__PATHPREFIX__/papers/" class="primary">Papers →</a>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="__PATHPREFIX__/assets/vendor/prism/prism-bundle.min.js"></script>
 <script>
 const FV_FILES = [
   { path: "__PATHPREFIX__/queries/01_cohort.sql", label: "01_cohort.sql", lang: "sql" },

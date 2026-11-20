@@ -7,14 +7,12 @@
 <link rel="icon" type="image/png" href="__PATHPREFIX__/assets/img/favicon.png">
 <link rel="icon" type="image/x-icon" href="__PATHPREFIX__/assets/img/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="__PATHPREFIX__/assets/img/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="__PATHPREFIX__/assets/fonts/inter-latin-wght-normal.woff2">
 <link rel="stylesheet" href="__PATHPREFIX__/assets/style.css">
-<script>(function(){try{var k=localStorage.getItem('sail-lang');var rtl={ar:1};if(k&&/^(en|ar|es|fr|pt|hi|zh)$/.test(k)){var h=document.documentElement;h.lang=k;h.dir=rtl[k]?'rtl':'ltr';var f={ar:'Noto+Sans+Arabic',hi:'Noto+Sans+Devanagari',zh:'Noto+Sans+SC'}[k];if(f){var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f+':wght@400;600;700&display=swap';document.head.appendChild(l);}}}catch(e){}})();</script>
+<script>(function(){try{var k=localStorage.getItem('sail-lang');var rtl={ar:1};if(k&&/^(en|ar|es|fr|pt|hi|zh)$/.test(k)){var h=document.documentElement;h.lang=k;h.dir=rtl[k]?'rtl':'ltr';}}catch(e){}})();</script>
 {%- if needsMathJax %}
 <script>window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<script src="__PATHPREFIX__/assets/vendor/mathjax/es5/tex-mml-chtml.js" async></script>
 {%- endif %}
 {%- if extraHead %}
 {{ extraHead | safe }}
@@ -60,10 +58,8 @@
   <script>
   (function(){var L=window.SAIL_I18N,S=window.SAIL_STR,sel=document.getElementById('langSel');if(!sel)return;
    var page=document.getElementById('sailPage');
-   var FONT={ar:'Noto+Sans+Arabic',hi:'Noto+Sans+Devanagari',zh:'Noto+Sans+SC'};
    function stored(){try{return localStorage.getItem('sail-lang')}catch(e){return null}}
-   function font(k){if(!FONT[k]||document.querySelector('link[data-f="'+k+'"]'))return;var l=document.createElement('link');l.rel='stylesheet';l.dataset.f=k;l.href='https://fonts.googleapis.com/css2?family='+FONT[k]+':wght@400;600;700&display=swap';document.head.appendChild(l)}
-   function render(k){var h=document.documentElement;h.lang=k;h.dir=L[k].dir;sel.value=k;font(k);
+   function render(k){var h=document.documentElement;h.lang=k;h.dir=L[k].dir;sel.value=k;
     document.querySelectorAll('[data-nav]').forEach(function(a){a.textContent=L[k].nav[a.dataset.nav]});
     document.querySelectorAll('[data-i18n-nav]').forEach(function(e){e.textContent=L[k].nav[e.dataset.i18nNav]});
     document.querySelectorAll('[data-t]').forEach(function(e){var en=e.dataset.t,tr=(k!=='en'&&S[en])?S[en][k]:null;e.textContent=tr||en});if(window.SAIL_ONLANG)window.SAIL_ONLANG(k)}

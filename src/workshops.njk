@@ -5,5 +5,47 @@ activeNav: workshops
 secId: workshops
 permalink: /workshops/
 ---
+<style>
+.ep{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:var(--paper)}
+.ep h3{margin:0 0 6px;font-size:17px}
+.ep dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:8px 0 0;font-size:14.5px}
+.ep dt{color:var(--ink-soft);font-weight:600}.ep dd{margin:0}
+.tbd{display:inline-block;border:1px dashed var(--ink-faint);border-radius:6px;padding:0 8px;color:var(--ink-soft)}
+.slot{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--paper);margin:8px 0 28px}
+.slot .row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.slot label{display:block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+:lang(ar) .slot label,:lang(hi) .slot label{letter-spacing:0;text-transform:none}
+.slot input,.slot select{padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--paper);color:var(--ink)}
+.slot ul{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.slot li{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.slot li b{display:block;font-size:13px;color:var(--ink-soft)}
+.slot li span{font-size:17px;font-weight:600;direction:ltr;unicode-bidi:isolate;display:block}
+.slot :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
 <p class="plain"><strong data-t="{{ workshops.status }}">{{ workshops.status }}</strong>. <span data-t="{{ workshops.note }}">{{ workshops.note }}</span></p>
-{% for e in workshops.episodes %}<div class="card" style="margin-bottom:16px;"><h3><span data-t="Episode {{ e.n }}">Episode {{ e.n }}</span> · <span data-t="{{ e.title }}">{{ e.title }}</span></h3><p class="plain" data-t="Status: proposed">Status: proposed</p></div>{% endfor %}
+{% for e in workshops.episodes %}<article class="ep"{% if e.iso %} data-iso="{{ e.iso }}"{% endif %}><h3><span data-t="Episode {{ e.n }}">Episode {{ e.n }}</span> · <span data-t="{{ e.title }}">{{ e.title }}</span></h3>
+<dl><dt data-t="Date">Date</dt><dd>{% if e.iso %}<time datetime="{{ e.iso }}" class="when">{{ e.iso }}</time>{% else %}<span class="tbd" data-t="Date to be announced">Date to be announced</span>{% endif %}</dd>
+<dt data-t="Host">Host</dt><dd><span class="tbd" data-t="To be confirmed">To be confirmed</span></dd>
+<dt data-t="Registration">Registration</dt><dd><span class="tbd" data-t="Opens when the date is set">Opens when the date is set</span></dd>
+<dt data-t="Status">Status</dt><dd data-t="Proposed">Proposed</dd></dl></article>{% endfor %}
+
+<h2 style="margin-top:36px" data-t="Find a time that works across chapters">Find a time that works across chapters</h2>
+<p class="plain" data-t="Pick a date and a time in Boston. Local times for each chapter are worked out in your browser using each city's current rules, so daylight-saving changes are handled for you.">Pick a date and a time in Boston. Local times for each chapter are worked out in your browser using each city's current rules, so daylight-saving changes are handled for you.</p>
+<div class="slot"><div class="row">
+ <div><label for="s_date" data-t="Date">Date</label><input type="date" id="s_date"></div>
+ <div><label for="s_time" data-t="Time in Boston">Time in Boston</label><input type="time" id="s_time" value="10:00"></div>
+</div>
+<ul id="s_out" aria-live="polite">{% for c in chapters.items %}<li data-tz="{{ c.tz }}"><b>{{ c.city }}</b><span>--:--</span></li>{% endfor %}</ul></div>
+<script>
+(function(){
+var d=document.getElementById('s_date'),t=document.getElementById('s_time'),lis=[].slice.call(document.querySelectorAll('#s_out li'));
+var now=new Date();now.setDate(now.getDate()+14);d.value=now.toISOString().slice(0,10);
+function offsetMin(tz,utcMs){var p=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date(utcMs)),o={};p.forEach(function(x){o[x.type]=x.value});return (Date.UTC(+o.year,+o.month-1,+o.day,+o.hour,+o.minute,+o.second)-Math.floor(utcMs/1000)*1000)/60000}
+function toUtc(tz,y,mo,da,h,mi){var guess=Date.UTC(y,mo-1,da,h,mi);var off=offsetMin(tz,guess);var u=guess-off*60000;off=offsetMin(tz,u);return guess-off*60000}
+function run(){if(!d.value||!t.value)return;var a=d.value.split('-').map(Number),b=t.value.split(':').map(Number);
+ var utc=toUtc('America/New_York',a[0],a[1],a[2],b[0],b[1]);var lang=document.documentElement.lang||'en';
+ lis.forEach(function(li){var tz=li.dataset.tz;var f=new Intl.DateTimeFormat(lang,{timeZone:tz,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});li.querySelector('span').textContent=f.format(new Date(utc))})}
+d.addEventListener('input',run);t.addEventListener('input',run);var prev=window.SAIL_ONLANG;window.SAIL_ONLANG=function(k){if(prev)prev(k);run()};run();
+document.querySelectorAll('time.when').forEach(function(e){var x=new Date(e.getAttribute('datetime'));if(!isNaN(x))e.textContent=new Intl.DateTimeFormat(document.documentElement.lang||'en',{dateStyle:'full',timeStyle:'short'}).format(x)});
+})();
+</script>
