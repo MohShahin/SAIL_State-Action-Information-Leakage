@@ -101,7 +101,7 @@ templateEngineOverride: false
     <h4>Reviewer response — Variant F disentanglement test (Experiment 8, 2026-09-08)</h4>
     <p>Tests a specific alternative to Variant D: keep severity untouched, add explicit
     treatment-history features (duration on vasopressor, time since last dose-tier change)
-    alongside it. The pre-registered success criterion was <b>falsified</b> — F's
+    alongside it. The pre-specified success criterion was <b>falsified</b> — F's
     action-recoverability AUROC (0.914) exceeded even the full state's (0.900), rather than staying
     near D's (0.792). Reported as the actual result: two purely temporal features are more
     predictive of the next action than the entire physiology-plus-severity state, sharpening the
@@ -120,10 +120,13 @@ templateEngineOverride: false
     with no explicit treatment features, and prevalence-matched placebo features (matches variant
     E's own number, confirming the placebo adds nothing). Results:
     <code class="mono" style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:0.9em;">notebook/results/experiment5_negative_controls.json</code>.
-    <b>H3 has been run.</b> The pre-registered paired-bootstrap test on per-patient predictions
+    <b>H3 has been run.</b> The pre-specified paired-bootstrap test on per-patient predictions
     gives Delta = AUROC(0) minus AUROC(8) = 0.147, 95% CI [0.140, 0.154] (bin-index offsets, common
     rows, logreg) — Prediction A, per
     <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
+    "Pre-specified" means the rule was written down before the final run; the decision log also discloses that an
+    earlier single-offset result prompted the redesign and that aggregate outputs were seen before the freeze.
+    With no infusion running, the same gap is 0.039 (95% CI [0.027, 0.050]) on the 13,192-stay primary cohort.
     An exploratory synthetic ground-truth check (exploratory work in review, exp-simulation) finds this rule cannot, on
     its own, separate the SOFA-construction mechanism from ordinary treatment persistence — see
     <a href="__PATHPREFIX__/evidence/" style="color:var(--accent);">Evidence</a> for the exploratory

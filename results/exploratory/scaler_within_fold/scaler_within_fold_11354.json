@@ -1,0 +1,478 @@
+{
+  "what": "Within-fold StandardScaler sensitivity for every logreg result built through cv_predict",
+  "status": "exploratory, not pre-registered; does not replace any pinned or reported result",
+  "cohort_stays": 11354,
+  "code_commit": "177aa96",
+  "scalers": {
+    "full_matrix": "notebook cv_predict: StandardScaler fit on all rows, then GroupKFold(5) by stay_id",
+    "within_fold": "same folds and probe; StandardScaler fit on each fold's training rows only"
+  },
+  "probe": "LogisticRegression(max_iter=2000, class_weight='balanced')",
+  "not_rerun": "rf and gb probes: tree ensembles are invariant to per-feature affine rescaling",
+  "n_action_rows": 170299,
+  "n_action_stays": 11354,
+  "sanity_full_matrix_reproduces_reported": {
+    "h3_vs_reported_run": {
+      "n_compared": 30,
+      "max_abs_diff": 0.0,
+      "worst": "h3.rows.unrestricted_sensitivity.delta_ci_lo",
+      "match_4dp": true
+    },
+    "exp2_vs_reported_run": {
+      "n_compared": 15,
+      "max_abs_diff": 9.77370295807134e-10,
+      "worst": "exp2.B_no_total_sofa.ci_lo",
+      "match_4dp": true
+    },
+    "exp5_vs_reported_run": {
+      "n_compared": 6,
+      "max_abs_diff": 2.6727364765832817e-10,
+      "worst": "exp5.placebo_feature_matched_prevalence.ci_lo",
+      "match_4dp": true
+    },
+    "exp6_vs_reported_run": {
+      "n_compared": 15,
+      "max_abs_diff": 0.0,
+      "worst": "exp6.E_physiology_only.ci_lo",
+      "match_4dp": true
+    },
+    "exp8_vs_notebook_cv_predict_points": {
+      "n_compared": 2,
+      "max_abs_diff": 0.0,
+      "worst": "exp8.F_mortality",
+      "match_4dp": true
+    }
+  },
+  "h3": {
+    "primary": "bins mode, restricted (common rows)",
+    "bins": {
+      "restricted": {
+        "full_matrix": {
+          "auroc_a": 0.8512122920037024,
+          "auroc_b": 0.7078491482858923,
+          "delta": 0.14336314371781012,
+          "delta_ci_lo": 0.1356876820203448,
+          "delta_ci_hi": 0.15059578218304961,
+          "n_rows_a": 79692,
+          "n_rows_b": 79692,
+          "n_patients": 11146,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_fold": {
+          "auroc_a": 0.8513420039006669,
+          "auroc_b": 0.7078844806853541,
+          "delta": 0.1434575232153128,
+          "delta_ci_lo": 0.13576164635677976,
+          "delta_ci_hi": 0.15070105779166545,
+          "n_rows_a": 79692,
+          "n_rows_b": 79692,
+          "n_patients": 11146,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_minus_full": {
+          "auroc_a": 0.000129711896964535,
+          "auroc_b": 3.5332399461851516e-05,
+          "delta": 9.437949750268348e-05,
+          "delta_ci_lo": 7.396433643494515e-05,
+          "delta_ci_hi": 0.00010527560861584018
+        }
+      },
+      "unrestricted_sensitivity": {
+        "full_matrix": {
+          "auroc_a": 0.8737327527609713,
+          "auroc_b": 0.7078491482858923,
+          "delta": 0.165883604475079,
+          "delta_ci_lo": 0.1593778900256753,
+          "delta_ci_hi": 0.1728959700832065,
+          "n_rows_a": 170299,
+          "n_rows_b": 79692,
+          "n_patients": 11354,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_fold": {
+          "auroc_a": 0.8738395918493244,
+          "auroc_b": 0.7078844806853541,
+          "delta": 0.16595511116397021,
+          "delta_ci_lo": 0.15938535802197668,
+          "delta_ci_hi": 0.1730039985918025,
+          "n_rows_a": 170299,
+          "n_rows_b": 79692,
+          "n_patients": 11354,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_minus_full": {
+          "auroc_a": 0.00010683908835307232,
+          "auroc_b": 3.5332399461851516e-05,
+          "delta": 7.15066888912208e-05,
+          "delta_ci_lo": 7.4679963013857265e-06,
+          "delta_ci_hi": 0.0001080285085959809
+        }
+      },
+      "decay_curve": [
+        {
+          "offset_bins": 0,
+          "n": 170299,
+          "full_matrix": 0.8737327527609713,
+          "within_fold": 0.8738395918493244,
+          "within_minus_full": 0.00010683908835307232
+        },
+        {
+          "offset_bins": 1,
+          "n": 154583,
+          "full_matrix": 0.8421665591382518,
+          "within_fold": 0.8423794304337834,
+          "within_minus_full": 0.00021287129553160256
+        },
+        {
+          "offset_bins": 2,
+          "n": 143943,
+          "full_matrix": 0.8184312082546744,
+          "within_fold": 0.8185390725019941,
+          "within_minus_full": 0.00010786424731967781
+        },
+        {
+          "offset_bins": 4,
+          "n": 123294,
+          "full_matrix": 0.7772278239753637,
+          "within_fold": 0.7772268787327539,
+          "within_minus_full": -9.452426098510713e-07
+        },
+        {
+          "offset_bins": 8,
+          "n": 79692,
+          "full_matrix": 0.7078491482858923,
+          "within_fold": 0.7078844806853541,
+          "within_minus_full": 3.5332399461851516e-05
+        }
+      ]
+    },
+    "rows": {
+      "restricted": {
+        "full_matrix": {
+          "auroc_a": 0.8434931240725418,
+          "auroc_b": 0.7025843780829535,
+          "delta": 0.14090874598958836,
+          "delta_ci_lo": 0.1332616560807629,
+          "delta_ci_hi": 0.14843423959963023,
+          "n_rows_a": 79686,
+          "n_rows_b": 79686,
+          "n_patients": 10876,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_fold": {
+          "auroc_a": 0.843632104444647,
+          "auroc_b": 0.7026438846257137,
+          "delta": 0.14098821981893328,
+          "delta_ci_lo": 0.13338028021289666,
+          "delta_ci_hi": 0.14858915141898535,
+          "n_rows_a": 79686,
+          "n_rows_b": 79686,
+          "n_patients": 10876,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_minus_full": {
+          "auroc_a": 0.00013898037210513525,
+          "auroc_b": 5.950654276021261e-05,
+          "delta": 7.947382934492264e-05,
+          "delta_ci_lo": 0.00011862413213376,
+          "delta_ci_hi": 0.0001549118193551191
+        }
+      },
+      "unrestricted_sensitivity": {
+        "full_matrix": {
+          "auroc_a": 0.8737327527609713,
+          "auroc_b": 0.7025843780829535,
+          "delta": 0.1711483746780178,
+          "delta_ci_lo": 0.16446610883622997,
+          "delta_ci_hi": 0.17830001293336892,
+          "n_rows_a": 170299,
+          "n_rows_b": 79686,
+          "n_patients": 11354,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_fold": {
+          "auroc_a": 0.8738395918493244,
+          "auroc_b": 0.7026438846257137,
+          "delta": 0.17119570722361066,
+          "delta_ci_lo": 0.16443395864614246,
+          "delta_ci_hi": 0.1783240538590273,
+          "n_rows_a": 170299,
+          "n_rows_b": 79686,
+          "n_patients": 11354,
+          "p_delta_ge_threshold": 1.0,
+          "prediction_A_supported": true,
+          "n_boot": 2000,
+          "n_boot_used": 2000,
+          "seed": 42
+        },
+        "within_minus_full": {
+          "auroc_a": 0.00010683908835307232,
+          "auroc_b": 5.950654276021261e-05,
+          "delta": 4.733254559285971e-05,
+          "delta_ci_lo": -3.2150190087509856e-05,
+          "delta_ci_hi": 2.4040925658386225e-05
+        }
+      },
+      "decay_curve": [
+        {
+          "offset_bins": 0,
+          "n": 170299,
+          "full_matrix": 0.8737327527609713,
+          "within_fold": 0.8738395918493244,
+          "within_minus_full": 0.00010683908835307232
+        },
+        {
+          "offset_bins": 1,
+          "n": 158945,
+          "full_matrix": 0.8457718739668513,
+          "within_fold": 0.8459645775234865,
+          "within_minus_full": 0.00019270355663525418
+        },
+        {
+          "offset_bins": 2,
+          "n": 147591,
+          "full_matrix": 0.8223454300457249,
+          "within_fold": 0.822361535012313,
+          "within_minus_full": 1.610496658810412e-05
+        },
+        {
+          "offset_bins": 4,
+          "n": 124884,
+          "full_matrix": 0.7795263161538619,
+          "within_fold": 0.7795240745720748,
+          "within_minus_full": -2.241581787076896e-06
+        },
+        {
+          "offset_bins": 8,
+          "n": 79686,
+          "full_matrix": 0.7025843780829535,
+          "within_fold": 0.7026438846257137,
+          "within_minus_full": 5.950654276021261e-05
+        }
+      ]
+    }
+  },
+  "exp2_logreg": {
+    "A_full": {
+      "full_matrix": {
+        "auroc": 0.8737327527609713,
+        "ci_lo": 0.8704534571484253,
+        "ci_hi": 0.8773285694766341
+      },
+      "within_fold": {
+        "auroc": 0.8738395918493244,
+        "ci_lo": 0.8705527975506,
+        "ci_hi": 0.8774318677197277
+      },
+      "within_minus_full_auroc": 0.00010683908835307232
+    },
+    "B_no_total_sofa": {
+      "full_matrix": {
+        "auroc": 0.8688640943003161,
+        "ci_lo": 0.8654575018567702,
+        "ci_hi": 0.8724493549860658
+      },
+      "within_fold": {
+        "auroc": 0.8688056166044551,
+        "ci_lo": 0.8654250027340836,
+        "ci_hi": 0.8723714640454926
+      },
+      "within_minus_full_auroc": -5.847769586098117e-05
+    },
+    "C_no_cardio_sofa": {
+      "full_matrix": {
+        "auroc": 0.8443237979897641,
+        "ci_lo": 0.8408727046678438,
+        "ci_hi": 0.8479562480066302
+      },
+      "within_fold": {
+        "auroc": 0.8443371726759178,
+        "ci_lo": 0.840882530441313,
+        "ci_hi": 0.8479458446075995
+      },
+      "within_minus_full_auroc": 1.3374686153699855e-05
+    },
+    "D_treatment_decomposed": {
+      "full_matrix": {
+        "auroc": 0.7320714263972594,
+        "ci_lo": 0.726751549822478,
+        "ci_hi": 0.737429729729193
+      },
+      "within_fold": {
+        "auroc": 0.7322950736412777,
+        "ci_lo": 0.7269592987984987,
+        "ci_hi": 0.7375921100170327
+      },
+      "within_minus_full_auroc": 0.00022364724401824354
+    },
+    "E_physiology_only": {
+      "full_matrix": {
+        "auroc": 0.7265218175021279,
+        "ci_lo": 0.7210659908753392,
+        "ci_hi": 0.7315937998744979
+      },
+      "within_fold": {
+        "auroc": 0.7267679428772018,
+        "ci_lo": 0.7212793800074463,
+        "ci_hi": 0.7317841556641983
+      },
+      "within_minus_full_auroc": 0.0002461253750739578
+    }
+  },
+  "exp5_controls_logreg": {
+    "shuffled_labels": {
+      "full_matrix": {
+        "auroc": 0.5019797975667448,
+        "ci_lo": 0.4992372083262824,
+        "ci_hi": 0.5046342547689144
+      },
+      "within_fold": {
+        "auroc": 0.5019862525071261,
+        "ci_lo": 0.49931323417469753,
+        "ci_hi": 0.5046913287067409
+      },
+      "within_minus_full_auroc": 6.454940381317442e-06
+    },
+    "placebo_feature_matched_prevalence": {
+      "full_matrix": {
+        "auroc": 0.7265226345575733,
+        "ci_lo": 0.7210583605016128,
+        "ci_hi": 0.7315985869157025
+      },
+      "within_fold": {
+        "auroc": 0.7267581834991554,
+        "ci_lo": 0.7212689387902014,
+        "ci_hi": 0.7317809734580387
+      },
+      "within_minus_full_auroc": 0.00023554894158217543
+    }
+  },
+  "n_mortality_rows": 11336,
+  "rebuilt_matrices_vs_checkpoint": {
+    "same_rows_and_labels": true,
+    "variant_A_max_abs_diff": 1.52587890625e-05
+  },
+  "exp6_logreg": {
+    "A_full": {
+      "full_matrix": {
+        "auroc": 0.7629757179376644,
+        "ci_lo": 0.7520910297613804,
+        "ci_hi": 0.7734396878998483
+      },
+      "within_fold": {
+        "auroc": 0.7630136206478785,
+        "ci_lo": 0.7521373113487487,
+        "ci_hi": 0.773495800947567
+      },
+      "within_minus_full_auroc": 3.790271021408831e-05
+    },
+    "B_no_total_sofa": {
+      "full_matrix": {
+        "auroc": 0.7625153386770154,
+        "ci_lo": 0.7518257432968598,
+        "ci_hi": 0.7728867935753718
+      },
+      "within_fold": {
+        "auroc": 0.7625287676218409,
+        "ci_lo": 0.7518418285026695,
+        "ci_hi": 0.7728924338188827
+      },
+      "within_minus_full_auroc": 1.3428944825477629e-05
+    },
+    "C_no_cardio_sofa": {
+      "full_matrix": {
+        "auroc": 0.7625888086287783,
+        "ci_lo": 0.7514106527341103,
+        "ci_hi": 0.7727922280835132
+      },
+      "within_fold": {
+        "auroc": 0.7626162990411928,
+        "ci_lo": 0.7514835659254272,
+        "ci_hi": 0.7728123285896853
+      },
+      "within_minus_full_auroc": 2.7490412414454823e-05
+    },
+    "D_treatment_decomposed": {
+      "full_matrix": {
+        "auroc": 0.756343668106548,
+        "ci_lo": 0.7450517076162333,
+        "ci_hi": 0.7667991066755876
+      },
+      "within_fold": {
+        "auroc": 0.7563334017755401,
+        "ci_lo": 0.74502046109924,
+        "ci_hi": 0.7668139083922617
+      },
+      "within_minus_full_auroc": -1.0266331007868779e-05
+    },
+    "E_physiology_only": {
+      "full_matrix": {
+        "auroc": 0.7566587130983786,
+        "ci_lo": 0.7455256461731782,
+        "ci_hi": 0.7673403018634696
+      },
+      "within_fold": {
+        "auroc": 0.7566624109237654,
+        "ci_lo": 0.7455245805412581,
+        "ci_hi": 0.7673410404386544
+      },
+      "within_minus_full_auroc": 3.6978253867836486e-06
+    }
+  },
+  "exp8_logreg": {
+    "F_action": {
+      "full_matrix": {
+        "auroc": 0.8928752626015435,
+        "ci_lo": 0.8894084460154166,
+        "ci_hi": 0.8966903512263821
+      },
+      "within_fold": {
+        "auroc": 0.8929153087156085,
+        "ci_lo": 0.8894413314140235,
+        "ci_hi": 0.8967526081988033
+      },
+      "within_minus_full_auroc": 4.0046114065050986e-05
+    },
+    "F_mortality": {
+      "full_matrix": {
+        "auroc": 0.7613322291756477,
+        "ci_lo": 0.7502425639877087,
+        "ci_hi": 0.7724346478202982
+      },
+      "within_fold": {
+        "auroc": 0.7613233252013613,
+        "ci_lo": 0.7502430031328412,
+        "ci_hi": 0.7724503514131887
+      },
+      "within_minus_full_auroc": -8.903974286433858e-06
+    }
+  }
+}

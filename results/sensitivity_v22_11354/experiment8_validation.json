@@ -1,0 +1,104 @@
+{
+  "strictly_before": {
+    "rows_checked": 2000,
+    "f1_max_abs_diff": 0.0,
+    "f1_rows_differing": 0,
+    "f2_max_abs_diff": 0.0,
+    "f2_rows_differing": 0,
+    "strictly_before_decision_time": true,
+    "differing_examples_no_patient_ids": []
+  },
+  "indicator_ablation": {
+    "D": {
+      "auroc": 0.7320714263972594,
+      "ci_lo": 0.726751549822478,
+      "ci_hi": 0.7374297297291929
+    },
+    "D_plus_on_vasopressor_indicator": {
+      "auroc": 0.8828251486087226,
+      "ci_lo": 0.8792638349034144,
+      "ci_hi": 0.8869390456473647
+    },
+    "D_plus_F1_F2": {
+      "auroc": 0.8928752626015435,
+      "ci_lo": 0.8894084460154166,
+      "ci_hi": 0.8966903512263821
+    },
+    "indicator_share_of_F_gain": 0.9375007821327518,
+    "prevalence_on_vasopressor_at_tau": 0.28190418029465825,
+    "label_given_on": 1.0,
+    "label_given_off": 0.22829153412761363
+  },
+  "n_rows": 170299,
+  "probe": "logreg",
+  "indicator_and_off_rows": {
+    "indicator_alone_auroc": 0.8161499354634776,
+    "n_rows_all": 170299,
+    "n_rows_off": 122291,
+    "n_rows_on": 48008,
+    "label_rate_off": 0.22829153412761363,
+    "label_rate_on": 1.0,
+    "off_rows": {
+      "A_full": {
+        "logreg": {
+          "auroc": 0.7120538546857065,
+          "ci_lo": 0.70589954153111,
+          "ci_hi": 0.7183706135128527
+        },
+        "gb": {
+          "auroc": 0.7635715345290591,
+          "ci_lo": 0.7578569783195537,
+          "ci_hi": 0.7689703867182971
+        }
+      },
+      "E_physiology_only": {
+        "logreg": {
+          "auroc": 0.6946921275427266,
+          "ci_lo": 0.688248952892997,
+          "ci_hi": 0.7012552534649884
+        },
+        "gb": {
+          "auroc": 0.7607625510424522,
+          "ci_lo": 0.7545703726643577,
+          "ci_hi": 0.7662704509455619
+        }
+      }
+    },
+    "drug_set": "dose_scored_4 (F1 > 0)"
+  },
+  "indicator_and_off_rows_all_drugs": {
+    "indicator_alone_auroc": 0.9420093248689514,
+    "n_rows_all": 170299,
+    "n_rows_off": 103179,
+    "n_rows_on": 67120,
+    "label_rate_off": 0.08534682445071187,
+    "label_rate_on": 1.0,
+    "off_rows": {
+      "A_full": {
+        "logreg": {
+          "auroc": 0.6967006809534052,
+          "ci_lo": 0.6905691886908101,
+          "ci_hi": 0.7023160271394223
+        },
+        "gb": {
+          "auroc": 0.7958990674622826,
+          "ci_lo": 0.7902155049041797,
+          "ci_hi": 0.8012781969067724
+        }
+      },
+      "E_physiology_only": {
+        "logreg": {
+          "auroc": 0.6788404386988478,
+          "ci_lo": 0.6716022485016516,
+          "ci_hi": 0.684918116332294
+        },
+        "gb": {
+          "auroc": 0.7789592954004697,
+          "ci_lo": 0.7727681187532177,
+          "ci_hi": 0.7845781950466567
+        }
+      }
+    },
+    "drug_set": "all_6_label_drugs"
+  }
+}

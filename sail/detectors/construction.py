@@ -44,6 +44,10 @@ class ConstructionLeakageDetector(LeakageCheck):
             to find anything; it is not a substitute for a proper tolerance-
             based binning strategy on noisy real-world data (a known Phase A
             simplification, not attempted here).
+        treatment_bins: if given, each treatment column is cut into this many equal-width
+            bins before testing 1a. Use it when doses are continuous. A bin that straddles a
+            real scoring threshold will look non-constant, so a clean result under coarse bins
+            is weaker evidence than under bins aligned with the scoring rule.
     """
 
     def run(self, df, spec: dict[str, Any]) -> LeakageFinding:
@@ -51,6 +55,7 @@ class ConstructionLeakageDetector(LeakageCheck):
         signal_col = spec["signal_col"]
         treatment_cols = list(spec["treatment_cols"])
         signal_round = spec.get("signal_round", 6)
+        treatment_bins = spec.get("treatment_bins")
 
         work = df.copy()
         work["_score"] = work.apply(scoring_fn, axis=1)
@@ -60,7 +65,18 @@ class ConstructionLeakageDetector(LeakageCheck):
         active = work[work["_active"]]
         inactive = work[~work["_active"]]
 
-        is_1a, groups_checked = self._check_1a(active, treatment_cols)
+        group_cols = treatment_cols
+        if treatment_bins:
+            # Continuous doses: every dose value is its own group with a single signal value, so
+            # nothing can be tested. Coarsen each treatment column into equal-width bins first.
+            import pandas as pd
+            active = active.copy()
+            group_cols = []
+            for c in treatment_cols:
+                active[f"_bin_{c}"] = pd.cut(active[c], bins=int(treatment_bins), duplicates="drop")
+                group_cols.append(f"_bin_{c}")
+
+        is_1a, groups_checked = self._check_1a(active, group_cols)
         if is_1a:
             return LeakageFinding(
                 category="construction_leakage_1a",
@@ -94,6 +110,21 @@ class ConstructionLeakageDetector(LeakageCheck):
                 evidence={"collisions": collisions[:10]},
             )
 
+        if active.empty or groups_checked == 0:
+            why = (
+                "no row has treatment active" if active.empty else
+                "within every treatment level the signal takes a single value, so constancy "
+                "cannot be tested (continuous doses do this; pass treatment_bins=N to group them)"
+            )
+            return LeakageFinding(
+                category="construction_leakage",
+                flagged=False,
+                inconclusive=True,
+                explanation=f"Not tested: {why}. This is not a clean result.",
+                evidence={"active_rows": int(active.shape[0]),
+                          "inactive_rows": int(inactive.shape[0]),
+                          "treatment_levels_checked": groups_checked},
+            )
         return LeakageFinding(
             category="construction_leakage",
             flagged=False,

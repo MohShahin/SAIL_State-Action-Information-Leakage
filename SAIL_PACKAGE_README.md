@@ -94,10 +94,46 @@ report = sail.check(
 print(report.summary())
 ```
 
-Every input above is optional except `df`, `state_cols`, and `action_col` — give a check only
-what you have. Drop `treatment_intervals` (or `window_col`, or `timestamp_col`) and only the
-temporal-overlap category is reported as **not run**; everything else still runs. You'll always
-know exactly what was and wasn't evaluated, never a silent guess.
+`state_cols` and `action_col` only name your columns (they are checked against `df`, and no
+detector reads them). **A bare table is not enough to run any check.** Each check needs its own extra
+input, listed in `print(sail.requirements())`. Give a check only what you have. Drop
+`treatment_intervals` (or `window_col`, or `timestamp_col`) and only the temporal-overlap category is
+reported as **not run**; everything else still runs. You'll always know exactly what was and wasn't
+evaluated, never a silent guess. A check that runs but has nothing it can test (every row missing a
+value, or no variation to test) is reported as **inconclusive**, never as clean.
+
+### A minimal example without SOFA
+
+Any table where a retained total contains a removed feature (Theorem 2's shape):
+
+```python
+import pandas as pd, sail
+
+df = pd.DataFrame({"a": [1, 0, 1, 0], "b": [0.2, 0.5, 0.1, 0.9], "total": [1.2, 0.5, 1.1, 0.9]})
+report = sail.check(
+    df, state_cols=["b", "total"],
+    reconstruction_spec={"total_col": "total", "component_cols": ["b"], "target_col": "a"},
+)
+print(report.summary())      # reconstruction_leakage is FLAGGED: 'a' = total - b
+```
+
+## Command line and CI
+
+```bash
+sail demo                                     # runs on a built-in synthetic table
+sail requirements                             # what each check needs
+sail check data.csv --timestamp-col state_end --action-start-col action_start \
+     --output report.json                     # JSON report, exit code for CI
+```
+
+Exit codes: `0` pass, `1` a gated condition was found, `2` usage or input error, `3` nothing could be
+tested. By default only genuine leakage findings fail the run (`--fail-on leakage`); persistence
+dominance is a diagnostic, not leakage, and does not fail it. Use `--fail-on any` to also fail on
+diagnostics and inconclusive checks.
+
+The JSON report carries `schema_version`, `sail_version`, a UTC timestamp and a content hash of the
+input table (shape, column names and a SHA-256 of the rows; never the values), so a report can be tied
+to the exact table it was run on.
 
 ## The five checks
 
@@ -140,8 +176,13 @@ the kind of thing this project wants to hear about.
 ## The research behind this package
 
 The full formal proofs, the empirical audit on 11,354 real ICU stays, and the project's honest
-account of what's still open (including a pre-registered, not-yet-run statistical test) live at
+account of what's still open live at
 **[the project site](https://mohshahin.github.io/SAIL_State-Action-Information-Leakage/)**.
+
+The pre-registered statistical test (H3, offset decay) has been run. Committed result, from the
+pinned run on the 13,192-stay primary cohort: Delta = AUROC(0) - AUROC(8) = 0.147, 95% CI 0.140 to
+0.154, which meets **Prediction A**. Exploratory controls are in review and do not change the H3
+decision.
 
 ## Citing this work
 
