@@ -44,7 +44,7 @@ templateEngineOverride: false
   <p class="plain">The AUROC gap (0.900 → 0.791) survived a <b>15× difference</b> in underlying
   vasopressor-dose row counts almost untouched — 0.109 verified vs. ≈0.108 in the original,
   inflated-data run, so the gap itself is not an artifact of the data bug. Exploratory work in
-  review (exp-persistence, not pre-registered) finds what the gap is actually made of: SOFA's
+  review (exp-persistence, not pre-specified) finds what the gap is actually made of: SOFA's
   dose-coded cardiovascular and total terms carry the currently running treatment's dose tier into
   the state, and that effect runs largely through treatment persistence rather than a SOFA-specific
   mechanism. Once an "infusion running right now" indicator is included, SOFA's own terms add
@@ -181,7 +181,7 @@ templateEngineOverride: false
   proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §4.5</a>.</p>
 </div>
 
-<h3 class="section" id="variant-f">A pre-registered disentanglement test — falsified</h3>
+<h3 class="section" id="variant-f">A pre-specified disentanglement test — falsified</h3>
 <div class="card">
   <p class="plain">A reviewer suggestion proposed a specific alternative to Variant D: instead of
   stripping treatment signal out of the severity term, keep severity untouched and add
@@ -214,7 +214,7 @@ templateEngineOverride: false
     <div class="fact"><div class="n">62%</div><div class="l">of D's small mortality-AUROC gap to A recovered by F (0.006 of 0.009) — a partial, not full, recovery</div></div>
   </div>
 
-  <p class="plain" style="margin-top:14px;">The pre-registered falsification condition was met,
+  <p class="plain" style="margin-top:14px;">The pre-specified falsification condition was met,
   unambiguously: F's action-recoverability didn't drift toward A's, it <b>exceeded</b> it. Two
   purely temporal features — how long a patient has been on a vasopressor, and how long since
   their dose tier last changed — are on their own more predictive of the <i>next</i> vasopressor
@@ -234,7 +234,7 @@ templateEngineOverride: false
 
 <h3 class="section">H3, run</h3>
 <div class="card">
-  <p class="plain">The pre-registered paired-bootstrap test has been run: Delta = AUROC(0) minus
+  <p class="plain">The pre-specified paired-bootstrap test has been run: Delta = AUROC(0) minus
   AUROC(8) = <b>0.147</b>, 95% CI <b>[0.140, 0.154]</b> (bin-index offsets, common rows, logreg) —
   <b>Prediction A</b>, per <a href="__PATHPREFIX__/docs/DECISIONS_H3.md" style="color:var(--accent);">docs/DECISIONS_H3.md</a>.
   A synthetic ground-truth check (exploratory work in review, exp-simulation) finds this same rule

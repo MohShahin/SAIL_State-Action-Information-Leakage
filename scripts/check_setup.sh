@@ -7,7 +7,7 @@
 # confusing mid-pipeline BigQuery error.
 
 set -u
-PROJECT_ID="${PROJECT_ID:-commanding-pier-456419-p8}"
+PROJECT_ID="${PROJECT_ID:?Set PROJECT_ID to your own Google Cloud project}"
 SCRATCH_DATASET_NAME="${SCRATCH_DATASET_NAME:-temp_dataset}"
 
 pass() { echo "  [OK] $1"; }

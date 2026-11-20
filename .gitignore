@@ -98,6 +98,14 @@ results/pinned_13192/*
 !results/pinned_13192/experiment8_variant_f_comparison.csv
 !results/pinned_13192/experiment8_variant_f_summary.json
 !results/pinned_13192/table3_all_metrics.json
+# Decision 6(a) across offsets 0 and 8 (exploratory, aggregates only)
+!results/exploratory/
+results/exploratory/*
+!results/exploratory/decision6a/
+results/exploratory/decision6a/*
+!results/exploratory/decision6a/README.md
+!results/exploratory/decision6a/decision6a_13192.json
+!results/exploratory/decision6a/decision6a_11354.json
 # Primary cohort (13,192 stays): notebook aggregates from the run of 1d3f170, whose extraction includes the post-pin change ff530e0 (pending the project lead's approval for H3 under Decision 4)
 !results/primary_13192/
 results/primary_13192/*
@@ -122,3 +130,45 @@ results/figures/*
 !results/figures/figure6_temporal_offset_decay_13192.png
 !results/figures/h3_pinned_29fb4ec_bins.png
 !results/figures/cohort_flow.png
+# Exploratory persistence control (not pre-registered; does not change the H3 decision)
+!results/exploratory/persistence/
+results/exploratory/persistence/*
+!results/exploratory/persistence/README.md
+!results/exploratory/persistence/persistence_13192.json
+!results/exploratory/persistence/persistence_11354.json
+!results/exploratory/persistence/persistence_decay_curves.png
+# Exploratory, not pre-registered: paired patient-level CIs for the Exp 2/6/8 AUROC gaps
+!results/exploratory/paired_cis/
+results/exploratory/paired_cis/*
+!results/exploratory/paired_cis/README.md
+!results/exploratory/paired_cis/paired_cis_13192.json
+!results/exploratory/paired_cis/paired_cis_11354.json
+# Exploratory, not pre-registered: within-fold StandardScaler sensitivity (scripts/exp_scaler_within_fold.py)
+!results/exploratory/scaler_within_fold/
+results/exploratory/scaler_within_fold/*
+!results/exploratory/scaler_within_fold/README.md
+!results/exploratory/scaler_within_fold/scaler_within_fold_13192.json
+!results/exploratory/scaler_within_fold/scaler_within_fold_11354.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision)
+!results/exploratory/label_alignment/
+results/exploratory/label_alignment/*
+!results/exploratory/label_alignment/README.md
+!results/exploratory/label_alignment/label_alignment_primary_13192.json
+!results/exploratory/label_alignment/label_alignment_sensitivity_11354.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision), aggregates only
+!results/exploratory/dose_decisions/
+results/exploratory/dose_decisions/*
+!results/exploratory/dose_decisions/README.md
+!results/exploratory/dose_decisions/dose_decisions_13192.json
+!results/exploratory/dose_decisions/dose_decisions_11354.json
+!results/exploratory/dose_decisions/dose_decisions_13192_at_risk.json
+!results/exploratory/dose_decisions/dose_decisions_11354_at_risk.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision): one topic folder each
+!results/exploratory/simulation/
+results/exploratory/simulation/*
+!results/exploratory/simulation/README.md
+!results/exploratory/simulation/calibration_aggregates.json
+!results/exploratory/simulation/sim_params.json
+!results/exploratory/simulation/grid_results.csv
+!results/exploratory/simulation/grid_results_mean.csv
+!results/exploratory/simulation/delta_vs_persistence.png

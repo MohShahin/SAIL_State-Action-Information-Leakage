@@ -164,7 +164,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
     <span class="thm-tag tag-proven">Proven</span>
   </div>
   <div class="thm-body">
-    <p class="intuition">Once any vasopressor is running, the cardiovascular SOFA score stops
+    <p class="intuition">Once a scored vasopressor (norepinephrine, epinephrine, dopamine or dobutamine) is running, the cardiovascular SOFA score stops
     reading blood pressure at all — it becomes purely a readout of the drug and dose.</p>
 
     <p class="plain">The cardiovascular SOFA subscore (Vincent et al., 1996) is scored by checking
@@ -186,7 +186,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 
     <div class="statement-block">
       <div class="label">Statement</div>
-      For any fixed nonzero drug/dose $D=d$ (any vasopressor active, at any dose), $\sigma_{cardio}$
+      For any fixed nonzero drug/dose $D=d$ (any scored vasopressor active, at any dose: norepinephrine, epinephrine, dopamine or dobutamine; vasopressin and phenylephrine are not scored by dose and are outside this theorem), $\sigma_{cardio}$
       is constant in MAP: $\sigma_{cardio}(m_1,d)=\sigma_{cardio}(m_2,d)$ for all $m_1,m_2$. This
       holds for the <i>entire</i> nonzero-dose domain, not merely where a dose exceeds some
       threshold.
@@ -214,7 +214,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
       <div class="label">Statement</div>
       Whenever $D\ne\emptyset$: the dose branches yield scores in $\{2,3,4\}$ while the $D=\emptyset$
       branches yield scores in $\{0,1\}$ — disjoint ranges. So the dose-derived score exceeds the
-      MAP-only score whenever any vasopressor is active, for <i>any</i> dose. Do not equate
+      MAP-only score whenever any scored vasopressor is active, for <i>any</i> dose. Do not equate
       $A_{t-1}=1$ alone with this — the relevant condition is the actual active drug/dose branch,
       which Theorem 1 shows is state-determining whenever nonzero.
     </div>
