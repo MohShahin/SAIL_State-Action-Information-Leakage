@@ -19,6 +19,17 @@
 {%- if extraHead %}
 {{ extraHead | safe }}
 {%- endif %}
+<style>
+#pal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;padding:12vh 16px 0;z-index:100}
+#pal.on{display:flex}
+#pal .box{background:var(--paper,#fff);color:var(--ink,#0f172a);border:1px solid var(--line,#e2e8f0);border-radius:12px;width:min(560px,100%);box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+#pal input{width:100%;border:0;border-bottom:1px solid var(--line,#e2e8f0);padding:14px 16px;font:inherit;font-size:16px;background:transparent;color:inherit;outline:none}
+#pal ul{list-style:none;margin:0;padding:6px;max-height:50vh;overflow:auto}
+#pal li a{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:8px;text-decoration:none;color:inherit}
+#pal li a.sel,#pal li a:hover{background:rgba(8,145,178,.14)}
+#pal li small{opacity:.65;white-space:nowrap}
+#palBtn{margin-inline-start:8px;background:transparent;border:1px solid #3b4654;color:#cbd5e1;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+</style>
 </head>
 <body>
 
@@ -31,7 +42,7 @@
     {%- for s in sections %}
     <a href="{{ s.path | withPrefix }}" data-nav="{{ s.i }}"{% if activeNav == s.id %} class="active"{% endif %}>{{ i18n.en.nav[s.i] }}</a>
     {%- endfor %}
-    <select id="langSel" aria-label="Language">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
+    <button type="button" id="palBtn" aria-label="Search" data-t="Search">Search</button><select id="langSel" aria-label="Language">{% for k, l in i18n %}<option value="{{ k }}">{{ l.name }}</option>{% endfor %}</select>
   </div>
 
 </div></nav>
@@ -63,5 +74,28 @@
    apply(stored()||'en',false);})();
   </script>
 
+
+<div id="pal" role="dialog" aria-modal="true" aria-label="Search"><div class="box"><input id="palQ" autocomplete="off" aria-label="Search"><ul id="palL"></ul></div></div>
+<script>
+(function(){var pal=document.getElementById('pal'),q=document.getElementById('palQ'),ul=document.getElementById('palL'),idx=null,sel=0,cur=[];
+function T(s){var k=document.documentElement.lang;return (k!=='en'&&window.SAIL_STR&&SAIL_STR[s]&&SAIL_STR[s][k])||s}
+function label(it){if(it.n!==undefined)return window.SAIL_I18N[document.documentElement.lang].nav[it.n];
+ var m=/^Episode (\d) · (.*)$/.exec(it.t);if(m)return T('Episode '+m[1])+' · '+T(m[2]);return T(it.t)}
+function grp(it){if(!it.g||it.n!==undefined)return '';var i=SAIL_I18N.en.nav.indexOf(it.g);return i>=0?SAIL_I18N[document.documentElement.lang].nav[i]:T(it.g)}
+function href(u){return '__PATHPREFIX__'+u}
+function draw(){var s=q.value.trim().toLowerCase();cur=(idx||[]).map(function(it){return {it:it,l:label(it)}}).filter(function(x){return !s||x.l.toLowerCase().indexOf(s)>=0||x.it.t.toLowerCase().indexOf(s)>=0}).slice(0,12);
+ if(sel>=cur.length)sel=0;ul.innerHTML='';cur.forEach(function(x,i){var li=document.createElement('li'),a=document.createElement('a');a.href=href(x.it.u);if(i===sel)a.className='sel';var s1=document.createElement('span');s1.textContent=x.l;var s2=document.createElement('small');s2.textContent=grp(x.it);a.append(s1,s2);li.append(a);ul.append(li)})}
+function open(){pal.classList.add('on');q.placeholder=T('Search');q.value='';sel=0;if(!idx){fetch('__PATHPREFIX__/assets/search.json').then(function(r){return r.json()}).then(function(j){idx=j;draw()}).catch(function(){})}draw();q.focus()}
+function close(){pal.classList.remove('on')}
+document.getElementById('palBtn').onclick=open;
+document.addEventListener('keydown',function(e){var on=pal.classList.contains('on');
+ if((e.key==='k'||e.key==='K')&&(e.metaKey||e.ctrlKey)){e.preventDefault();on?close():open();return}
+ if(!on)return;if(e.key==='Escape'){close()}
+ else if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(sel+1,cur.length-1);draw()}
+ else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(sel-1,0);draw()}
+ else if(e.key==='Enter'&&cur[sel]){location.href=href(cur[sel].it.u)}});
+pal.addEventListener('mousedown',function(e){if(e.target===pal)close()});q.addEventListener('input',function(){sel=0;draw()});
+})();
+</script>
 </body>
 </html>
