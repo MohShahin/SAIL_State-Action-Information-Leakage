@@ -149,3 +149,9 @@ results/exploratory/scaler_within_fold/*
 !results/exploratory/scaler_within_fold/README.md
 !results/exploratory/scaler_within_fold/scaler_within_fold_13192.json
 !results/exploratory/scaler_within_fold/scaler_within_fold_11354.json
+# Exploratory analyses (not pre-registered; do not change the H3 decision)
+!results/exploratory/label_alignment/
+results/exploratory/label_alignment/*
+!results/exploratory/label_alignment/README.md
+!results/exploratory/label_alignment/label_alignment_primary_13192.json
+!results/exploratory/label_alignment/label_alignment_sensitivity_11354.json
