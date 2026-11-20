@@ -57,6 +57,11 @@ class PersistenceDominanceDetector(LeakageCheck):
         persistence_auroc = spec["persistence_auroc"]
         full_state_auroc = spec["full_state_auroc"]
         margin = spec.get("margin", 0.02)
+        for name, val in (("persistence_auroc", persistence_auroc), ("full_state_auroc", full_state_auroc)):
+            if not isinstance(val, (int, float)) or isinstance(val, bool) or not (0.0 <= val <= 1.0):
+                raise ValueError(f"{name} must be a number between 0 and 1, got {val!r}")
+        if not isinstance(margin, (int, float)) or margin < 0:
+            raise ValueError(f"margin must be a non-negative number, got {margin!r}")
 
         gap = full_state_auroc - persistence_auroc
         # A tiny epsilon keeps the documented "within margin OF, or exceeding" boundary
@@ -90,6 +95,7 @@ class PersistenceDominanceDetector(LeakageCheck):
 
         return LeakageFinding(
             category="persistence_dominance",
+            kind="diagnostic",
             flagged=flagged,
             explanation=explanation,
             evidence={

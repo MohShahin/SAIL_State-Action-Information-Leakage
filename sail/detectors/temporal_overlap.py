@@ -89,7 +89,11 @@ class TemporalOverlapDetector(LeakageCheck):
             raise KeyError("spec must provide either 'window_hours' or 'window_col'")
 
         records = []
+        n_missing = 0
         for t, w in zip(df[time_col].tolist(), windows):
+            if t != t or w != w:  # NaN time or window: cannot be tested
+                n_missing += 1
+                continue
             o = _overlap_hours(t - w, t, intervals)
             c = min(1.0, o / w) if w > 0 else (1.0 if o > 0 else 0.0)
             records.append({
@@ -98,6 +102,17 @@ class TemporalOverlapDetector(LeakageCheck):
 
         flagged_rows = [r for r in records if r["overlap_fraction"] > threshold]
         flagged = len(flagged_rows) > 0
+        if not records:
+            return LeakageFinding(
+                category="temporal_overlap_leakage",
+                flagged=False,
+                inconclusive=True,
+                explanation=(
+                    f"Not tested: no row has both a decision time and a window length "
+                    f"({n_missing} row(s) were missing one). This is not a clean result."
+                ),
+                evidence={"threshold": threshold, "records": [], "n_missing": n_missing},
+            )
 
         if flagged:
             explanation = (
@@ -117,5 +132,5 @@ class TemporalOverlapDetector(LeakageCheck):
             category="temporal_overlap_leakage",
             flagged=flagged,
             explanation=explanation,
-            evidence={"threshold": threshold, "records": records},
+            evidence={"threshold": threshold, "records": records, "n_missing": n_missing},
         )

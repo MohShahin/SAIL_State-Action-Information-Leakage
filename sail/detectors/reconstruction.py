@@ -33,13 +33,21 @@ class ReconstructionLeakageDetector(LeakageCheck):
         if target_col in component_cols:
             raise ValueError("target_col must not be included in component_cols")
 
+        used = [total_col, *component_cols, target_col]
+        usable = df[used].notna().all(axis=1)
+        n_missing = int((~usable).sum())
+        df = df[usable]
         n_rows = int(len(df))
         if n_rows == 0:
             return LeakageFinding(
                 category="reconstruction_leakage",
                 flagged=False,
-                explanation="No rows to check.",
-                evidence={"n_rows": 0},
+                inconclusive=True,
+                explanation=(
+                    "Not tested: no row has all of the needed columns present "
+                    f"({n_missing} row(s) had a missing value in {used}). This is not a clean result."
+                ),
+                evidence={"n_rows": 0, "n_missing": n_missing},
             )
 
         reconstructed = df[total_col] - df[component_cols].sum(axis=1)
@@ -63,9 +71,12 @@ class ReconstructionLeakageDetector(LeakageCheck):
                 f"{max_diff:.2e}, exceeding tolerance ({tolerance:.0e})."
             )
 
+        if n_missing:
+            explanation += f" {n_missing} row(s) with a missing value were excluded and not counted."
         return LeakageFinding(
             category="reconstruction_leakage",
             flagged=flagged,
             explanation=explanation,
-            evidence={"max_abs_error": max_diff, "n_rows": n_rows, "tolerance": tolerance},
+            evidence={"max_abs_error": max_diff, "n_rows": n_rows, "n_missing": n_missing,
+                      "tolerance": tolerance},
         )

@@ -13,6 +13,12 @@ class LeakageFinding:
     flagged: bool
     explanation: str
     evidence: dict[str, Any] = field(default_factory=dict)
+    # "leakage" for the four leakage categories; "diagnostic" for persistence dominance, which is
+    # explicitly not a leakage finding. Gates (CI, exit codes) must only fail on kind == "leakage".
+    kind: str = "leakage"
+    # True when the check could not actually test anything (no usable rows, no variation to test).
+    # An inconclusive finding is never "not flagged": it is reported on its own.
+    inconclusive: bool = False
 
 
 class LeakageCheck(ABC):
