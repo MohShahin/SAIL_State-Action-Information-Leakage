@@ -35,9 +35,9 @@
   --accent-soft:#ecfeff;
   --physio:#0F766E;
   --physio-soft:#f0fdfa;
-  --treat:#DC2626;
+  --treat:#B91C1C;
   --treat-soft:#fef2f2;
-  --gold:#8a6d1f;
+  --gold:#6b520f;
 
   --serif: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -139,12 +139,13 @@ body{ overflow-wrap:break-word; word-break:break-word; }
 main{ max-width:840px; margin:0 auto; padding:32px 24px 48px; }
 main.wide{ max-width:1100px; }
 h2{ font-family:var(--serif); font-weight:400; font-size:25px; margin:0 0 12px; line-height:1.3; color:var(--ink); }
-h3.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36px 0 12px; color:var(--ink); }
+h3.section,h2.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36px 0 12px; color:var(--ink); }
 .plain{ font-size:15px; line-height:1.7; color:var(--ink-soft); margin:0 0 18px; }
 .plain b{ color:var(--ink); font-weight:600; }
 
 .card{ background:var(--paper); border:1px solid var(--line); border-radius:4px; padding:22px 24px; margin-bottom:18px; }
 .card h3{ font-family:var(--sans); margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; border-bottom:1px solid var(--line-soft); padding-bottom:9px; }
+.card h2:not([style]):not(.section){ font-family:var(--sans); margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; border-bottom:1px solid var(--line-soft); padding-bottom:9px; line-height:1.3; }
 
 .facts{ display:flex; gap:14px; flex-wrap:wrap; margin-top:16px; }
 .fact{ flex:1 1 150px; border-inline-start:2px solid var(--accent); padding-inline-start:12px; }
@@ -153,8 +154,8 @@ h3.section{ font-family:var(--serif); font-weight:400; font-size:20px; margin:36
 
 .flag{ display:inline-flex; align-items:center; gap:7px; font-size:12px; padding:5px 11px; border-radius:3px; border:1px solid var(--line); }
 .flag.physio{ border-color:var(--physio); color:var(--physio); background:var(--physio-soft); }
-.flag.treat{ border-color:var(--treat); color:var(--treat); background:var(--treat-soft); }
-.flag.pending{ border-color:var(--gold); color:var(--gold); background:#f7f0df; }
+.flag.treat{ border-color:#991B1B; color:#991B1B; background:var(--treat-soft); }
+.flag.pending{ border-color:var(--gold); color:#6b520f; background:#f7f0df; }
 .flag .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
 
 /* Labeled callout blocks -- a formal statement (accent) or a methodology warning (treat), same
@@ -254,20 +255,20 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
   border:1px solid rgba(255,255,255,.35); border-radius:4px; padding:4px 10px; cursor:pointer;
   white-space:nowrap; flex:0 0 auto;
 }
-.landing-dark .ext-note{ font-size:12.5px; color:#8592a0; margin-top:10px; }
+.landing-dark .ext-note{ font-size:12.5px; color:#aab5c1; margin-top:10px; }
 .landing-dark .ext-note a{ color:#7fd8ca; }
 .landing-dark .demo-frame{
   border:1px solid #2a2f35; border-radius:8px; overflow:hidden; margin:var(--space-4) 0; line-height:0;
 }
 .landing-dark .demo-frame img, .landing-dark .demo-frame video{ width:100%; height:auto; display:block; }
 .landing-dark h2{ color:#f3f6f9; }
-.landing-dark h3.section{ color:#f3f6f9; }
+.landing-dark h3.section,.landing-dark h2.section{ color:#f3f6f9; }
 .landing-dark .plain{ color:#a9b7c4; }
 .landing-dark .plain b{ color:#f3f6f9; }
 .landing-dark .card{
   background:#1b1f24; border:1px solid #2a2f35; color:#dfe6ee;
 }
-.landing-dark .card h3{ color:#8592a0; border-bottom-color:#2a2f35; }
+.landing-dark .card h3,.landing-dark .card h2:not([style]){ color:#aab5c1; border-bottom-color:#2a2f35; }
 .landing-dark .step-num{
   display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
   border-radius:50%; background:#7fd8ca; color:#0c0e10; font-family:var(--sans); font-weight:700;
@@ -291,7 +292,7 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
    is a plain .card with no dashed border and no tag, so the two states can never be confused. */
 .landing-dark .placeholder-icon{
   width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  background:#0c0e10; margin-bottom:12px; color:#5a6472; flex:0 0 auto;
+  background:#0c0e10; margin-bottom:12px; color:#9aa7b5; flex:0 0 auto;
 }
 .landing-dark .placeholder-icon svg{ width:26px; height:26px; }
 .landing-dark .team-photo{
@@ -312,11 +313,11 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 }
 .landing-dark .card.placeholder .placeholder-tag{
   display:inline-block; font-family:var(--sans); font-size:10.5px; font-weight:700; letter-spacing:.06em;
-  text-transform:uppercase; color:#5a6472; border:1px solid #3a4048; border-radius:3px;
+  text-transform:uppercase; color:#9aa7b5; border:1px solid #3a4048; border-radius:3px;
   padding:2px 7px; margin-bottom:10px;
 }
-.landing-dark .card.placeholder .check-name{ color:#5a6472; }
-.landing-dark .card.placeholder .check-q{ color:#4a5361; font-style:italic; }
+.landing-dark .card.placeholder .check-name{ color:#9aa7b5; }
+.landing-dark .card.placeholder .check-q{ color:#aab5c1; font-style:italic; }
 
 /* Expandable detail sections (website rebuild Phase 4), matching proof.html's existing
    details.expand pattern -- same markup, dark-appropriate colors instead of that page's
@@ -327,12 +328,12 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
   color:#dfe6ee; list-style:none; display:flex; justify-content:space-between; align-items:center;
 }
 .landing-dark details.expand summary::-webkit-details-marker{ display:none; }
-.landing-dark details.expand summary::after{ content:"+"; font-size:18px; color:#5a6472; }
+.landing-dark details.expand summary::after{ content:"+"; font-size:18px; color:#9aa7b5; }
 .landing-dark details.expand[open] summary::after{ content:"\2212"; }
 .landing-dark details.expand .expand-body{ padding:0 16px 14px; font-size:13px; color:#a9b7c4; line-height:1.65; }
 .landing-dark .proven-by{
   font-family:var(--sans); font-size:11px; text-transform:uppercase; letter-spacing:.05em;
-  color:#5a6472; margin:0 0 4px;
+  color:#9aa7b5; margin:0 0 4px;
 }
 .landing-dark .see-math{ display:inline-block; margin-top:10px; font-size:13px; color:#7fd8ca; }
 
@@ -342,21 +343,22 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
   display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:16px;
 }
 .landing-dark .lib-card{ border:1px solid #2a2f35; border-radius:6px; padding:20px; background:#1b1f24; }
-.landing-dark .lib-card h3{
+.landing-dark .lib-card h3,.landing-dark .lib-card h2{
   font-family:var(--serif); font-weight:400; font-size:16px; margin:10px 0 4px; color:#f3f6f9;
   border:none; padding:0; text-transform:none; letter-spacing:normal;
 }
-.landing-dark .lib-card .lib-meta{ font-size:12.5px; color:#5a6472; }
+.landing-dark .lib-card .lib-meta{ font-size:12.5px; color:#9aa7b5; }
 .landing-dark .lib-card .lib-desc{ font-size:13px; color:#a9b7c4; line-height:1.55; margin-top:10px; }
 .landing-dark .lib-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
 .landing-dark .lib-tags span{
-  font-family:var(--mono); font-size:10px; color:#8592a0; background:#14171a; border:1px solid #2a2f35;
+  font-family:var(--mono); font-size:10px; color:#aab5c1; background:#14171a; border:1px solid #2a2f35;
   padding:2px 7px; border-radius:3px;
 }
 .landing-dark .lib-card .view-link{ display:inline-block; margin-top:12px; font-size:12.5px; color:#7fd8ca; }
+.landing-dark .view-link{ color:#7fd8ca; }
 .landing-dark .lib-badge{ font-size:11px; font-weight:600; padding:3px 9px; border-radius:3px; display:inline-block; }
 .landing-dark .badge-confound{ background:rgba(201,151,77,.15); color:#c9974d; }
-.landing-dark .badge-context{ background:rgba(255,255,255,.06); color:#8592a0; }
+.landing-dark .badge-context{ background:rgba(255,255,255,.06); color:#aab5c1; }
 .landing-dark .badge-related{ background:rgba(127,216,202,.12); color:#7fd8ca; }
 .landing-dark .badge-dataset{ background:rgba(143,189,232,.14); color:#8fbde8; }
 .landing-dark .badge-model{ background:rgba(127,216,202,.12); color:#7fd8ca; }
@@ -374,16 +376,16 @@ table.data tr.old td{ color:var(--ink-faint); text-decoration:line-through; }
 .landing-dark .sc-q{ padding:14px 0; border-top:1px solid #2a2f35; }
 .landing-dark .statement-block{ background:rgba(127,216,202,.08); border:1px solid #2f5f56; color:#dfe6ee; }
 .landing-dark .statement-block .label{ color:#7fd8ca; }
-.landing-dark table.data th{ color:#8592a0; border-bottom-color:#2a2f35; }
+.landing-dark table.data th{ color:#aab5c1; border-bottom-color:#2a2f35; }
 .landing-dark table.data td{ color:#dfe6ee; border-bottom-color:#2a2f35; }
 .landing-dark table.data td.label{ color:#f3f6f9; }
-.landing-dark table.data tr.old td{ color:#5a6472; }
+.landing-dark table.data tr.old td{ color:#9aa7b5; }
 .landing-dark .warn-block{ background:rgba(245,161,90,.08); border:1px solid #6b4a26; color:#dfe6ee; }
 .landing-dark .warn-block .label{ color:#f5a15a; }
 .landing-dark input[type="text"]{
   background:#14171a; border:1px solid #2a2f35; color:#dfe6ee;
 }
-.landing-dark input[type="text"]::placeholder{ color:#5a6472; }
+.landing-dark input[type="text"]::placeholder{ color:#9aa7b5; }
 .landing-dark label{ color:#dfe6ee !important; }
 
 /* Giscus comment section: a fixed-height slot before the widget's iframe injects itself, so the

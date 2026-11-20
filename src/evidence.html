@@ -13,7 +13,7 @@ templateEngineOverride: false
 
 <main class="wide">
 
-<h3 class="section" style="margin-top:0;">Verified figures</h3>
+<h2 class="section" style="margin-top:0;">Verified figures</h2>
 <div class="card">
   <div class="table-scroll">
   <table class="data">
@@ -39,7 +39,7 @@ templateEngineOverride: false
   which this historical verification predates.</p>
 </div>
 
-<h3 class="section">What Experiment 2's gap reflects</h3>
+<h2 class="section">What Experiment 2's gap reflects</h2>
 <div class="card">
   <p class="plain">The AUROC gap (0.900 → 0.791) survived a <b>15× difference</b> in underlying
   vasopressor-dose row counts almost untouched — 0.109 verified vs. ≈0.108 in the original,
@@ -57,7 +57,7 @@ templateEngineOverride: false
   </div>
 </div>
 
-<h3 class="section">The three bugs, found and fixed in the open</h3>
+<h2 class="section">The three bugs, found and fixed in the open</h2>
 <div class="card">
   <div class="facts">
     <div class="fact"><div class="n" style="font-size:14px;">Bug 1 — WRITE_APPEND</div><div class="l">The cohort table's BigQuery load had no write_disposition. A re-run against an already-populated table silently duplicated rows (~15x). Confirmed twice — by code inspection, and by recovering the original buggy Colab run and reproducing its exact inflated numbers.</div></div>
@@ -68,7 +68,7 @@ templateEngineOverride: false
   in <a href="__PATHPREFIX__/ROADMAP.md" style="color:var(--accent);">ROADMAP.md</a>.</p>
 </div>
 
-<h3 class="section">A scope note: this evidence is task-specific</h3>
+<h2 class="section">A scope note: this evidence is task-specific</h2>
 <div class="card">
   <p class="plain">Everything on this page evaluates a feature's relationship to <i>next-action
   prediction</i> specifically. That's a deliberate scope, not an oversight — the same feature's
@@ -82,7 +82,7 @@ templateEngineOverride: false
   full distinction this depends on.</p>
 </div>
 
-<h3 class="section">Limitation: sanitization has a clinical-validity cost</h3>
+<h2 class="section">Limitation: sanitization has a clinical-validity cost</h2>
 <div class="card">
   <p class="plain">Variant D's fix (recompute the total from a MAP-only cardiovascular proxy) removes
   the treatment-confounding this project measures — but it isn't free. The MAP-only branch of the
@@ -109,7 +109,7 @@ templateEngineOverride: false
   terms, rather than collapsing them into one composite score either way.</p>
 </div>
 
-<h3 class="section">Testing that concern quantitatively: it doesn't hold at the cohort level</h3>
+<h2 class="section">Testing that concern quantitatively: it doesn't hold at the cohort level</h2>
 <div class="card">
   <p class="plain">The concrete example above is real, but does it add up to variant D/E being
   meaningfully <i>worse at predicting mortality</i> across the whole cohort? Trained the same way as
@@ -139,7 +139,7 @@ templateEngineOverride: false
   <a href="__PATHPREFIX__/results/experiment6_mortality_vs_action_recoverability.json" style="color:var(--accent);">results/experiment6_mortality_vs_action_recoverability.json</a>.</p>
 </div>
 
-<h3 class="section">A second mechanism instance: respiratory SOFA</h3>
+<h2 class="section">A second mechanism instance: respiratory SOFA</h2>
 <div class="card">
   <p class="plain">Theorems 1–2 are proofs about the cardiovascular subscore specifically. Does the
   diagnostic generalize to a different SOFA subscore, or was it a one-off property? Checked against
@@ -181,7 +181,7 @@ templateEngineOverride: false
   proof: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §4.5</a>.</p>
 </div>
 
-<h3 class="section" id="variant-f">A pre-specified disentanglement test — falsified</h3>
+<h2 class="section" id="variant-f">A pre-specified disentanglement test — falsified</h2>
 <div class="card">
   <p class="plain">A reviewer suggestion proposed a specific alternative to Variant D: instead of
   stripping treatment signal out of the severity term, keep severity untouched and add
@@ -232,7 +232,7 @@ templateEngineOverride: false
   discussion: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §7.5</a>.</p>
 </div>
 
-<h3 class="section">H3, run</h3>
+<h2 class="section">H3, run</h2>
 <div class="card">
   <p class="plain">The pre-specified paired-bootstrap test has been run: Delta = AUROC(0) minus
   AUROC(8) = <b>0.147</b>, 95% CI <b>[0.140, 0.154]</b> (bin-index offsets, common rows, logreg) —

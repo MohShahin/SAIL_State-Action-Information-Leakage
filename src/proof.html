@@ -30,7 +30,7 @@ needsMathJax: true
   #derivOverlay{ position:fixed; inset:0; background:rgba(15,23,42,.25); opacity:0; pointer-events:none; transition:opacity .28s; z-index:199; }
   #derivOverlay.open{ opacity:1; pointer-events:auto; }
   .deriv-head{ position:sticky; top:0; background:var(--paper); border-bottom:1px solid var(--line); padding:16px 22px; display:flex; justify-content:space-between; align-items:center; }
-  .deriv-head h4{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0; }
+  .deriv-head h3{ font-family:var(--serif); font-weight:400; font-size:16px; margin:0; }
   .deriv-close{ background:none; border:none; font-size:20px; color:var(--ink-faint); cursor:pointer; padding:4px 8px; }
   .deriv-body{ padding:20px 22px 60px; font-size:13.5px; line-height:1.7; color:var(--ink-soft); }
   .deriv-step{ margin:16px 0; }
@@ -43,11 +43,11 @@ needsMathJax: true
 
   .status-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; margin:18px 0; }
   .status-col{ background:var(--paper); padding:16px 18px; }
-  .status-col h5{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin:0 0 10px; }
+  .status-col h3{ font-family:var(--sans); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin:0 0 10px; }
   .status-col ul{ margin:0; padding-left:16px; font-size:12.5px; line-height:1.7; color:var(--ink-soft); }
-  .status-col.proven h5{ color:var(--physio); }
-  .status-col.empirical h5{ color:var(--gold); }
-  .status-col.open h5{ color:var(--treat); }
+  .status-col.proven h3{ color:var(--physio); }
+  .status-col.empirical h3{ color:var(--gold); }
+  .status-col.open h3{ color:var(--treat); }
   @media (max-width:700px){ .status-grid{ grid-template-columns:1fr; } }
 
   details.expand{ border:1px solid var(--line); border-radius:6px; margin:14px 0; }
@@ -74,7 +74,7 @@ needsMathJax: true
 
 <main>
 
-<h3 class="section" id="abstract" style="margin-top:0;">Abstract</h3>
+<h2 class="section" id="abstract" style="margin-top:0;">Abstract</h2>
 <p class="plain">This page proves two mechanisms by which a SOFA-based reinforcement-learning state
 can encode prior treatment, and states precisely what those proofs do and do not imply about
 whether a model actually exploits that encoding — a question this page treats as open and
@@ -88,7 +88,7 @@ empirical, not settled by the mathematics alone.</p>
   see <a href="#h3" style="color:var(--treat);">§H3</a>.
 </div>
 
-<h3 class="section" id="term">Terminology — confounding, not ML-sense leakage</h3>
+<h2 class="section" id="term">Terminology — confounding, not ML-sense leakage</h2>
 <p class="plain">$A_{t-1} \to S_t \to A_t$ — prior treatment shaping the current state, which then
 informs the <i>next</i> decision — is ordinary sequential decision-making, not leakage. True leakage
 would be $A_t \to S_t \to \hat{A}_t$: the state containing information about the <i>same</i> action
@@ -101,22 +101,22 @@ verified to have zero overlap with the state window it follows (analysis noteboo
 Variants A–E and Action Labels") — the second pattern does not occur anywhere in this pipeline.
 Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--accent);">FORMAL_ANALYSIS.md §1.1</a>.</p>
 
-<h3 class="section">What is actually proven?</h3>
+<h2 class="section">What is actually proven?</h2>
 <div class="status-grid">
-  <div class="status-col proven"><h5>Proven</h5><ul>
+  <div class="status-col proven"><h3>Proven</h3><ul>
     <li>Treatment-dose non-identifiability of σ_cardio</li>
     <li>Exact reconstructibility of σ_cardio from the total</li>
     <li>Monotonicity of absolute window overlap</li>
     <li>Non-monotonicity of fractional overlap</li>
     <li>S_t is a descendant of A_(t-1) in the causal graph</li>
   </ul></div>
-  <div class="status-col empirical"><h5>Empirical</h5><ul>
+  <div class="status-col empirical"><h3>Empirical</h3><ul>
     <li>Frequency of nonzero dose in the cohort (32.3% / 28.6%)</li>
     <li>AUROC values for variants A–E</li>
     <li>Window-overlap percentages</li>
     <li>Offset-decay curve shape</li>
   </ul></div>
-  <div class="status-col open"><h5>Open / testable</h5><ul>
+  <div class="status-col open"><h3>Open / testable</h3><ul>
     <li>Whether the definitional pathway materially explains next-action predictability</li>
     <li>Whether the AUROC gap survives controlling for treatment persistence</li>
   </ul></div>
@@ -160,7 +160,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 <!-- ============ THEOREM 1 ============ -->
 <div class="thm-card" id="thm1">
   <div class="thm-head">
-    <h4 class="thm-name">Theorem 1 — Treatment-dose non-identifiability of σ<sub>cardio</sub></h4>
+    <h3 class="thm-name">Theorem 1 — Treatment-dose non-identifiability of σ<sub>cardio</sub></h3>
     <span class="thm-tag tag-proven">Proven</span>
   </div>
   <div class="thm-body">
@@ -204,7 +204,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 <!-- ============ COROLLARY 1.1 ============ -->
 <div class="thm-card">
   <div class="thm-head">
-    <h4 class="thm-name">Corollary 1.1 — "100% of treated timesteps" is proven, not observed</h4>
+    <h3 class="thm-name">Corollary 1.1 — "100% of treated timesteps" is proven, not observed</h3>
     <span class="thm-tag tag-proven">Proven</span>
   </div>
   <div class="thm-body">
@@ -229,7 +229,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 <!-- ============ THEOREM 2 ============ -->
 <div class="thm-card" id="thm2">
   <div class="thm-head">
-    <h4 class="thm-name">Theorem 2 — Exact reconstructibility under naive feature removal</h4>
+    <h3 class="thm-name">Theorem 2 — Exact reconstructibility under naive feature removal</h3>
     <span class="thm-tag tag-proven">Proven</span>
   </div>
   <div class="thm-body">
@@ -253,7 +253,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 <!-- ============ PROPOSITION 1 + FRACTIONAL OVERLAP ============ -->
 <div class="thm-card" id="prop1">
   <div class="thm-head">
-    <h4 class="thm-name">Proposition 1 — Window overlap: absolute monotone, fractional not</h4>
+    <h3 class="thm-name">Proposition 1 — Window overlap: absolute monotone, fractional not</h3>
     <span class="thm-tag tag-proven">Proven</span>
   </div>
   <div class="thm-body">
@@ -280,7 +280,7 @@ Full derivation: <a href="__PATHPREFIX__/FORMAL_ANALYSIS.md" style="color:var(--
 </div>
 
 <!-- ============ CAUSAL STRUCTURE ============ -->
-<h3 class="section" id="causal">Causal structure — why non-identifiability isn't the same as leakage</h3>
+<h2 class="section" id="causal">Causal structure — why non-identifiability isn't the same as leakage</h2>
 <p class="plain">Theorem 1 is a fact about a scoring <i>function</i>. Whether that fact lets a model
 predict the next action is a separate, empirical question — this section makes precisely why.</p>
 
@@ -326,10 +326,10 @@ containing treatment information does not, by itself, prove predictive leakage o
 action.</b></p>
 
 <!-- ============ H3 ============ -->
-<h3 class="section" id="h3">H3 — run, with the proper statistical test</h3>
+<h2 class="section" id="h3">H3 — run, with the proper statistical test</h2>
 <div class="thm-card">
   <div class="thm-head">
-    <h4 class="thm-name">H3 — does the definitional pathway materially explain next-action predictability?</h4>
+    <h3 class="thm-name">H3 — does the definitional pathway materially explain next-action predictability?</h3>
     <span class="thm-tag tag-run">Run — Prediction A</span>
   </div>
   <div class="thm-body">
@@ -375,7 +375,7 @@ action.</b></p>
   </div>
 </div>
 
-<h3 class="section">References</h3>
+<h2 class="section">References</h2>
 <p class="plain" style="font-size:13px;">
 Vincent, J.-L. et al. (1996). The SOFA score. <i>Intensive Care Medicine</i>, 22(7), 707–710.<br>
 Hernán, M. A. & Robins, J. M. <i>Causal Inference: What If</i>. Chapman & Hall/CRC, 2020.<br>
@@ -397,7 +397,7 @@ Komorowski, M. et al. (2018). The Artificial Intelligence Clinician. <i>Nature M
 <!-- ============ DERIVATION PANEL ============ -->
 <div id="derivOverlay"></div>
 <div id="derivPanel">
-  <div class="deriv-head"><h4 id="derivTitle">Derivation</h4><button class="deriv-close" id="derivClose">&times;</button></div>
+  <div class="deriv-head"><h3 id="derivTitle">Derivation</h3><button class="deriv-close" id="derivClose">&times;</button></div>
   <div class="deriv-body" id="derivBody"></div>
 </div>
 

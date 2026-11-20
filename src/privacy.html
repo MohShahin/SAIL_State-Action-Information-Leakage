@@ -16,7 +16,7 @@ templateEngineOverride: false
 <main class="wide">
 <div class="grid-container">
 
-<h3 class="section" style="margin-top:0;">This website</h3>
+<h2 class="section" style="margin-top:0;">This website</h2>
 <p class="plain">This site is static. It sets no cookies, runs no analytics or tracking, and loads its fonts, code
 highlighting and maths rendering from its own files, so visiting a page does not send your address to a third party.
 The only thing it stores in your browser is your language choice and, if you use the Comments button, nothing until you press it.</p>
@@ -27,13 +27,13 @@ The only thing it stores in your browser is your language choice and, if you use
 <li><strong>Example data</strong> in the demo, the simulator and the videos is synthetic and labelled as such.</li>
 </ul>
 
-<h3 class="section">The <code>sail-leakage</code> package is local-only</h3>
+<h2 class="section">The <code>sail-leakage</code> package is local-only</h2>
 <p class="plain">The package reads the file (or DataFrame) you give it and returns a report. It makes
 no network requests, sends no telemetry, and has no server component — there is nothing in its
 dependency chain that talks to the network. Verifying this is as simple as reading its source; there
 are five detector modules and an orchestrator, nothing else.</p>
 
-<h3 class="section">The VS Code extension</h3>
+<h2 class="section">The VS Code extension</h2>
 <p class="plain">The extension's setup wizard runs the installed <code>sail-leakage</code> package in
 a local Python subprocess on your own machine, the same way the package itself works from a
 terminal. The sidebar states this directly: <b>"Runs on this computer. Your patient data is never
@@ -41,7 +41,7 @@ uploaded."</b> That line isn't marketing copy sitting next to the mechanism — 
 code actually does, which you can check in
 <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/tree/vscode-extension/extension/src/sailBridge.ts" style="color:#7fd8ca;">the extension's source</a>.</p>
 
-<h3 class="section">What isn't built yet: AI-assistant fix suggestions</h3>
+<h2 class="section">What isn't built yet: AI-assistant fix suggestions</h2>
 <p class="plain">A future feature (an MCP server offering LLM-assisted fix suggestions inside the
 editor) is fully designed but <b>not implemented</b> — no server, no AI-assistant-facing code, and no
 network path for your data exist anywhere in the codebase today, confirmed by direct search of the
@@ -72,7 +72,7 @@ so a network call is never required at all, for either tier 1 or tier 2.</p>
   source document states it, not implied to be further along than it is.
 </div>
 
-<h3 class="section">HIPAA: architectural reasoning, not a compliance certification</h3>
+<h2 class="section">HIPAA: architectural reasoning, not a compliance certification</h2>
 <p class="plain">Because tier 3 architecturally never transmits raw data values, and tier 2's code
 snippets require a separate opt-in plus a pre-send preview the user can review before anything leaves
 the machine, the LLM-suggestion feature — once built — is designed so that no patient data (PHI) is
@@ -89,7 +89,7 @@ MIMIC-IV's own data-use terms.</p>
 this summary doesn't try to fully reproduce:
 <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/blob/vscode-extension/extension/docs/PHASE_5_DATA_SHARING.md" style="color:#7fd8ca;">PHASE_5_DATA_SHARING.md</a>.</p>
 
-<h3 class="section">This project's own data handling</h3>
+<h2 class="section">This project's own data handling</h2>
 <p class="plain">The research behind SAIL was built on credentialed MIMIC-IV data under a PhysioNet
 Data Use Agreement, which restricts what can be published at row level. See
 <a href="__PATHPREFIX__/DATA_ACCESS.md" style="color:#7fd8ca;">DATA_ACCESS.md</a> for exactly what that

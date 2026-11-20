@@ -23,14 +23,14 @@ extraHead: |
   exhaustive coverage — see "What this does and doesn't check" below.
 </div>
 
-<h3 class="section" id="install">Install</h3>
+<h2 class="section" id="install">Install</h2>
 <div class="card">
   <pre style="margin:0 0 12px; background:var(--ink); color:#fff; padding:var(--space-2) var(--space-3); border-radius:6px; font-family:var(--mono); font-size:var(--text-sm); overflow-x:auto;"><code>pip install sail-leakage</code></pre>
   <p class="plain" style="margin:0;">For the latest development version instead of the latest release, install directly from source:</p>
   <pre style="margin:12px 0 0; background:var(--ink); color:#fff; padding:var(--space-2) var(--space-3); border-radius:6px; font-family:var(--mono); font-size:var(--text-sm); overflow-x:auto;"><code>pip install git+https://github.com/MohShahin/SAIL_State-Action-Information-Leakage.git</code></pre>
 </div>
 
-<h3 class="section" id="quickstart">Quickstart</h3>
+<h2 class="section" id="quickstart">Quickstart</h2>
 <div class="card">
   <p class="plain">SAIL doesn't guess what your columns mean — each of the five checks is explicit
   about exactly what it needs, and a check only runs when you give it enough to run correctly. This
@@ -95,7 +95,7 @@ print(report.summary())</code></pre>
   You'll always know exactly what was and wasn't evaluated, never a silent guess.</p>
 </div>
 
-<h3 class="section" id="categories">The five checks</h3>
+<h2 class="section" id="categories">The five checks</h2>
 <div class="card">
   <div class="table-scroll">
   <table class="data">
@@ -114,7 +114,7 @@ print(report.summary())</code></pre>
   page</a>.</p>
 </div>
 
-<h3 class="section">What this does and doesn't check</h3>
+<h2 class="section">What this does and doesn't check</h2>
 <div class="card">
   <p class="plain"><b>It doesn't read or understand your paper or your code.</b> SAIL checks the
   data you give it against five specific, well-defined patterns — it has no opinion about anything
@@ -129,7 +129,7 @@ print(report.summary())</code></pre>
   <a href="https://github.com/MohShahin/SAIL_State-Action-Information-Leakage/issues" style="color:var(--accent);">open an issue</a>.</p>
 </div>
 
-<h3 class="section">Links</h3>
+<h2 class="section">Links</h2>
 <div class="card">
   <div style="display:flex; gap:12px; flex-wrap:wrap;">
     <a href="https://pypi.org/project/sail-leakage/" class="navbtn" style="text-decoration:none;">PyPI project page →</a>

@@ -7,7 +7,7 @@ permalink: /workshops/
 ---
 <style>
 .ep{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:var(--paper)}
-.ep h3{margin:0 0 6px;font-size:17px}
+.ep .et{margin:0 0 6px;font-size:17px;border:0;padding:0;text-transform:none;color:inherit}
 .ep dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:8px 0 0;font-size:14.5px}
 .ep dt{color:var(--ink-soft);font-weight:600}.ep dd{margin:0}
 .tbd{display:inline-block;border:1px dashed var(--ink-faint);border-radius:6px;padding:0 8px;color:var(--ink-soft)}
@@ -23,7 +23,7 @@ permalink: /workshops/
 .slot :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 <p class="plain"><strong data-t="{{ workshops.status }}">{{ workshops.status }}</strong>. <span data-t="{{ workshops.note }}">{{ workshops.note }}</span></p>
-{% for e in workshops.episodes %}<article class="ep"{% if e.iso %} data-iso="{{ e.iso }}"{% endif %}><h3><span data-t="Episode {{ e.n }}">Episode {{ e.n }}</span> · <span data-t="{{ e.title }}">{{ e.title }}</span></h3>
+{% for e in workshops.episodes %}<article class="ep"{% if e.iso %} data-iso="{{ e.iso }}"{% endif %}><h2 class="et"><span data-t="Episode {{ e.n }}">Episode {{ e.n }}</span> · <span data-t="{{ e.title }}">{{ e.title }}</span></h2>
 <dl><dt data-t="Date">Date</dt><dd>{% if e.iso %}<time datetime="{{ e.iso }}" class="when">{{ e.iso }}</time>{% else %}<span class="tbd" data-t="Date to be announced">Date to be announced</span>{% endif %}</dd>
 <dt data-t="Host">Host</dt><dd><span class="tbd" data-t="To be confirmed">To be confirmed</span></dd>
 <dt data-t="Registration">Registration</dt><dd><span class="tbd" data-t="Opens when the date is set">Opens when the date is set</span></dd>

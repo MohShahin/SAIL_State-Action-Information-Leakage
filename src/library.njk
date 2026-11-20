@@ -20,9 +20,9 @@ permalink: /library/
 .libbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .libbar select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--paper);color:var(--ink)}
 .paper{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--paper)}
-.paper h3{font-size:16.5px;line-height:1.35;margin:0 0 4px}
-.paper h3 a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
-.paper h3 a:hover{text-decoration-color:var(--accent)}
+.paper .pt{font-size:16.5px;line-height:1.35;margin:0 0 4px}
+.paper .pt a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.paper .pt a:hover{text-decoration-color:var(--accent)}
 .paper .meta{font-size:13.5px;color:var(--ink-soft);margin:0 0 8px}
 .paper p{margin:6px 0 0;font-size:14.5px;color:var(--ink-soft)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;padding:0;list-style:none}
@@ -56,7 +56,7 @@ permalink: /library/
    <label style="font-size:14px"><span data-t="Sort by">Sort by</span> <select id="f_sort"><option value="pri" data-t="Priority">Priority</option><option value="new" data-t="Newest first">Newest first</option><option value="old" data-t="Oldest first">Oldest first</option></select></label></div>
   <div id="list">
   {% for r in library.rows %}<article class="paper" data-id="{{ r.id }}" data-family="{{ r.family }}" data-scope="{{ r.scope }}" data-kind="{{ r.kind }}" data-pri="{{ r.priority }}" data-ver="{{ 1 if r.verified else 0 }}" data-pos="{{ 1 if r.positive else 0 }}" data-year="{{ r.year or 0 }}" data-text="{{ (r.title + ' ' + r.authors + ' ' + r.datasets + ' ' + r.mechanism + ' ' + r.what) | lower }}">
-   <h3>{% if r.link %}<a href="{{ r.link }}" rel="noopener" target="_blank">{{ r.title }}</a>{% else %}{{ r.title }}{% endif %}</h3>
+   <h2 class="pt">{% if r.link %}<a href="{{ r.link }}" rel="noopener" target="_blank">{{ r.title }}</a>{% else %}{{ r.title }}{% endif %}</h2>
    <p class="meta">{% if r.year %}{{ r.year }}{% endif %}{% if r.year and r.authors %} · {% endif %}{{ r.authors }}{% if r.linkKind == "search" %} · <span data-t="Search link, not a direct link">Search link, not a direct link</span>{% endif %}</p>
    <ul class="tags"><li class="hi">{{ r.family }}</li><li>{{ r.scope }}</li><li>{{ r.kind }}</li>{% if r.positive %}<li class="ok" data-t="Positive practice">Positive practice</li>{% endif %}{% if r.verified %}<li class="ok" data-t="Verified">Verified</li>{% else %}<li class="warn" data-t="Not yet verified">Not yet verified</li>{% endif %}<li>{{ r.priority }}</li></ul>
    {% if r.mechanism %}<p><strong data-t="Mechanism:">Mechanism:</strong> {{ r.mechanism }}</p>{% endif %}
